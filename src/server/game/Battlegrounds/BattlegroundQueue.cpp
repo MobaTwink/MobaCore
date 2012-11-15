@@ -800,8 +800,8 @@ void BattlegroundQueue::BattlegroundQueueUpdate(uint32 /*diff*/, BattlegroundTyp
 
     if (bg_template->isArena())
     {
-        MaxPlayersPerTeam = arenaType;
-        MinPlayersPerTeam = sBattlegroundMgr->isArenaTesting() ? 1 : arenaType;
+        MaxPlayersPerTeam = (arenaType < 4) ? arenaType : 1 ;
+        MinPlayersPerTeam = (arenaType < 4) ? arenaType : 1 ;
     }
     else if (sBattlegroundMgr->isTesting())
         MinPlayersPerTeam = 1;
