@@ -1820,6 +1820,16 @@ void Player::Update(uint32 p_time)
     //because we don't want player's ghost teleported from graveyard
     if (IsHasDelayedTeleport() && isAlive())
         TeleportTo(m_teleport_dest, m_teleport_options);
+	
+	//Give Speed Buff Yo
+    uint32 zone = GetZoneId();
+    if ((zone == 3358 || zone == 3711))
+    {
+    	if (!isInCombat())
+            CastSpell(this, 22590, true);
+	else
+            CastSpell(this, 22586, true);
+    }
 }
 
 void Player::setDeathState(DeathState s)
