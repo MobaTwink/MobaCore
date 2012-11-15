@@ -278,7 +278,7 @@ int32 GetDiminishingReturnsLimitDuration(DiminishingGroup group, SpellInfo const
         {
             // Faerie Fire - limit to 40 seconds in PvP (3.1)
             if (spellproto->SpellFamilyFlags[0] & 0x400)
-                return 40 * IN_MILLISECONDS;
+                return 24 * IN_MILLISECONDS;
             break;
         }
         case SPELLFAMILY_HUNTER:
