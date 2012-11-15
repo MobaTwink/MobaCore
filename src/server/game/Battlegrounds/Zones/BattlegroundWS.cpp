@@ -64,7 +64,7 @@ void BattlegroundWS::PostUpdateImpl(uint32 diff)
 {
     if (GetStatus() == STATUS_IN_PROGRESS)
     {
-        if (GetStartTime() >= 27*MINUTE*IN_MILLISECONDS)
+        if (GetStartTime() >= 127*MINUTE*IN_MILLISECONDS)
         {
             if (GetTeamScore(TEAM_ALLIANCE) == 0)
             {
@@ -86,7 +86,7 @@ void BattlegroundWS::PostUpdateImpl(uint32 diff)
         else if (GetStartTime() > uint32(_minutesElapsed * MINUTE * IN_MILLISECONDS) +  3 * MINUTE * IN_MILLISECONDS)
         {
             ++_minutesElapsed;
-            UpdateWorldState(BG_WS_STATE_TIMER, 25 - _minutesElapsed);
+            UpdateWorldState(BG_WS_STATE_TIMER, 125 - _minutesElapsed);
         }
 
         if (_flagState[TEAM_ALLIANCE] == BG_WS_FLAG_STATE_WAIT_RESPAWN)
@@ -191,7 +191,7 @@ void BattlegroundWS::StartingEventCloseDoors()
         SpawnBGObject(i, RESPAWN_ONE_DAY);
 
     UpdateWorldState(BG_WS_STATE_TIMER_ACTIVE, 1);
-    UpdateWorldState(BG_WS_STATE_TIMER, 25);
+    UpdateWorldState(BG_WS_STATE_TIMER, 125);
 }
 
 void BattlegroundWS::StartingEventOpenDoors()
@@ -842,7 +842,7 @@ void BattlegroundWS::FillInitialWorldStates(WorldPacket& data)
     if (GetStatus() == STATUS_IN_PROGRESS)
     {
         data << uint32(BG_WS_STATE_TIMER_ACTIVE) << uint32(1);
-        data << uint32(BG_WS_STATE_TIMER) << uint32(25-_minutesElapsed);
+        data << uint32(BG_WS_STATE_TIMER) << uint32(125-_minutesElapsed);
     }
     else
         data << uint32(BG_WS_STATE_TIMER_ACTIVE) << uint32(0);
