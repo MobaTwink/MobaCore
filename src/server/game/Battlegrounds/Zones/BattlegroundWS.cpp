@@ -134,49 +134,6 @@ void BattlegroundWS::PostUpdateImpl(uint32 diff)
                 _bothFlagsKept = false;
             }
         }
-
-        if (_bothFlagsKept)
-        {
-            _flagSpellForceTimer += diff;
-            if (_flagDebuffState == 0 && _flagSpellForceTimer >= 10*MINUTE*IN_MILLISECONDS)  //10 minutes
-            {
-                if (Player* player = ObjectAccessor::FindPlayer(m_FlagKeepers[0]))
-                    player->CastSpell(player, WS_SPELL_FOCUSED_ASSAULT, true);
-                if (Player* player = ObjectAccessor::FindPlayer(m_FlagKeepers[1]))
-                    player->CastSpell(player, WS_SPELL_FOCUSED_ASSAULT, true);
-                _flagDebuffState = 1;
-            }
-            else if (_flagDebuffState == 1 && _flagSpellForceTimer >= 900000) //15 minutes
-            {
-                if (Player* player = ObjectAccessor::FindPlayer(m_FlagKeepers[0]))
-                {
-                    player->RemoveAurasDueToSpell(WS_SPELL_FOCUSED_ASSAULT);
-                    player->CastSpell(player, WS_SPELL_BRUTAL_ASSAULT, true);
-                }
-                if (Player* player = ObjectAccessor::FindPlayer(m_FlagKeepers[1]))
-                {
-                    player->RemoveAurasDueToSpell(WS_SPELL_FOCUSED_ASSAULT);
-                    player->CastSpell(player, WS_SPELL_BRUTAL_ASSAULT, true);
-                }
-                _flagDebuffState = 2;
-            }
-        }
-        else
-        {
-            if (Player* player = ObjectAccessor::FindPlayer(m_FlagKeepers[0]))
-            {
-                player->RemoveAurasDueToSpell(WS_SPELL_FOCUSED_ASSAULT);
-                player->RemoveAurasDueToSpell(WS_SPELL_BRUTAL_ASSAULT);
-            }
-            if (Player* player = ObjectAccessor::FindPlayer(m_FlagKeepers[1]))
-            {
-                player->RemoveAurasDueToSpell(WS_SPELL_FOCUSED_ASSAULT);
-                player->RemoveAurasDueToSpell(WS_SPELL_BRUTAL_ASSAULT);
-            }
-
-            _flagSpellForceTimer = 0; //reset timer.
-            _flagDebuffState = 0;
-        }
     }
 }
 
