@@ -7376,7 +7376,9 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
             uint8 MapType = sWorld->getIntConfig(CONFIG_PVP_TOKEN_MAP_TYPE);
             if ((MapType == 1 && !InBattleground() && !HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
                 || (MapType == 2 && !HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
-                || (MapType == 3 && !InBattleground()))
+                || (MapType == 3 && !InBattleground())
+                || (MapType == 4 && victim->GetZoneId() != 3358))
+
                 return true;
 
             uint32 itemId = sWorld->getIntConfig(CONFIG_PVP_TOKEN_ID);
