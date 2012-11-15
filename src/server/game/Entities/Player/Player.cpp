@@ -1193,6 +1193,8 @@ bool Player::Create(uint32 guidlow, CharacterCreateInfo* createInfo)
     }
     // all item positions resolved
 
+	GiveXP(5, NULL);
+
     return true;
 }
 
