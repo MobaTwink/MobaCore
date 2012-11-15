@@ -219,12 +219,22 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
                     ChatHandler(leader).PSendSysMessage(LANG_BG_QUEUE_ANNOUNCE_SELF, bgName, q_min_level, q_max_level,
                         qAlliance, (MinPlayers > qAlliance) ? MinPlayers - qAlliance : (uint32)0, qHorde, (MinPlayers > qHorde) ? MinPlayers - qHorde : (uint32)0);
                 }
+
                 // System message
-                else if (q_max_level == 19)
-                {
-                    sWorld->SendWorldText(LANG_BG_QUEUE_ANNOUNCE_WORLD, bgName, qAlliance, qHorde);
-                }
-            }
+				if (q_max_level == 19)
+				{
+					if (q_min_level == 10)
+						sWorld->SendWorldText(MOBA_BG_QUEU, bgName, leader->GetName().c_str(), qAlliance, qHorde);
+
+					else if (ArenaType == 5)
+						sWorld->SendWorldText(MOBA_ARENA_DUEL, leader->GetName().c_str());
+
+					else
+						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, leader->GetName().c_str());
+				}
+				else
+					sWorld->SendWorldText(MOBA_ARATHI_QUEU, bgName, leader->GetName().c_str());
+			}
         }
         //release mutex
     }

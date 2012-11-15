@@ -1099,6 +1099,25 @@ enum TrinityStrings
     LANG_AUTO_BROADCAST                 = 11000,
     LANG_INVALID_REALMID                = 11001,
 
+	//Moba Custom Announces
+	MOBA_ARENA_DUEL						= 12000,
+	MOBA_ARENA_SKIRMISH					= 12001,
+	MOBA_BG_QUEU						= 12002,
+	MOBA_ARATHI_QUEU					= 12005,
+	MOBA_BG_OPEN_SOON					= 12003,
+	MOBA_BG_STARTED						= 12004
+
+/* SQL to add to the DB :
+DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12005';
+INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
+('12005', '[|cffff961b%s|r]:|cffffffff %s|r join\'d.', '[|cffff961b%s|r]:|cffffffff%s|r est rentrer.'),
+('12004', '[|cff9d69f3%s|r]:|cff74fa2b Started!|r', '[|cff9d69f3%s|r]:|cff74fa2b Commence!|r'),
+('12003', '[|cff9d69f3%s|r]:|cff49fcaa Open in 2min...|r', '[|cff9d69f3%s|r]:|cff49fcaa Débute dans 2min...|r'),
+('12002', '[|cff9d69f3%s|r]:|cffffffff %s|r join\'d -|cff3898fa %u Alliance|r for|cfffa2b2b %u Horde|r.', '[|cff9d69f3%s|r]:|cffffffff %s|r est dans la file -|cff3898fa %u Alliance|r pour|cfffa2b2b %u Horde|r.'),
+('12001', '[|cffff0006%uv%u|r]:|cffffffff %s|r join\'d.', '[|cffff0006%uv%u|r]:|cffffffff %s|r est prêt.'),
+('12000', '[|cff79f369Duels|r]:|cffffffff %s|r join\'d.', '[|cff79f369Duels|r]:|cffffffff %s|r est prêt.');
+*/
+
     // NOT RESERVED IDS                   12000-1999999999
     // `db_script_string` table index     2000000000-2000009999 (MIN_DB_SCRIPT_STRING_ID-MAX_DB_SCRIPT_STRING_ID)
     // For other tables maybe             2000010000-2147483647 (max index)
