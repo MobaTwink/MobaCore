@@ -2871,7 +2871,7 @@ void Player::SetSpectate(bool on)
         getHostileRefManager().setOnlineOfflineState(false);
         CombatStopWithPets();
 
-        SetDisplayId(22235);
+        SetDisplayId(7804);
 
         m_serverSideVisibility.SetValue(SERVERSIDE_VISIBILITY_GM, SEC_ADMINISTRATOR);
     }
