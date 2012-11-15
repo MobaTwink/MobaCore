@@ -16,6 +16,7 @@ set(scripts_STAT_SRCS
   Custom/npc_supporter.cpp
   Custom/arena_spectator.cpp
   Custom/moba_commands.cpp
+  Custom/petmaster.cpp
 )
 
 message("  -> Prepared: Custom")

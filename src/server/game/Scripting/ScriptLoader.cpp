@@ -31,6 +31,7 @@ void AddSC_utility_commandscript();
 void AddSC_npc_teleport();
 void AddSC_npc_supporter();
 void AddSC_moba_commands();
+void AddSC_npc_beastmaster();
 
 // spells
 void AddSC_deathknight_spell_scripts();
@@ -1287,6 +1288,7 @@ void AddCustomScripts()
     AddSC_EM_trader();
     AddSC_npc_teleport();
 	AddSC_npc_supporter();
+	AddSC_npc_beastmaster();
 	AddSC_moba_commands();
 #endif
 }
