@@ -764,22 +764,7 @@ void Spell::SelectSpellTargets()
             bool checkLvl = !m_UniqueTargetInfo.empty();
             for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end();)
             {
-                // remove targets which did not pass min level check
-                if (m_auraScaleMask && ihit->effectMask == m_auraScaleMask)
-                {
-                    // Do not check for selfcast
-                    if (!ihit->scaleAura && ihit->targetGUID != m_caster->GetGUID())
-                    {
-                         m_UniqueTargetInfo.erase(ihit++);
-                         continue;
-                    }
-                }
                 ++ihit;
-            }
-            if (checkLvl && m_UniqueTargetInfo.empty())
-            {
-                SendCastResult(SPELL_FAILED_LOWLEVEL);
-                finish(false);
             }
         }
     }
