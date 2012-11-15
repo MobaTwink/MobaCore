@@ -34,7 +34,7 @@
 
 enum eAuctionHouse
 {
-    AH_MINIMUM_DEPOSIT = 100
+    AH_MINIMUM_DEPOSIT = 5
 };
 
 AuctionHouseMgr::AuctionHouseMgr()
@@ -66,24 +66,7 @@ AuctionHouseObject* AuctionHouseMgr::GetAuctionsMap(uint32 factionTemplateId)
 
 uint32 AuctionHouseMgr::GetAuctionDeposit(AuctionHouseEntry const* entry, uint32 time, Item* pItem, uint32 count)
 {
-    uint32 MSV = pItem->GetTemplate()->SellPrice;
-
-    if (MSV <= 0)
-        return AH_MINIMUM_DEPOSIT;
-
-    float multiplier = CalculatePct(float(entry->depositPercent), 3);
-    uint32 timeHr = (((time / 60) / 60) / 12);
-    uint32 deposit = uint32(((multiplier * MSV * count / 3) * timeHr * 3) * sWorld->getRate(RATE_AUCTION_DEPOSIT));
-
-    sLog->outDebug(LOG_FILTER_AUCTIONHOUSE, "MSV:        %u", MSV);
-    sLog->outDebug(LOG_FILTER_AUCTIONHOUSE, "Items:      %u", count);
-    sLog->outDebug(LOG_FILTER_AUCTIONHOUSE, "Multiplier: %f", multiplier);
-    sLog->outDebug(LOG_FILTER_AUCTIONHOUSE, "Deposit:    %u", deposit);
-
-    if (deposit < AH_MINIMUM_DEPOSIT)
-        return AH_MINIMUM_DEPOSIT;
-    else
-        return deposit;
+	return AH_MINIMUM_DEPOSIT;
 }
 
 //does not clear ram
