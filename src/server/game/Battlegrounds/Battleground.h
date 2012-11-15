@@ -114,7 +114,9 @@ enum BattlegroundTimeIntervals
     MAX_OFFLINE_TIME                = 300,                  // secs
     RESPAWN_ONE_DAY                 = 86400,                // secs
     RESPAWN_IMMEDIATELY             = 0,                    // secs
-    BUFF_RESPAWN_TIME               = 180                   // secs
+    BUFF_RESPAWN_TIME               = 180,                   // secs
+	BERSERKBUFF_RESPAWN_TIME        = 120,                  // secs
+	REGENBUFF_RESPAWN_TIME          = 45			        // secs
 };
 
 enum BattlegroundStartTimeIntervals

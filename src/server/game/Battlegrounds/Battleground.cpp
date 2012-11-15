@@ -1793,7 +1793,18 @@ void Battleground::HandleTriggerBuff(uint64 go_guid)
             }
     }
 
-    SpawnBGObject(index, BUFF_RESPAWN_TIME);
+	if (entry == 179905)
+	{
+		SpawnBGObject(index, BERSERKBUFF_RESPAWN_TIME);	
+	}
+	else if (entry == 179904)
+	{
+		SpawnBGObject(index, REGENBUFF_RESPAWN_TIME);
+	}
+	else
+	{
+		SpawnBGObject(index, BUFF_RESPAWN_TIME);
+	}
 }
 
 void Battleground::HandleKillPlayer(Player* victim, Player* killer)
