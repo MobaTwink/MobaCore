@@ -885,6 +885,14 @@ void Battleground::EndBattleground(uint32 winner)
         uint32 winner_kills = player->GetRandomWinner() ? BG_REWARD_WINNER_HONOR_LAST : BG_REWARD_WINNER_HONOR_FIRST;
         uint32 loser_kills = player->GetRandomWinner() ? BG_REWARD_LOSER_HONOR_LAST : BG_REWARD_LOSER_HONOR_FIRST;
         uint32 winner_arena = player->GetRandomWinner() ? BG_REWARD_WINNER_ARENA_LAST : BG_REWARD_WINNER_ARENA_FIRST;
+		
+		// Custom Token rewards
+		uint32
+			itemId = isRated() ? 29434 : 43016,
+			winner_count = isArena() ? 2 : 10,
+			loser_count = isArena() ? 1 : 5,
+		    itemCount = (team == winner) ? winner_count : loser_count;
+		ItemPosCountVec dest;
 
         // Reward winner team
         if (team == winner)
@@ -905,6 +913,12 @@ void Battleground::EndBattleground(uint32 winner)
             if (IsRandom() || BattlegroundMgr::IsBGWeekend(GetTypeID()))
                 UpdatePlayerScore(player, SCORE_BONUS_HONOR, GetBonusHonorFromKill(loser_kills));
         }
+
+		if (player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, itemCount) == EQUIP_ERR_OK)
+		{
+			Item* item = player->StoreNewItem(dest, itemId, true, Item::GenerateItemRandomPropertyId(itemId));
+			player->SendNewItem(item, itemCount, true, false);
+		}
 
         player->ResetAllPowers();
         player->CombatStopWithPets(true);
