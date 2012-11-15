@@ -597,13 +597,6 @@ void WorldSession::HandleBattlemasterJoinArena(WorldPacket & recvData)
     if (_player->InBattleground())
         return;
 
-    Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
-    if (!unit)
-        return;
-
-    if (!unit->isBattleMaster())                             // it's not battle master
-        return;
-
     uint8 arenatype = 0;
     uint32 arenaRating = 0;
     uint32 matchmakerRating = 0;
