@@ -7283,6 +7283,10 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
             if (GetTeam() == plrVictim->GetTeam() && !sWorld->IsFFAPvPRealm())
                 return false;
 
+			//No Honor from Noobs
+			if (plrVictim->GetSession()->GetSecurity() == 0)
+                return false;
+
             uint8 k_level = getLevel();
             uint8 k_grey = Trinity::XP::GetGrayLevel(k_level);
             uint8 v_level = victim->getLevel();
@@ -7341,8 +7345,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
         // apply honor multiplier from aura (not stacking-get highest)
         AddPct(honor_f, GetMaxPositiveAuraModifier(SPELL_AURA_MOD_HONOR_GAIN_PCT));
     }
-
-    honor_f *= sWorld->getRate(RATE_HONOR);
+    honor_f *= ( GetSession()->GetSecurity() > 0 ) ? sWorld->getRate(RATE_HONOR) : 0;
     // Back to int now
     honor = int32(honor_f);
     // honor - for show honor points in log
