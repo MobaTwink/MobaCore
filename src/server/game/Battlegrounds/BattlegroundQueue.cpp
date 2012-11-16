@@ -219,21 +219,23 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
                     ChatHandler(leader).PSendSysMessage(LANG_BG_QUEUE_ANNOUNCE_SELF, bgName, q_min_level, q_max_level,
                         qAlliance, (MinPlayers > qAlliance) ? MinPlayers - qAlliance : (uint32)0, qHorde, (MinPlayers > qHorde) ? MinPlayers - qHorde : (uint32)0);
                 }
-
+				
+			    std::string color((ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa");
+			    std::string name("|Hplayer:"+leader->GetName()+"|h"+leader->GetName()+"|h");
                 // System message
 				if (q_max_level == 19)
 				{
 					if (q_min_level == 10)
-						sWorld->SendWorldText(MOBA_BG_QUEU, bgName, (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r", qAlliance, qHorde);
+						sWorld->SendWorldText(MOBA_BG_QUEU, bgName, color.c_str(), name.c_str(), "|r", qAlliance, qHorde);
 
 					else if (ArenaType == 5)
-						sWorld->SendWorldText(MOBA_ARENA_DUEL,  (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r");
+						sWorld->SendWorldText(MOBA_ARENA_DUEL,  color.c_str(), name.c_str(), "|r");
 
 					else
-						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r");
+						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, color.c_str(), name.c_str(), "|r");
 				}
 				else
-					sWorld->SendWorldText(MOBA_ARATHI_QUEU, bgName, (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r");
+					sWorld->SendWorldText(MOBA_ARATHI_QUEU, bgName, color.c_str(), name.c_str(), "|r");
 			}
         }
         //release mutex
