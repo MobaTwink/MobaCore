@@ -224,16 +224,16 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
 				if (q_max_level == 19)
 				{
 					if (q_min_level == 10)
-						sWorld->SendWorldText(MOBA_BG_QUEU, bgName, leader->GetName().c_str(), qAlliance, qHorde);
+						sWorld->SendWorldText(MOBA_BG_QUEU, bgName, (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r", qAlliance, qHorde);
 
 					else if (ArenaType == 5)
-						sWorld->SendWorldText(MOBA_ARENA_DUEL, leader->GetName().c_str());
+						sWorld->SendWorldText(MOBA_ARENA_DUEL,  (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r");
 
 					else
-						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, leader->GetName().c_str());
+						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r");
 				}
 				else
-					sWorld->SendWorldText(MOBA_ARATHI_QUEU, bgName, leader->GetName().c_str());
+					sWorld->SendWorldText(MOBA_ARATHI_QUEU, bgName, (ginfo->Team == HORDE) ? "|cfffa2b2b" : "[cff3898fa", leader->GetName().c_str(), "|r");
 			}
         }
         //release mutex
