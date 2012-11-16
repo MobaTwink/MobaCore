@@ -118,7 +118,7 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
                 m_ReputationScoreTics[team] += BG_AB_TickPoints[points];
                 if (m_ReputationScoreTics[team] >= m_ReputationTics)
                 {
-                    (team == TEAM_ALLIANCE) ? RewardReputationToTeam(509, 10, ALLIANCE) : RewardReputationToTeam(510, 10, HORDE);
+                    (team == TEAM_ALLIANCE) ? RewardReputationToTeam(509, 5, ALLIANCE) : RewardReputationToTeam(510, 5, HORDE);
                     m_ReputationScoreTics[team] -= m_ReputationTics;
                 }
                 if (m_HonorScoreTics[team] >= m_HonorTics)
@@ -149,12 +149,6 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
                     m_TeamScores500Disadvantage[otherTeam] = true;
             }
         }
-
-        // Test win condition
-        if (m_TeamScores[TEAM_ALLIANCE] >= BG_AB_MAX_TEAM_SCORE)
-            EndBattleground(ALLIANCE);
-        if (m_TeamScores[TEAM_HORDE] >= BG_AB_MAX_TEAM_SCORE)
-            EndBattleground(HORDE);
     }
 }
 
