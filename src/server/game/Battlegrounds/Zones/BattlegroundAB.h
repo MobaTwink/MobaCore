@@ -304,5 +304,9 @@ class BattlegroundAB : public Battleground
         uint32              m_ReputationTics;
         // need for achievements
         bool                m_TeamScores500Disadvantage[BG_TEAMS_COUNT];
+		uint8		        amountHorde;
+		uint8	    	    amountAlliance;
+		float		        ratioAlliance;
+		float		        ratioHorde;
 };
 #endif

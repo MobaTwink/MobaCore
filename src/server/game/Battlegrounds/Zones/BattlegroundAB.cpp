@@ -136,8 +136,36 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
                     m_IsInformedNearVictory = true;
                 }
 
-                if (m_TeamScores[team] > BG_AB_MAX_TEAM_SCORE)
-                    m_TeamScores[team] = BG_AB_MAX_TEAM_SCORE;
+                if (m_TeamScores[team] >= BG_AB_MAX_TEAM_SCORE)
+				{
+					amountAlliance = GetPlayersCountByTeam(ALLIANCE);
+					amountHorde = GetPlayersCountByTeam(HORDE);
+					if( amountHorde != 0 && amountAlliance != 0 )
+					{
+						ratioAlliance = amountHorde / amountAlliance;
+						ratioHorde = amountAlliance / amountHorde;
+					}
+					else
+					{
+						ratioAlliance = 0;
+						ratioHorde = 0;
+					}
+					if( amountHorde > 2 && ratioAlliance > 0.66666 && team == TEAM_ALLIANCE )
+					{
+						int honor = ratioAlliance*5;
+						if( honor > 25 ) honor = 25;
+						RewardHonorToTeam(honor, ALLIANCE);
+					}
+					if( amountAlliance > 2 && ratioHorde > 0.66666 && team == TEAM_HORDE )
+					{
+						int honor = ratioHorde*5;
+						if( honor > 25 ) honor = 25;
+						RewardHonorToTeam(honor, HORDE);
+					}
+					m_TeamScores[team] = 0;
+					CastSpellOnTeam(43484, (team == TEAM_ALLIANCE) ? ALLIANCE : HORDE);
+				}
+
                 if (team == TEAM_ALLIANCE)
                     UpdateWorldState(BG_AB_OP_RESOURCES_ALLY, m_TeamScores[team]);
                 if (team == TEAM_HORDE)
@@ -586,6 +614,10 @@ void BattlegroundAB::Reset()
     //call parent's class reset
     Battleground::Reset();
 
+    amountHorde				             = 0;
+    amountAlliance		                 = 0;
+    ratioAlliance			             = 1.0f;
+    ratioHorde				             = 1.0f;
     m_TeamScores[TEAM_ALLIANCE]          = 0;
     m_TeamScores[TEAM_HORDE]             = 0;
     m_lastTick[TEAM_ALLIANCE]            = 0;
@@ -618,14 +650,15 @@ void BattlegroundAB::EndBattleground(uint32 winner)
 {
     // Win reward
     if (winner == ALLIANCE)
-        RewardHonorToTeam(GetBonusHonorFromKill(1), ALLIANCE);
+	CastSpellOnTeam(43484, ALLIANCE);
+	RewardHonorToTeam(GetBonusHonorFromKill(1), ALLIANCE);
     if (winner == HORDE)
-        RewardHonorToTeam(GetBonusHonorFromKill(1), HORDE);
-    // Complete map_end rewards (even if no team wins)
+	CastSpellOnTeam(43484, HORDE);
+	RewardHonorToTeam(GetBonusHonorFromKill(10), HORDE);
+    //complete map_end rewards (even if no team wins)
     RewardHonorToTeam(GetBonusHonorFromKill(1), HORDE);
     RewardHonorToTeam(GetBonusHonorFromKill(1), ALLIANCE);
 
-    Battleground::EndBattleground(winner);
 }
 
 WorldSafeLocsEntry const* BattlegroundAB::GetClosestGraveYard(Player* player)
