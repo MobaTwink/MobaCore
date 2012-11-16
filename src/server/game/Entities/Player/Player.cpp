@@ -1824,12 +1824,7 @@ void Player::Update(uint32 p_time)
 	//Give Speed Buff Yo
     uint32 zone = GetZoneId();
     if ((zone == 3358 || zone == 3711))
-    {
-    	if (!isInCombat())
-            CastSpell(this, 22590, true);
-	else
-            CastSpell(this, 22586, true);
-    }
+		CastSpell(this, isInCombat() ? 22586 : 22590, true);
 }
 
 void Player::setDeathState(DeathState s)
