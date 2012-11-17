@@ -242,6 +242,23 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
     switch (type)
     {
         case CHAT_MSG_SAY:
+		{
+			sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg);
+			std::string color("|cffffffff");
+			std::string rank("<Console>");
+			std::string name(GetPlayer()->GetName());
+			switch(GetPlayer()->GetSession()->GetSecurity())
+			{
+			case 0: color = ("|cff939393"), rank = ("<Noob>"); break;
+			case 1: color = ("|cffefc9a0"), rank = ("<Member>"); break;
+			case 2: color = ("|cffc784ff"), rank = ("<Helper>"); break;
+			case 3: color = ("|cff9ffd43"), rank = ("<Mod>"); break;
+			case 4: color = ("|cff01b2f1"), rank = ("<Admin>"); break;
+			} 
+			std::string GetNameLink("|Hplayer:"+name+"|h["+name+"]:|h|r");
+			sWorld->SendWorldText(MOBA_GLOBAL_CHAT, color.c_str(), rank.c_str(), (GetPlayer()->GetTeam() == HORDE ) ? "|cfffa2b2b" : "|cff3898fa", GetNameLink.c_str(), color.c_str(), msg.c_str());
+        
+        } break;
         case CHAT_MSG_EMOTE:
         case CHAT_MSG_YELL:
         {
@@ -334,23 +351,17 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
             }
         } break;
         case CHAT_MSG_OFFICER:
-        {
-			sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg);
-			std::string color("|cffffffff");
-			std::string rank("<Console>");
-			std::string name(GetPlayer()->GetName());
-			switch(GetPlayer()->GetSession()->GetSecurity())
-			{
-			case 0: color = ("|cff939393"), rank = ("<Noob>"); break;
-			case 1: color = ("|cffefc9a0"), rank = ("<Member>"); break;
-			case 2: color = ("|cffc784ff"), rank = ("<Helper>"); break;
-			case 3: color = ("|cff9ffd43"), rank = ("<Mod>"); break;
-			case 4: color = ("|cff01b2f1"), rank = ("<Admin>"); break;
-			} 
-			std::string GetNameLink("|Hplayer:"+name+"|h["+name+"]:|h|r");
-			sWorld->SendWorldText(MOBA_GLOBAL_CHAT, color.c_str(), rank.c_str(), (GetPlayer()->GetTeam() == HORDE ) ? "|cfffa2b2b" : "|cff3898fa", GetNameLink.c_str(), color.c_str(), msg.c_str());
-        
-        } break;
+		{
+            if (GetPlayer()->GetGuildId())
+            {
+                if (Guild* guild = sGuildMgr->GetGuildById(GetPlayer()->GetGuildId()))
+                {
+                    sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg, guild);
+
+                    guild->BroadcastToGuild(this, true, msg, lang == LANG_ADDON ? LANG_ADDON : LANG_UNIVERSAL);
+                }
+            }
+		} break;
         case CHAT_MSG_RAID:
         {
             // if player is in battleground, he cannot say to battleground members by /ra
