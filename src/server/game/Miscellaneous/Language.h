@@ -1106,7 +1106,8 @@ enum TrinityStrings
 	MOBA_ARATHI_QUEU					= 12005,
 	MOBA_BG_OPEN_SOON					= 12003,
 	MOBA_BG_STARTED						= 12004,
-	MOBA_GLOBAL_CHAT					= 12006
+	MOBA_GLOBAL_CHAT					= 12006,
+	MOBA_CHATBOX						= 12007
 
 /* SQL to add to the DB :
 DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12005';
