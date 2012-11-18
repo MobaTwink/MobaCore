@@ -91,11 +91,11 @@ class moba_commands : public CommandScript
                { "arena",          SEC_PLAYER,          false, &HandleArenaCommand,		 "", NULL },
                { "bg",		       SEC_PLAYER,          false, &HandleBGCommand,		 "", NULL },
 			   { "talents",        SEC_PLAYER,          false, &HandleTalentsCommand,	 "", NULL },
-               { "chatad",		   SEC_ADMINISTRATOR,   false, &HandleAdminChatCommand,  "", NULL },
-               { "chatmo",	       SEC_ADMINISTRATOR,   false, &HandleModChatCommand,    "", NULL },
-               { "chathe",		   SEC_ADMINISTRATOR,   false, &HandleHelpChatCommand,   "", NULL },
-               { "chatme",	       SEC_ADMINISTRATOR,   false, &HandleMemberChatCommand, "", NULL },
-               { "chatno",	       SEC_ADMINISTRATOR,   false, &HandleNoobChatCommand,   "", NULL },
+               { "chatad",		   SEC_MODERATOR,       false, &HandleAdminChatCommand,  "", NULL },
+               { "chatmo",	       SEC_MODERATOR,       false, &HandleModChatCommand,    "", NULL },
+               { "chathe",		   SEC_MODERATOR,       false, &HandleHelpChatCommand,   "", NULL },
+               { "chatme",	       SEC_MODERATOR,       false, &HandleMemberChatCommand, "", NULL },
+               { "chatno",	       SEC_MODERATOR,       false, &HandleNoobChatCommand,   "", NULL },
                { NULL,             0,			    	false, NULL,		    	     "", NULL }
            };
            return MobaCommands;
