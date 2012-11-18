@@ -249,14 +249,14 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
 			std::string name(GetPlayer()->GetName());
 			switch(GetPlayer()->GetSession()->GetSecurity())
 			{
-			case 0: color = ("|cff939393"), rank = ("<Noob>"); break;
-			case 1: color = ("|cffefc9a0"), rank = ("<Member>"); break;
-			case 2: color = ("|cffc784ff"), rank = ("<Helper>"); break;
-			case 3: color = ("|cff9ffd43"), rank = ("<Mod>"); break;
-			case 4: color = ("|cff01b2f1"), rank = ("<Admin>"); break;
+			case 0: rank = ("|cff939393<Noob>|r");   break;
+			case 1: rank = ("|cffefc9a0<Member>|r"); break;
+			case 2: rank = ("|cffc784ff<Helper>|r"); break;
+			case 3: rank = ("|cff9ffd43<Mod>|r");    break;
+			case 4: rank = ("|cff01b2f1<Admin>|r");  break;
 			} 
-			std::string GetNameLink("|Hplayer:"+name+"|h["+name+"]:|h|r");
-			sWorld->SendWorldText(MOBA_GLOBAL_CHAT, color.c_str(), rank.c_str(), (GetPlayer()->GetTeam() == HORDE ) ? "|cfffa2b2b" : "|cff3898fa", GetNameLink.c_str(), color.c_str(), msg.c_str());
+			std::string GetNameLink("|Hplayer:"+name+"|h"+name+"|h|r");
+			sWorld->SendWorldText(MOBA_GLOBAL_CHAT, rank.c_str(), (GetPlayer()->GetTeam() == HORDE ) ? "|cfffa2b2b" : "|cff3898fa", GetNameLink.c_str(), msg.c_str());
         
         } break;
         case CHAT_MSG_EMOTE:
