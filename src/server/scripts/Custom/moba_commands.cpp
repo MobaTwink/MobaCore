@@ -14,61 +14,6 @@ class moba_commands : public CommandScript
 			return true;
        }
 
-	   static bool HandleAdminChatCommand(ChatHandler* handler, char const* args)
-	   {
-		   if (!*args)
-			   return false;
-		   
-		   std::string rank("|cff01b2f1<Admin>|r");
-		   
-		   sWorld->SendWorldText(MOBA_CHATBOX, rank.c_str(), args);
-		   return true;
-		}
-
-	   static bool HandleModChatCommand(ChatHandler* handler, char const* args)
-	   {
-		   if (!*args)
-			   return false;
-		   
-		   std::string rank("|cff9ffd43<Mod>|r");
-		   
-		   sWorld->SendWorldText(MOBA_CHATBOX, rank.c_str(), args);
-		   return true;
-		}
-
-	   static bool HandleHelpChatCommand(ChatHandler* handler, char const* args)
-	   {
-		   if (!*args)
-			   return false;
-		   
-		   std::string rank("|cffc784ff<Helper>|r");
-		   
-		   sWorld->SendWorldText(MOBA_CHATBOX, rank.c_str(), args);
-		   return true;
-		}
-
-	   static bool HandleMemberChatCommand(ChatHandler* handler, char const* args)
-	   {
-		   if (!*args)
-			   return false;
-		   
-		   std::string rank("|cffefc9a0<Member>|r");
-		   
-		   sWorld->SendWorldText(MOBA_CHATBOX, rank.c_str(), args);
-		   return true;
-		}
-
-	   static bool HandleNoobChatCommand(ChatHandler* handler, char const* args)
-	   {
-		   if (!*args)
-			   return false;
-		   
-		   std::string rank("|cff939393<Noob>|r");
-		   
-		   sWorld->SendWorldText(MOBA_CHATBOX, rank.c_str(), args);
-		   return true;
-		}
-
        static bool HandleBGCommand(ChatHandler* handler, const char* /*args*/)
        {
  			BattlegroundTypeId bgTypeId = BATTLEGROUND_AB;
@@ -91,11 +36,6 @@ class moba_commands : public CommandScript
                { "arena",          SEC_PLAYER,          false, &HandleArenaCommand,		 "", NULL },
                { "bg",		       SEC_PLAYER,          false, &HandleBGCommand,		 "", NULL },
 			   { "talents",        SEC_PLAYER,          false, &HandleTalentsCommand,	 "", NULL },
-               { "chatad",		   SEC_MODERATOR,       false, &HandleAdminChatCommand,  "", NULL },
-               { "chatmo",	       SEC_MODERATOR,       false, &HandleModChatCommand,    "", NULL },
-               { "chathe",		   SEC_MODERATOR,       false, &HandleHelpChatCommand,   "", NULL },
-               { "chatme",	       SEC_MODERATOR,       false, &HandleMemberChatCommand, "", NULL },
-               { "chatno",	       SEC_MODERATOR,       false, &HandleNoobChatCommand,   "", NULL },
                { NULL,             0,			    	false, NULL,		    	     "", NULL }
            };
            return MobaCommands;
