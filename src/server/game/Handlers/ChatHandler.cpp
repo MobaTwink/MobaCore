@@ -247,13 +247,27 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
 			std::string color("|cffffffff");
 			std::string rank("<Console>");
 			std::string name(GetPlayer()->GetName());
+			std::string userName("console");
+
+			// Get Account name :
+			PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_NAME);
+			int32 account = GetPlayer()->GetSession()->GetAccountId();
+			stmt->setUInt32(0, account);
+			PreparedQueryResult result = LoginDatabase.Query(stmt);
+			
+			if (result)
+			{
+				Field* fields = result->Fetch();
+				userName      = fields[0].GetString();
+			}
+			
 			switch(GetPlayer()->GetSession()->GetSecurity())
 			{
-			case 0: rank = ("|cff939393<Noob>|r");   break;
-			case 1: rank = ("|cffefc9a0<Member>|r"); break;
-			case 2: rank = ("|cffc784ff<Helper>|r"); break;
-			case 3: rank = ("|cff9ffd43<Mod>|r");    break;
-			case 4: rank = ("|cff01b2f1<Admin>|r");  break;
+			case 0: rank = ("|cff939393<"+userName+">|r");   break;
+			case 1: rank = ("|cffefc9a0<"+userName+">|r"); break;
+			case 2: rank = ("|cffc784ff<"+userName+">|r"); break;
+			case 3: rank = ("|cff9ffd43<"+userName+">|r");    break;
+			case 4: rank = ("|cff01b2f1<"+userName+">|r");  break;
 			} 
 			std::string GetNameLink("|Hplayer:"+name+"|h"+name+"|h|r");
 			sWorld->SendWorldText(MOBA_GLOBAL_CHAT, rank.c_str(), (GetPlayer()->GetTeam() == HORDE ) ? "|cfffa2b2b" : "|cff3898fa", GetNameLink.c_str(), msg.c_str());
