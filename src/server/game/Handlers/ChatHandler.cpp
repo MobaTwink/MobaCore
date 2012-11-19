@@ -251,8 +251,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
 
 			// Get Account name :
 			PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_NAME);
-			int32 account = GetPlayer()->GetSession()->GetAccountId();
-			stmt->setUInt32(0, account);
+			stmt->setUInt32(0, GetPlayer()->GetSession()->GetAccountId());
 			PreparedQueryResult result = LoginDatabase.Query(stmt);
 			
 			if (result)
