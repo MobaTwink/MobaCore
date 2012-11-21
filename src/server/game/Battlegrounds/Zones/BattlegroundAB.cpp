@@ -112,6 +112,8 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
             m_lastTick[team] += diff;
             if (m_lastTick[team] > BG_AB_TickIntervals[points])
             {
+				amountAlliance = GetPlayersCountByTeam(ALLIANCE);
+				amountHorde = GetPlayersCountByTeam(HORDE);
                 m_lastTick[team] -= BG_AB_TickIntervals[points];
                 m_TeamScores[team] += BG_AB_TickPoints[points];
                 m_HonorScoreTics[team] += BG_AB_TickPoints[points];
@@ -123,7 +125,8 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
                 }
                 if (m_HonorScoreTics[team] >= m_HonorTics)
                 {
-                    RewardHonorToTeam(GetBonusHonorFromKill(1), (team == TEAM_ALLIANCE) ? ALLIANCE : HORDE);
+					int balancedTicks = (team == TEAM_ALLIANCE) ? ( amountHorde - amountAlliance ) : ( amountAlliance - amountHorde);
+                    RewardHonorToTeam((balancedTicks > 0) ? balancedTicks * 10 : 0, (team == TEAM_ALLIANCE) ? ALLIANCE : HORDE);
                     m_HonorScoreTics[team] -= m_HonorTics;
                 }
                 if (!m_IsInformedNearVictory && m_TeamScores[team] > BG_AB_WARNING_NEAR_VICTORY_SCORE)
@@ -138,18 +141,9 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
 
                 if (m_TeamScores[team] >= BG_AB_MAX_TEAM_SCORE)
 				{
-					amountAlliance = GetPlayersCountByTeam(ALLIANCE);
-					amountHorde = GetPlayersCountByTeam(HORDE);
-					if( amountHorde != 0 && amountAlliance != 0 )
-					{
-						ratioAlliance = amountHorde / amountAlliance;
-						ratioHorde = amountAlliance / amountHorde;
-					}
-					else
-					{
-						ratioAlliance = 0;
-						ratioHorde = 0;
-					}
+					ratioAlliance = ( amountHorde != 0 && amountAlliance != 0 ) ? amountHorde / amountAlliance : 0;
+					ratioHorde = ( amountHorde != 0 && amountAlliance != 0 ) ? amountAlliance / amountHorde : 0;
+
 					if( amountHorde > 2 && ratioAlliance > 0.66666 && team == TEAM_ALLIANCE )
 					{
 						int honor = ratioAlliance*5;
