@@ -595,7 +595,6 @@ class npc_high_overlord_saurfang_icc : public CreatureScript
             void Reset()
             {
                 _events.Reset();
-			   me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             }
 
             void DoAction(int32 const action)
@@ -640,7 +639,6 @@ class npc_high_overlord_saurfang_icc : public CreatureScript
                     case ACTION_INTERRUPT_INTRO:
                     {
                         _events.Reset();
-						me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                         for (std::list<Creature*>::iterator itr = _guardList.begin(); itr != _guardList.end(); ++itr)
                             (*itr)->AI()->DoAction(ACTION_DESPAWN);
                         break;
@@ -825,13 +823,12 @@ class npc_muradin_bronzebeard_icc : public CreatureScript
                         for (std::list<Creature*>::iterator itr = _guardList.begin(); itr != _guardList.end(); ++x, ++itr)
                             (*itr)->AI()->SetData(0, x);
 
+                        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                         Talk(SAY_INTRO_ALLIANCE_1);
                         _events.ScheduleEvent(EVENT_INTRO_ALLIANCE_4, 2500+17500+9500, 0, PHASE_INTRO_A);
                         _instance->HandleGameObject(_instance->GetData64(GO_SAURFANG_S_DOOR), true);
                         if (Creature* deathbringer = ObjectAccessor::GetCreature(*me, _instance->GetData64(DATA_DEATHBRINGER_SAURFANG)))
                             deathbringer->AI()->DoAction(PHASE_INTRO_A);
-							
-                        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                         break;
                     }
                     case ACTION_START_OUTRO:

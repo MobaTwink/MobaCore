@@ -114,32 +114,17 @@ void WardenMac::RequestHash()
     _session->SendPacket(&pkt);
 }
 
-struct keyData {
-    union
-    {
-       struct
-        {
-            uint8 bytes[16];
-        } bytes;
-
-       struct
-        {
-            int ints[4];
-        } ints;
-    };
-};
-
 void WardenMac::HandleHashResult(ByteBuffer &buff)
 {
 
     // test
     int keyIn[4];
 
-    keyData mod_seed = { { { { 0x4D, 0x80, 0x8D, 0x2C, 0x77, 0xD9, 0x05, 0xC4, 0x1A, 0x63, 0x80, 0xEC, 0x08, 0x58, 0x6A, 0xFE } } } };
+    uint8 mod_seed[16] = { 0x4D, 0x80, 0x8D, 0x2C, 0x77, 0xD9, 0x05, 0xC4, 0x1A, 0x63, 0x80, 0xEC, 0x08, 0x58, 0x6A, 0xFE };
 
     for (int i = 0; i < 4; ++i)
     {
-        keyIn[i] = mod_seed.ints.ints[i];
+        keyIn[i] = *(int*)(&mod_seed[0] + i * 4);
     }
 
     int keyOut[4];
