@@ -274,6 +274,7 @@ void WorldSession::HandlePetitionShowSignOpcode(WorldPacket& recvData)
     if (type == GUILD_CHARTER_TYPE && _player->GetGuildId())
         return;
 
+
     stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_SIGNATURE);
 
     stmt->setUInt32(0, petitionGuidLow);
@@ -661,7 +662,8 @@ void WorldSession::HandleOfferPetitionOpcode(WorldPacket & recvData)
 
     if (type != GUILD_CHARTER_TYPE)
     {
-        if (player->getLevel() < sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL))
+
+        if (player->getLevel() < 20)
         {
             // player is too low level to join an arena team
             SendArenaTeamCommandResult(ERR_ARENA_TEAM_CREATE_S, player->GetName().c_str(), "", ERR_ARENA_TEAM_TARGET_TOO_LOW_S);
@@ -825,11 +827,7 @@ void WorldSession::HandleTurnInPetitionOpcode(WorldPacket & recvData)
     else
         signatures = 0;
 
-    uint32 requiredSignatures;
-    if (type == GUILD_CHARTER_TYPE)
-        requiredSignatures = sWorld->getIntConfig(CONFIG_MIN_PETITION_SIGNS);
-    else
-        requiredSignatures = type-1;
+    uint32 requiredSignatures = (type == GUILD_CHARTER_TYPE) ? sWorld->getIntConfig(CONFIG_MIN_PETITION_SIGNS) : 0;
 
     // Notify player if signatures are missing
     if (signatures < requiredSignatures)
