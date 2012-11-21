@@ -927,9 +927,9 @@ void Battleground::EndBattleground(uint32 winner)
 			player->SendNewItem(item, itemCount, true, false);
 		}
 
-		if ( m_ArenaType == 3 )
+		if ( m_ArenaType == 2 )
 		{
-			player->ModifyArenaPoints((team == winner) ? 33 : 22);
+			player->ModifyArenaPoints((team == winner) ? 24 : 16);
 			
 		}
 		

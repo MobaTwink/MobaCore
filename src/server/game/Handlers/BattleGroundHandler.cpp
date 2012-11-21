@@ -660,7 +660,7 @@ void WorldSession::HandleBattlemasterJoinArena(WorldPacket & recvData)
         err = grp->CanJoinBattlegroundQueue(bg, bgQueueTypeId, arenatype, arenatype, (bool)isRated, arenaslot);
     }
 	    
-	if (arenatype == ARENA_TYPE_3v3 && !sArenaTeamMgr->GetArenaTeamById(_player->GetArenaTeamId(arenaslot)))
+	if (arenatype == ARENA_TYPE_2v2 && !sArenaTeamMgr->GetArenaTeamById(_player->GetArenaTeamId(arenaslot)))
     {
         _player->GetSession()->SendNotInArenaTeamPacket(arenatype);
         return;
