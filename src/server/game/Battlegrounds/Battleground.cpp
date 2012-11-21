@@ -895,9 +895,9 @@ void Battleground::EndBattleground(uint32 winner)
 		
 		// Custom Token rewards
 		uint32
-			itemId = isRated() ? 29434 : 43016,
-			winner_count = isArena() ? 2 : 10,
-			loser_count = isArena() ? 1 : 5,
+			itemId = 43016,
+			winner_count = 10,
+			loser_count = 5,
 		    itemCount = (team == winner) ? winner_count : loser_count;
 		ItemPosCountVec dest;
 
@@ -921,11 +921,18 @@ void Battleground::EndBattleground(uint32 winner)
                 UpdatePlayerScore(player, SCORE_BONUS_HONOR, GetBonusHonorFromKill(loser_kills));
         }
 
-		if (player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, itemCount) == EQUIP_ERR_OK)
+		if (player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, itemCount) == EQUIP_ERR_OK && !isArena() )
 		{
 			Item* item = player->StoreNewItem(dest, itemId, true, Item::GenerateItemRandomPropertyId(itemId));
 			player->SendNewItem(item, itemCount, true, false);
 		}
+
+		if ( m_ArenaType == 3 )
+		{
+			player->ModifyArenaPoints((team == winner) ? 33 : 22);
+			
+		}
+		
 
         player->ResetAllPowers();
         player->CombatStopWithPets(true);
