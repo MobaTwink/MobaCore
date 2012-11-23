@@ -932,6 +932,8 @@ void Battleground::EndBattleground(uint32 winner)
 			ArenaTeam* ArenaTeam = sArenaTeamMgr->GetArenaTeamByCaptain(player->GetGUIDLow());
 			if (ArenaTeam)
 			{
+				player->ModifyArenaPoints((team == winner) ? 33 : 22);
+
 				if(team == winner)
 					ArenaTeam->ArenaWin(player);
 				else
@@ -940,7 +942,6 @@ void Battleground::EndBattleground(uint32 winner)
 				ArenaTeam->SaveToDB();
 				ArenaTeam->NotifyStatsChanged();
 			}
-			player->ModifyArenaPoints((team == winner) ? 33 : 22);
 		}
 
         player->ResetAllPowers();
