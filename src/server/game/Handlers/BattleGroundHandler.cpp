@@ -659,33 +659,13 @@ void WorldSession::HandleBattlemasterJoinArena(WorldPacket & recvData)
             return;
         err = grp->CanJoinBattlegroundQueue(bg, bgQueueTypeId, arenatype, arenatype, (bool)isRated, arenaslot);
     }
-	    
-	if (arenatype == ARENA_TYPE_3v3 && !sArenaTeamMgr->GetArenaTeamById(_player->GetArenaTeamId(arenaslot)))
-    {
-        _player->GetSession()->SendNotInArenaTeamPacket(arenatype);
-        return;
-    }
-	
 
     uint32 ateamId = 0;
 
     if (isRated)
     {
-        ateamId = _player->GetArenaTeamId(arenaslot);
-        // check real arenateam existence only here (if it was moved to group->CanJoin .. () then we would ahve to get it twice)
-        ArenaTeam* at = sArenaTeamMgr->GetArenaTeamById(ateamId);
-        if (!at)
-        {
-            _player->GetSession()->SendNotInArenaTeamPacket(arenatype);
-            return;
-        }
-        // get the team rating for queueing
-        arenaRating = at->GetRating();
-        matchmakerRating = at->GetAverageMMR(grp);
-        // the arenateam id must match for everyone in the group
-
-        if (arenaRating <= 0)
-            arenaRating = 1;
+        ChatHandler(this).PSendSysMessage(LANG_ARENA_DISABLED);
+		return;
     }
 
     BattlegroundQueue &bgQueue = sBattlegroundMgr->GetBattlegroundQueue(bgQueueTypeId);
