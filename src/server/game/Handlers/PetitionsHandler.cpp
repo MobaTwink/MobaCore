@@ -959,10 +959,10 @@ void WorldSession::SendPetitionShowList(uint64 guid)
     {
         data << uint8(3);                                   // count
         // 2v2
-        data << uint32(1);                                  // index
-        data << uint32(ARENA_TEAM_CHARTER_2v2);             // charter entry
-        data << uint32(CHARTER_DISPLAY_ID);                 // charter display id
-        data << uint32(ARENA_TEAM_CHARTER_2v2_COST);        // charter cost
+        data << uint32(0);                                  // index
+        data << uint32(0);             // charter entry
+        data << uint32(0);                 // charter display id
+        data << uint32(0);        // charter cost
         data << uint32(0);                                  // unknown
         data << uint32(0);                                  // required signs?
         // 3v3

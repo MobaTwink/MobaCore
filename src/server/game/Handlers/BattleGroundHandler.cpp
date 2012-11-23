@@ -666,8 +666,6 @@ void WorldSession::HandleBattlemasterJoinArena(WorldPacket & recvData)
         return;
     }
 	
-	if(arenatype = ARENA_TYPE_2v2)
-		isRated = true ;
 
     uint32 ateamId = 0;
 
