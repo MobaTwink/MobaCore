@@ -238,7 +238,17 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
 					else
 					{
 						ArenaTeam* RatedTeam = sArenaTeamMgr->GetArenaTeamByCaptain(leader->GetGUID());
-						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, color.c_str(), RatedTeam->GetRating(), name.c_str());
+						if(RatedTeam)
+						{
+							uint32 rate(RatedTeam->GetRating());
+							std::ostringstream oss; oss << rate;
+							std::string rank("|cffffffff"+oss.str()+"|r");
+							sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, rank.c_str(), color.c_str(), name.c_str());
+						}
+						else
+						{
+							sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, "|cff939393Noob|r", color.c_str(), name.c_str());
+						}
 					}
 				}
 				else
@@ -818,8 +828,8 @@ void BattlegroundQueue::BattlegroundQueueUpdate(uint32 /*diff*/, BattlegroundTyp
 
     if (bg_template->isArena())
     {
-        MaxPlayersPerTeam = (arenaType < 4) ? arenaType : 1 ;
-        MinPlayersPerTeam = (arenaType < 4) ? arenaType : 1 ;
+        MaxPlayersPerTeam = arenaType == 2 ? 1 : arenaType ;
+        MinPlayersPerTeam = (sBattlegroundMgr->isArenaTesting() || arenaType == 2 ) ? 1 : arenaType;
     }
     else if (sBattlegroundMgr->isTesting())
         MinPlayersPerTeam = 1;
