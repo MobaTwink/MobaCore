@@ -615,7 +615,7 @@ int32 ArenaTeam::GetMatchmakerRatingMod(uint32 ownRating, uint32 opponentRating,
     */
 
     // Real rating modification
-    mod *= 24.0f;
+    mod *= 9.0f;
 
     return (int32)ceil(mod);
 }
@@ -630,16 +630,10 @@ int32 ArenaTeam::GetRatingMod(uint32 ownRating, uint32 opponentRating, bool won 
     // Calculate the rating modification
     float mod;
 
-    // TODO: Replace this hack with using the confidence factor (limiting the factor to 2.0f)
-    if (won && ownRating < 1300)
-    {
-        if (ownRating < 1000)
-            mod = 48.0f * (won_mod - chance);
-        else
-            mod = (24.0f + (24.0f * (1300.0f - float(ownRating)) / 300.0f)) * (won_mod - chance);
-    }
-    else
-        mod = 24.0f * (won_mod - chance);
+	mod = 9.0f * (won_mod - chance);
+
+	if(mod < 3.0f)
+		mod = 3.0f;
 
     return (int32)ceil(mod);
 }
