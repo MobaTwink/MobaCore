@@ -182,12 +182,6 @@ void BattlegroundAB::StartingEventCloseDoors()
     for (int i = 0; i < BG_AB_DYNAMIC_NODES_COUNT * 3; ++i)
         SpawnBGObject(BG_AB_OBJECT_SPEEDBUFF_STABLES + i, RESPAWN_ONE_DAY);
 
-    // Starting doors
-    DoorClose(BG_AB_OBJECT_GATE_A);
-    DoorClose(BG_AB_OBJECT_GATE_H);
-    SpawnBGObject(BG_AB_OBJECT_GATE_A, RESPAWN_IMMEDIATELY);
-    SpawnBGObject(BG_AB_OBJECT_GATE_H, RESPAWN_IMMEDIATELY);
-
     // Starting base spirit guides
     _NodeOccupied(BG_AB_SPIRIT_ALIANCE, ALLIANCE);
     _NodeOccupied(BG_AB_SPIRIT_HORDE, HORDE);
@@ -204,8 +198,6 @@ void BattlegroundAB::StartingEventOpenDoors()
         uint8 buff = urand(0, 2);
         SpawnBGObject(BG_AB_OBJECT_SPEEDBUFF_STABLES + buff + i * 3, RESPAWN_IMMEDIATELY);
     }
-    DoorOpen(BG_AB_OBJECT_GATE_A);
-    DoorOpen(BG_AB_OBJECT_GATE_H);
 
     // Achievement: Let's Get This Done
     StartTimedAchievement(ACHIEVEMENT_TIMED_TYPE_EVENT, AB_EVENT_START_BATTLE);
@@ -582,13 +574,6 @@ bool BattlegroundAB::SetupBattleground()
             sLog->outError(LOG_FILTER_SQL, "BatteGroundAB: Failed to spawn some object Battleground not created!");
             return false;
         }
-    }
-    if (!AddObject(BG_AB_OBJECT_GATE_A, BG_AB_OBJECTID_GATE_A, BG_AB_DoorPositions[0][0], BG_AB_DoorPositions[0][1], BG_AB_DoorPositions[0][2], BG_AB_DoorPositions[0][3], BG_AB_DoorPositions[0][4], BG_AB_DoorPositions[0][5], BG_AB_DoorPositions[0][6], BG_AB_DoorPositions[0][7], RESPAWN_IMMEDIATELY)
-        || !AddObject(BG_AB_OBJECT_GATE_H, BG_AB_OBJECTID_GATE_H, BG_AB_DoorPositions[1][0], BG_AB_DoorPositions[1][1], BG_AB_DoorPositions[1][2], BG_AB_DoorPositions[1][3], BG_AB_DoorPositions[1][4], BG_AB_DoorPositions[1][5], BG_AB_DoorPositions[1][6], BG_AB_DoorPositions[1][7], RESPAWN_IMMEDIATELY)
-)
-    {
-        sLog->outError(LOG_FILTER_SQL, "BatteGroundAB: Failed to spawn door object Battleground not created!");
-        return false;
     }
     //buffs
     for (int i = 0; i < BG_AB_DYNAMIC_NODES_COUNT; ++i)

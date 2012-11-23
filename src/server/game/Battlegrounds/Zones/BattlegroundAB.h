@@ -84,9 +84,6 @@ enum BG_AB_ObjectType
     BG_AB_OBJECT_AURA_ALLY               = 5,
     BG_AB_OBJECT_AURA_HORDE              = 6,
     BG_AB_OBJECT_AURA_CONTESTED          = 7,
-    //gates
-    BG_AB_OBJECT_GATE_A                  = 40,
-    BG_AB_OBJECT_GATE_H                  = 41,
     //buffs
     BG_AB_OBJECT_SPEEDBUFF_STABLES       = 42,
     BG_AB_OBJECT_REGENBUFF_STABLES       = 43,
