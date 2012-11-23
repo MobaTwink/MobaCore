@@ -480,12 +480,11 @@ inline void Battleground::_ProcessJoin(uint32 diff)
         }
 
         StartingEventCloseDoors();
-        SetStartDelayTime(StartDelayTimes[BATTLEGROUND_AB ? BG_STARTING_EVENT_FOURTH : BG_STARTING_EVENT_FIRST]);
+        SetStartDelayTime(StartDelayTimes[BG_STARTING_EVENT_FIRST]);
         // First start warning - 2 or 1 minute
-		if(!BATTLEGROUND_AB)
-			SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_FIRST], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+        SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_FIRST], CHAT_MSG_BG_SYSTEM_NEUTRAL);
 
-		if (!isArena() && !BATTLEGROUND_AB)
+		if (!isArena())
 		{
             // Announce BG starting
             if (sWorld->getBoolConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
@@ -496,15 +495,13 @@ inline void Battleground::_ProcessJoin(uint32 diff)
     else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_SECOND] && !(m_Events & BG_STARTING_EVENT_2))
     {
         m_Events |= BG_STARTING_EVENT_2;
-		if(!BATTLEGROUND_AB)
-			SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_SECOND], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+        SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_SECOND], CHAT_MSG_BG_SYSTEM_NEUTRAL);
     }
     // After 30 or 15 seconds, warning is signaled
     else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_THIRD] && !(m_Events & BG_STARTING_EVENT_3))
     {
         m_Events |= BG_STARTING_EVENT_3;
-		if(!BATTLEGROUND_AB)
-			SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_THIRD], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+        SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_THIRD], CHAT_MSG_BG_SYSTEM_NEUTRAL);
     }
     // Delay expired (after 2 or 1 minute)
     else if (GetStartDelayTime() <= 0 && !(m_Events & BG_STARTING_EVENT_4))
@@ -512,9 +509,8 @@ inline void Battleground::_ProcessJoin(uint32 diff)
         m_Events |= BG_STARTING_EVENT_4;
 
         StartingEventOpenDoors();
-		
-		if(!BATTLEGROUND_AB)
-			SendWarningToAll(StartMessageIds[BG_STARTING_EVENT_FOURTH]);
+
+        SendWarningToAll(StartMessageIds[BG_STARTING_EVENT_FOURTH]);
         SetStatus(STATUS_IN_PROGRESS);
         SetStartDelayTime(StartDelayTimes[BG_STARTING_EVENT_FOURTH]);
 
@@ -558,8 +554,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
         }
         else
         {
-			if(!BATTLEGROUND_AB)
-				PlaySoundToAll(SOUND_BG_START);
+            PlaySoundToAll(SOUND_BG_START);
 
             for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
                 if (Player* player = ObjectAccessor::FindPlayer(itr->first))
@@ -568,7 +563,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                     player->ResetAllPowers();
                 }
             // Announce BG starting
-            if (sWorld->getBoolConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE) && !BATTLEGROUND_AB)
+            if (sWorld->getBoolConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
                 sWorld->SendWorldText(MOBA_BG_STARTED, GetName());
         }
     }
