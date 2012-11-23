@@ -781,7 +781,8 @@ void ArenaTeam::MemberWon(Player* player, uint32 againstMatchmakerRating, int32 
 void ArenaTeam::ArenaWin(Player* player)
 {
 	//UpdateTeam
-	Stats.Rating += 9;
+	uint8 mod = 6;
+	Stats.Rating += mod;
 
     // Update number of games played per season or week
 	Stats.WeekWins += 1;
@@ -800,7 +801,7 @@ void ArenaTeam::ArenaWin(Player* player)
 
 	// Update Player
 	ArenaTeamMember* member = GetMember(player->GetGUID());
-	member->ModifyPersonalRating(player, 9, 3);
+	member->ModifyPersonalRating(player, mod, 3);
 	
 	// Update personal played stats
 	member->WeekGames +=1;
