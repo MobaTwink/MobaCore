@@ -261,7 +261,10 @@ void Battleground::Update(uint32 diff)
         case STATUS_WAIT_JOIN:
             if (GetPlayersSize())
             {
-                _ProcessJoin(diff);
+				if(GetTypeID() == 3 )
+					_ProcessAutoJoin(diff);
+				else
+					_ProcessJoin(diff);
                 _CheckSafePositions(diff);
             }
             break;
@@ -567,6 +570,72 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                 sWorld->SendWorldText(MOBA_BG_STARTED, GetName());
         }
     }
+}
+
+inline void Battleground::_ProcessAutoJoin(uint32 diff)
+{
+	// Use for open bg instantly
+    ModifyStartDelayTime(diff);
+
+    if (m_ResetStatTimer > 5000)
+    {
+        m_ResetStatTimer = 0;
+        for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+            if (Player* player = ObjectAccessor::FindPlayer(itr->first))
+                player->ResetAllPowers();
+    }
+
+    if (!(m_Events & BG_STARTING_EVENT_1))
+    {
+        m_Events |= BG_STARTING_EVENT_1;
+
+        if (!FindBgMap())
+        {
+            sLog->outError(LOG_FILTER_BATTLEGROUND, "Battleground::_ProcessJoin: map (map id: %u, instance id: %u) is not created!", m_MapId, m_InstanceID);
+            EndNow();
+            return;
+        }
+
+        // Setup here, only when at least one player has ported to the map
+        if (!SetupBattleground())
+        {
+            EndNow();
+            return;
+        }
+
+        StartingEventCloseDoors();
+        SetStartDelayTime(StartDelayTimes[BG_STARTING_EVENT_FOURTH]);
+    }
+    // After 1 minute or 30 seconds, warning is signaled
+    else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_SECOND] && !(m_Events & BG_STARTING_EVENT_2))
+    {
+        m_Events |= BG_STARTING_EVENT_2;
+    }
+    // After 30 or 15 seconds, warning is signaled
+    else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_THIRD] && !(m_Events & BG_STARTING_EVENT_3))
+    {
+        m_Events |= BG_STARTING_EVENT_3;
+    }
+    // Delay expired (after 2 or 1 minute)
+    else if (GetStartDelayTime() <= 0 && !(m_Events & BG_STARTING_EVENT_4))
+    {
+        m_Events |= BG_STARTING_EVENT_4;
+
+        StartingEventOpenDoors();
+
+        SetStatus(STATUS_IN_PROGRESS);
+        SetStartDelayTime(StartDelayTimes[BG_STARTING_EVENT_FOURTH]);
+
+        // Remove preparation
+        
+
+		for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+			if (Player* player = ObjectAccessor::FindPlayer(itr->first))
+			{
+				player->RemoveAurasDueToSpell(SPELL_PREPARATION);
+				player->ResetAllPowers();
+			}
+	}
 }
 
 inline void Battleground::_ProcessLeave(uint32 diff)
