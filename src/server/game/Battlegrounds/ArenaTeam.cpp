@@ -784,6 +784,61 @@ void ArenaTeam::MemberWon(Player* player, uint32 againstMatchmakerRating, int32 
     }
 }
 
+void ArenaTeam::ArenaWin(Player* player)
+{
+	//UpdateTeam
+	Stats.Rating += 9;
+
+    // Update number of games played per season or week
+	Stats.WeekWins += 1;
+    Stats.SeasonWins += 1;
+    Stats.WeekGames += 1;
+    Stats.SeasonGames += 1;
+
+    // Update team's rank, start with rank 1 and increase until no team with more rating was found
+    Stats.Rank = 1;
+    ArenaTeamMgr::ArenaTeamContainer::const_iterator i = sArenaTeamMgr->GetArenaTeamMapBegin();
+    for (; i != sArenaTeamMgr->GetArenaTeamMapEnd(); ++i)
+    {
+        if (i->second->GetType() == Type && i->second->GetStats().Rating > Stats.Rating)
+            ++Stats.Rank;
+    }
+
+	// Update Player
+	ArenaTeamMember* member = GetMember(player->GetGUID());
+	member->ModifyPersonalRating(player, 9, 3);
+	
+	// Update personal played stats
+	member->WeekGames +=1;
+	member->SeasonGames +=1;
+    member->SeasonWins += 1;
+    member->WeekWins += 1;
+	
+	// update the unit fields
+	player->SetArenaTeamInfoField(GetSlot(), ARENA_TEAM_GAMES_WEEK,  member->WeekGames);
+	player->SetArenaTeamInfoField(GetSlot(), ARENA_TEAM_GAMES_SEASON,  member->SeasonGames);
+
+	// Update Achievement
+	player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_HIGHEST_TEAM_RATING, Stats.Rating, Type);
+	return;
+}
+
+void ArenaTeam::ArenaTry(Player* player)
+{
+	ArenaTeamMember* member = GetMember(player->GetGUID());
+	
+	// Update personal played stats
+	member->WeekGames +=1;
+	member->SeasonGames +=1;
+    Stats.WeekGames += 1;
+    Stats.SeasonGames += 1;
+	
+	// update the unit fields
+	player->SetArenaTeamInfoField(GetSlot(), ARENA_TEAM_GAMES_WEEK,  member->WeekGames);
+	player->SetArenaTeamInfoField(GetSlot(), ARENA_TEAM_GAMES_SEASON,  member->SeasonGames);
+	return;
+}
+
 void ArenaTeam::UpdateArenaPointsHelper(std::map<uint32, uint32>& playerPoints)
 {
     // Called after a match has ended and the stats are already modified

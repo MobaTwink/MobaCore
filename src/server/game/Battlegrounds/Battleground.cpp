@@ -927,7 +927,21 @@ void Battleground::EndBattleground(uint32 winner)
 			player->SendNewItem(item, itemCount, true, false);
 		}
 
+		if ( m_ArenaType == 3 )
+		{
+			ArenaTeam* ArenaTeam = sArenaTeamMgr->GetArenaTeamByCaptain(player->GetGUIDLow());
+			if (ArenaTeam)
+			{
+				if(team == winner)
+					ArenaTeam->ArenaWin(player);
+				else
+					ArenaTeam->ArenaTry(player);
 
+				ArenaTeam->SaveToDB();
+				ArenaTeam->NotifyStatsChanged();
+			}
+			player->ModifyArenaPoints((team == winner) ? 33 : 22);
+		}
 
         player->ResetAllPowers();
         player->CombatStopWithPets(true);
