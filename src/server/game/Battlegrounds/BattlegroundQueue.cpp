@@ -220,39 +220,33 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
                         qAlliance, (MinPlayers > qAlliance) ? MinPlayers - qAlliance : (uint32)0, qHorde, (MinPlayers > qHorde) ? MinPlayers - qHorde : (uint32)0);
                 }
 				
-
 			    std::string color((ginfo->Team == HORDE) ? "|cfffa2b2b" : "|cff3898fa");
 			    std::string name("|Hplayer:"+leader->GetName()+"|h"+leader->GetName()+"|h|r");
                 // System message
-				if (q_max_level == 19)
+				if (q_min_level == 10)
+					sWorld->SendWorldText(MOBA_BG_QUEU, bgName, color.c_str(), name.c_str(), qAlliance, qHorde);
+
+				else if (ArenaType == 5)
+					sWorld->SendWorldText(MOBA_BG_QUEU, "5v5", color.c_str(), name.c_str(), qAlliance, qHorde);
+
+				else if (ArenaType == 2 )
+					sWorld->SendWorldText(MOBA_ARENA_DUEL,  color.c_str(), name.c_str());
+
+				else if (ArenaType == 3 )
 				{
-					if (q_min_level == 10)
-						sWorld->SendWorldText(MOBA_BG_QUEU, bgName, color.c_str(), name.c_str(), qAlliance, qHorde);
-
-					else if (ArenaType == 5)
-						sWorld->SendWorldText(MOBA_BG_QUEU, "5v5", color.c_str(), name.c_str(), qAlliance, qHorde);
-
-					else if (ArenaType == 2 )
-						sWorld->SendWorldText(MOBA_ARENA_DUEL,  color.c_str(), name.c_str());
-
+					ArenaTeam* RatedTeam = sArenaTeamMgr->GetArenaTeamByCaptain(leader->GetGUID());
+					if(RatedTeam)
+					{
+						uint32 rate(RatedTeam->GetRating());
+						std::ostringstream oss; oss << rate;
+						std::string rank("|cffffffff"+oss.str()+"|r");
+						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, rank.c_str(), color.c_str(), name.c_str());
+					}
 					else
 					{
-						ArenaTeam* RatedTeam = sArenaTeamMgr->GetArenaTeamByCaptain(leader->GetGUID());
-						if(RatedTeam)
-						{
-							uint32 rate(RatedTeam->GetRating());
-							std::ostringstream oss; oss << rate;
-							std::string rank("|cffffffff"+oss.str()+"|r");
-							sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, rank.c_str(), color.c_str(), name.c_str());
-						}
-						else
-						{
-							sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, "|cff939393Noob|r", color.c_str(), name.c_str());
-						}
+						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, "|cff939393Noob|r", color.c_str(), name.c_str());
 					}
 				}
-				else
-					sWorld->SendWorldText(MOBA_ARATHI_QUEU, bgName, color.c_str(), name.c_str());
 			}
         }
         //release mutex

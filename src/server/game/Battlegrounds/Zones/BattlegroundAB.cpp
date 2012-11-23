@@ -208,6 +208,10 @@ void BattlegroundAB::AddPlayer(Player* player)
     Battleground::AddPlayer(player);
     //create score and add it to map, default values are set in the constructor
     BattlegroundABScore* sc = new BattlegroundABScore;
+	
+	std::string color((player->GetTeam() == HORDE) ? "|cfffa2b2b" : "|cff3898fa");
+	std::string name("|Hplayer:"+player->GetName()+"|h"+player->GetName()+"|h|r");
+	sWorld->SendWorldText(MOBA_ARATHI_QUEU, "Arathi Basin", color.c_str(), name.c_str());
 
     PlayerScores[player->GetGUID()] = sc;
 }
