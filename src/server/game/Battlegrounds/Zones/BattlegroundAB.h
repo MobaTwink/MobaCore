@@ -84,6 +84,9 @@ enum BG_AB_ObjectType
     BG_AB_OBJECT_AURA_ALLY               = 5,
     BG_AB_OBJECT_AURA_HORDE              = 6,
     BG_AB_OBJECT_AURA_CONTESTED          = 7,
+    //gates
+    BG_AB_OBJECT_GATE_A                  = 40,
+    BG_AB_OBJECT_GATE_H                  = 41,
     //buffs
     BG_AB_OBJECT_SPEEDBUFF_STABLES       = 42,
     BG_AB_OBJECT_REGENBUFF_STABLES       = 43,
@@ -121,13 +124,13 @@ enum BG_AB_ObjectTypes
 
 enum BG_AB_Timers
 {
-    BG_AB_FLAG_CAPTURING_TIME           = 300000,
+    BG_AB_FLAG_CAPTURING_TIME           = 60000
 };
 
 enum BG_AB_Score
 {
-    BG_AB_WARNING_NEAR_VICTORY_SCORE    = 1800,
-    BG_AB_MAX_TEAM_SCORE                = 2000
+    BG_AB_WARNING_NEAR_VICTORY_SCORE    = 1400,
+    BG_AB_MAX_TEAM_SCORE                = 1600
 };
 
 /* do NOT change the order, else wrong behaviour */
@@ -301,9 +304,5 @@ class BattlegroundAB : public Battleground
         uint32              m_ReputationTics;
         // need for achievements
         bool                m_TeamScores500Disadvantage[BG_TEAMS_COUNT];
-		uint8		        amountHorde;
-		uint8	    	    amountAlliance;
-		float		        ratioAlliance;
-		float		        ratioHorde;
 };
 #endif

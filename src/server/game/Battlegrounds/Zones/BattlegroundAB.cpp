@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
+ UPDATE `battleground_template` SET `MinPlayersPerTeam`='9', `MaxPlayersPerTeam`='12' WHERE (`id`='3');
  */
 
 #include "BattlegroundAB.h"
@@ -112,21 +113,18 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
             m_lastTick[team] += diff;
             if (m_lastTick[team] > BG_AB_TickIntervals[points])
             {
-				amountAlliance = GetPlayersCountByTeam(ALLIANCE);
-				amountHorde = GetPlayersCountByTeam(HORDE);
                 m_lastTick[team] -= BG_AB_TickIntervals[points];
                 m_TeamScores[team] += BG_AB_TickPoints[points];
                 m_HonorScoreTics[team] += BG_AB_TickPoints[points];
                 m_ReputationScoreTics[team] += BG_AB_TickPoints[points];
                 if (m_ReputationScoreTics[team] >= m_ReputationTics)
                 {
-                    (team == TEAM_ALLIANCE) ? RewardReputationToTeam(509, 5, ALLIANCE) : RewardReputationToTeam(510, 5, HORDE);
+                    (team == TEAM_ALLIANCE) ? RewardReputationToTeam(509, 10, ALLIANCE) : RewardReputationToTeam(510, 10, HORDE);
                     m_ReputationScoreTics[team] -= m_ReputationTics;
                 }
                 if (m_HonorScoreTics[team] >= m_HonorTics)
                 {
-					int balancedTicks = (team == TEAM_ALLIANCE) ? ( amountHorde - amountAlliance ) : ( amountAlliance - amountHorde);
-                    RewardHonorToTeam((balancedTicks > 0) ? balancedTicks * 10 : 0, (team == TEAM_ALLIANCE) ? ALLIANCE : HORDE);
+                    RewardHonorToTeam(GetBonusHonorFromKill(1), (team == TEAM_ALLIANCE) ? ALLIANCE : HORDE);
                     m_HonorScoreTics[team] -= m_HonorTics;
                 }
                 if (!m_IsInformedNearVictory && m_TeamScores[team] > BG_AB_WARNING_NEAR_VICTORY_SCORE)
@@ -139,27 +137,8 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
                     m_IsInformedNearVictory = true;
                 }
 
-                if (m_TeamScores[team] >= BG_AB_MAX_TEAM_SCORE)
-				{
-					ratioAlliance = ( amountHorde != 0 && amountAlliance != 0 ) ? amountHorde / amountAlliance : 0;
-					ratioHorde = ( amountHorde != 0 && amountAlliance != 0 ) ? amountAlliance / amountHorde : 0;
-
-					if( amountHorde > 2 && ratioAlliance > 0.66666 && team == TEAM_ALLIANCE )
-					{
-						int honor = ratioAlliance*5;
-						if( honor > 25 ) honor = 25;
-						RewardHonorToTeam(honor, ALLIANCE);
-					}
-					if( amountAlliance > 2 && ratioHorde > 0.66666 && team == TEAM_HORDE )
-					{
-						int honor = ratioHorde*5;
-						if( honor > 25 ) honor = 25;
-						RewardHonorToTeam(honor, HORDE);
-					}
-					m_TeamScores[team] = 0;
-					CastSpellOnTeam(43484, (team == TEAM_ALLIANCE) ? ALLIANCE : HORDE);
-				}
-
+                if (m_TeamScores[team] > BG_AB_MAX_TEAM_SCORE)
+                    m_TeamScores[team] = BG_AB_MAX_TEAM_SCORE;
                 if (team == TEAM_ALLIANCE)
                     UpdateWorldState(BG_AB_OP_RESOURCES_ALLY, m_TeamScores[team]);
                 if (team == TEAM_HORDE)
@@ -171,6 +150,12 @@ void BattlegroundAB::PostUpdateImpl(uint32 diff)
                     m_TeamScores500Disadvantage[otherTeam] = true;
             }
         }
+
+        // Test win condition
+        if (m_TeamScores[TEAM_ALLIANCE] >= BG_AB_MAX_TEAM_SCORE)
+            EndBattleground(ALLIANCE);
+        if (m_TeamScores[TEAM_HORDE] >= BG_AB_MAX_TEAM_SCORE)
+            EndBattleground(HORDE);
     }
 }
 
@@ -181,6 +166,12 @@ void BattlegroundAB::StartingEventCloseDoors()
         SpawnBGObject(obj, RESPAWN_ONE_DAY);
     for (int i = 0; i < BG_AB_DYNAMIC_NODES_COUNT * 3; ++i)
         SpawnBGObject(BG_AB_OBJECT_SPEEDBUFF_STABLES + i, RESPAWN_ONE_DAY);
+
+    // Starting doors
+    DoorClose(BG_AB_OBJECT_GATE_A);
+    DoorClose(BG_AB_OBJECT_GATE_H);
+    SpawnBGObject(BG_AB_OBJECT_GATE_A, RESPAWN_IMMEDIATELY);
+    SpawnBGObject(BG_AB_OBJECT_GATE_H, RESPAWN_IMMEDIATELY);
 
     // Starting base spirit guides
     _NodeOccupied(BG_AB_SPIRIT_ALIANCE, ALLIANCE);
@@ -198,6 +189,8 @@ void BattlegroundAB::StartingEventOpenDoors()
         uint8 buff = urand(0, 2);
         SpawnBGObject(BG_AB_OBJECT_SPEEDBUFF_STABLES + buff + i * 3, RESPAWN_IMMEDIATELY);
     }
+    DoorOpen(BG_AB_OBJECT_GATE_A);
+    DoorOpen(BG_AB_OBJECT_GATE_H);
 
     // Achievement: Let's Get This Done
     StartTimedAchievement(ACHIEVEMENT_TIMED_TYPE_EVENT, AB_EVENT_START_BATTLE);
@@ -208,10 +201,6 @@ void BattlegroundAB::AddPlayer(Player* player)
     Battleground::AddPlayer(player);
     //create score and add it to map, default values are set in the constructor
     BattlegroundABScore* sc = new BattlegroundABScore;
-	
-	std::string color((player->GetTeam() == HORDE) ? "|cfffa2b2b" : "|cff3898fa");
-	std::string name("|Hplayer:"+player->GetName()+"|h"+player->GetName()+"|h|r");
-	sWorld->SendWorldText(MOBA_ARATHI_QUEU, "Arathi Basin", color.c_str(), name.c_str());
 
     PlayerScores[player->GetGUID()] = sc;
 }
@@ -395,7 +384,6 @@ void BattlegroundAB::_NodeOccupied(uint8 node, Team team)
     {
         trigger->setFaction(team == ALLIANCE ? 84 : 83);
         trigger->CastSpell(trigger, SPELL_HONORABLE_DEFENDER_25Y, false);
-        CastSpellOnTeam(51974, team);
     }
 }
 
@@ -579,6 +567,13 @@ bool BattlegroundAB::SetupBattleground()
             return false;
         }
     }
+    if (!AddObject(BG_AB_OBJECT_GATE_A, BG_AB_OBJECTID_GATE_A, BG_AB_DoorPositions[0][0], BG_AB_DoorPositions[0][1], BG_AB_DoorPositions[0][2], BG_AB_DoorPositions[0][3], BG_AB_DoorPositions[0][4], BG_AB_DoorPositions[0][5], BG_AB_DoorPositions[0][6], BG_AB_DoorPositions[0][7], RESPAWN_IMMEDIATELY)
+        || !AddObject(BG_AB_OBJECT_GATE_H, BG_AB_OBJECTID_GATE_H, BG_AB_DoorPositions[1][0], BG_AB_DoorPositions[1][1], BG_AB_DoorPositions[1][2], BG_AB_DoorPositions[1][3], BG_AB_DoorPositions[1][4], BG_AB_DoorPositions[1][5], BG_AB_DoorPositions[1][6], BG_AB_DoorPositions[1][7], RESPAWN_IMMEDIATELY)
+)
+    {
+        sLog->outError(LOG_FILTER_SQL, "BatteGroundAB: Failed to spawn door object Battleground not created!");
+        return false;
+    }
     //buffs
     for (int i = 0; i < BG_AB_DYNAMIC_NODES_COUNT; ++i)
     {
@@ -597,10 +592,6 @@ void BattlegroundAB::Reset()
     //call parent's class reset
     Battleground::Reset();
 
-    amountHorde				             = 0;
-    amountAlliance		                 = 0;
-    ratioAlliance			             = 1.0f;
-    ratioHorde				             = 1.0f;
     m_TeamScores[TEAM_ALLIANCE]          = 0;
     m_TeamScores[TEAM_HORDE]             = 0;
     m_lastTick[TEAM_ALLIANCE]            = 0;
@@ -633,15 +624,14 @@ void BattlegroundAB::EndBattleground(uint32 winner)
 {
     // Win reward
     if (winner == ALLIANCE)
-	CastSpellOnTeam(43484, ALLIANCE);
-	RewardHonorToTeam(GetBonusHonorFromKill(1), ALLIANCE);
+        RewardHonorToTeam(GetBonusHonorFromKill(1), ALLIANCE);
     if (winner == HORDE)
-	CastSpellOnTeam(43484, HORDE);
-	RewardHonorToTeam(GetBonusHonorFromKill(10), HORDE);
-    //complete map_end rewards (even if no team wins)
+        RewardHonorToTeam(GetBonusHonorFromKill(1), HORDE);
+    // Complete map_end rewards (even if no team wins)
     RewardHonorToTeam(GetBonusHonorFromKill(1), HORDE);
     RewardHonorToTeam(GetBonusHonorFromKill(1), ALLIANCE);
 
+    Battleground::EndBattleground(winner);
 }
 
 WorldSafeLocsEntry const* BattlegroundAB::GetClosestGraveYard(Player* player)

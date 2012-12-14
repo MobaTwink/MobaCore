@@ -261,10 +261,7 @@ void Battleground::Update(uint32 diff)
         case STATUS_WAIT_JOIN:
             if (GetPlayersSize())
             {
-				if(GetTypeID() == 3 )
-					_ProcessAutoJoin(diff);
-				else
-					_ProcessJoin(diff);
+                _ProcessJoin(diff);
                 _CheckSafePositions(diff);
             }
             break;
@@ -567,75 +564,9 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                 }
             // Announce BG starting
             if (sWorld->getBoolConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
-                sWorld->SendWorldText(MOBA_BG_STARTED, GetName());
+                sWorld->SendWorldText(LANG_BG_STARTED_ANNOUNCE_WORLD, GetName(), GetMinLevel(), GetMaxLevel());
         }
     }
-}
-
-inline void Battleground::_ProcessAutoJoin(uint32 diff)
-{
-	// Use for open bg instantly
-    ModifyStartDelayTime(diff);
-
-    if (m_ResetStatTimer > 5000)
-    {
-        m_ResetStatTimer = 0;
-        for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
-            if (Player* player = ObjectAccessor::FindPlayer(itr->first))
-                player->ResetAllPowers();
-    }
-
-    if (!(m_Events & BG_STARTING_EVENT_1))
-    {
-        m_Events |= BG_STARTING_EVENT_1;
-
-        if (!FindBgMap())
-        {
-            sLog->outError(LOG_FILTER_BATTLEGROUND, "Battleground::_ProcessJoin: map (map id: %u, instance id: %u) is not created!", m_MapId, m_InstanceID);
-            EndNow();
-            return;
-        }
-
-        // Setup here, only when at least one player has ported to the map
-        if (!SetupBattleground())
-        {
-            EndNow();
-            return;
-        }
-
-        StartingEventCloseDoors();
-        SetStartDelayTime(StartDelayTimes[BG_STARTING_EVENT_FOURTH]);
-    }
-    // After 1 minute or 30 seconds, warning is signaled
-    else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_SECOND] && !(m_Events & BG_STARTING_EVENT_2))
-    {
-        m_Events |= BG_STARTING_EVENT_2;
-    }
-    // After 30 or 15 seconds, warning is signaled
-    else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_THIRD] && !(m_Events & BG_STARTING_EVENT_3))
-    {
-        m_Events |= BG_STARTING_EVENT_3;
-    }
-    // Delay expired (after 2 or 1 minute)
-    else if (GetStartDelayTime() <= 0 && !(m_Events & BG_STARTING_EVENT_4))
-    {
-        m_Events |= BG_STARTING_EVENT_4;
-
-        StartingEventOpenDoors();
-
-        SetStatus(STATUS_IN_PROGRESS);
-        SetStartDelayTime(StartDelayTimes[BG_STARTING_EVENT_FOURTH]);
-
-        // Remove preparation
-        
-
-		for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
-			if (Player* player = ObjectAccessor::FindPlayer(itr->first))
-			{
-				player->RemoveAurasDueToSpell(SPELL_PREPARATION);
-				player->ResetAllPowers();
-			}
-	}
 }
 
 inline void Battleground::_ProcessLeave(uint32 diff)
@@ -1001,8 +932,9 @@ void Battleground::EndBattleground(uint32 winner)
 			ArenaTeam* ArenaTeam = sArenaTeamMgr->GetArenaTeamByCaptain(player->GetGUIDLow());
 			if (ArenaTeam)
 			{
-				player->ModifyArenaPoints((team == winner) ? 33 : 22);
-
+				player->ModifyArenaPoints((team == winner) ? 25 : 5);
+				player->ModifyHonorPoints(25);
+				
 				if(team == winner)
 					ArenaTeam->ArenaWin(player);
 				else
@@ -1421,8 +1353,56 @@ void Battleground::RemoveFromBGFreeSlotQueue()
 uint32 Battleground::GetFreeSlotsForTeam(uint32 Team) const
 {
     // if BG is starting ... invite anyone
+    if (GetStatus() == STATUS_WAIT_JOIN)
         return (GetInvitedCount(Team) < GetMaxPlayersPerTeam()) ? GetMaxPlayersPerTeam() - GetInvitedCount(Team) : 0;
     // if BG is already started .. do not allow to join too much players of one faction
+    uint32 otherTeam;
+    uint32 otherIn;
+    if (Team == ALLIANCE)
+    {
+        otherTeam = GetInvitedCount(HORDE);
+        otherIn = GetPlayersCountByTeam(HORDE);
+    }
+    else
+    {
+        otherTeam = GetInvitedCount(ALLIANCE);
+        otherIn = GetPlayersCountByTeam(ALLIANCE);
+    }
+    if (GetStatus() == STATUS_IN_PROGRESS)
+    {
+        // difference based on ppl invited (not necessarily entered battle)
+        // default: allow 0
+        uint32 diff = 0;
+        // allow join one person if the sides are equal (to fill up bg to minplayersperteam)
+        if (otherTeam == GetInvitedCount(Team))
+            diff = 1;
+        // allow join more ppl if the other side has more players
+        else if (otherTeam > GetInvitedCount(Team))
+            diff = otherTeam - GetInvitedCount(Team);
+
+        // difference based on max players per team (don't allow inviting more)
+        uint32 diff2 = (GetInvitedCount(Team) < GetMaxPlayersPerTeam()) ? GetMaxPlayersPerTeam() - GetInvitedCount(Team) : 0;
+        // difference based on players who already entered
+        // default: allow 0
+        uint32 diff3 = 0;
+        // allow join one person if the sides are equal (to fill up bg minplayersperteam)
+        if (otherIn == GetPlayersCountByTeam(Team))
+            diff3 = 1;
+        // allow join more ppl if the other side has more players
+        else if (otherIn > GetPlayersCountByTeam(Team))
+            diff3 = otherIn - GetPlayersCountByTeam(Team);
+        // or other side has less than minPlayersPerTeam
+        else if (GetInvitedCount(Team) <= GetMinPlayersPerTeam())
+            diff3 = GetMinPlayersPerTeam() - GetInvitedCount(Team) + 1;
+
+        // return the minimum of the 3 differences
+
+        // min of diff and diff 2
+        diff = std::min(diff, diff2);
+        // min of diff, diff2 and diff3
+        return std::min(diff, diff3);
+    }
+    return 0;
 }
 
 bool Battleground::HasFreeSlots() const
