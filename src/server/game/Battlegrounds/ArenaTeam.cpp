@@ -781,8 +781,8 @@ void ArenaTeam::MemberWon(Player* player, uint32 againstMatchmakerRating, int32 
 void ArenaTeam::ArenaWin(Player* player)
 {
 	//UpdateTeam
-	uint8 mod = 6;
-	Stats.Rating += mod;
+	uint8 mod = 15 - (int32(Stats.Rating) / 200);
+	Stats.Rating += (mod < 1)? 1 : mod;
 
     // Update number of games played per season or week
 	Stats.WeekWins += 1;
@@ -801,7 +801,7 @@ void ArenaTeam::ArenaWin(Player* player)
 
 	// Update Player
 	ArenaTeamMember* member = GetMember(player->GetGUID());
-	member->ModifyPersonalRating(player, mod, 3);
+	member->ModifyPersonalRating(player, mod, 2);
 	
 	// Update personal played stats
 	member->WeekGames +=1;
@@ -821,6 +821,26 @@ void ArenaTeam::ArenaWin(Player* player)
 void ArenaTeam::ArenaTry(Player* player)
 {
 	ArenaTeamMember* member = GetMember(player->GetGUID());
+	
+	//UpdateTeam
+	uint8 mod = -5;
+	
+    if (int32(Stats.Rating) + mod < 0)
+        mod = 0;
+		
+	Stats.Rating += mod;
+	
+    // Update team's rank, start with rank 1 and increase until no team with more rating was found
+    Stats.Rank = 1;
+    ArenaTeamMgr::ArenaTeamContainer::const_iterator i = sArenaTeamMgr->GetArenaTeamMapBegin();
+    for (; i != sArenaTeamMgr->GetArenaTeamMapEnd(); ++i)
+    {
+        if (i->second->GetType() == Type && i->second->GetStats().Rating > Stats.Rating)
+            ++Stats.Rank;
+    }
+
+	// Update Player
+	member->ModifyPersonalRating(player, mod, 2);
 	
 	// Update personal played stats
 	member->WeekGames +=1;
