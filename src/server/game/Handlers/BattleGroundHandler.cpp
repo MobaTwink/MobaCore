@@ -648,6 +648,9 @@ void WorldSession::HandleBattlemasterJoinArena(WorldPacket & recvData)
         // check if has free queue slots
         if (!_player->HasFreeBattlegroundQueueId())
             return;
+		// Check if he isn't in 5v5, only 5v5 can solo queue
+		if (arenatype != ARENA_TYPE_5v5)
+			return;
     }
     else
     {
