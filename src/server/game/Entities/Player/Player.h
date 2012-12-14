@@ -263,12 +263,13 @@ struct PlayerInfo
 
 struct PvPInfo
 {
-    PvPInfo() : inHostileArea(false), inNoPvPArea(false), inFFAPvPArea(false), endTimer(0) {}
+    PvPInfo() : inHostileArea(false), inNoPvPArea(false), inFFAPvPArea(false), endTimer(0), endFFATimer(0)  {}
 
     bool inHostileArea;
     bool inNoPvPArea;
     bool inFFAPvPArea;
     time_t endTimer;
+    time_t endFFATimer;
 };
 
 struct DuelInfo
@@ -1801,7 +1802,7 @@ class Player : public Unit, public GridObject<Player>
         void UpdateAreaDependentAuras(uint32 area_id);    // subzones
 
         void UpdateAfkReport(time_t currTime);
-        void UpdatePvPFlag(time_t currTime);
+        void UpdateFFAFlag(time_t currTime);
         void UpdateContestedPvP(uint32 currTime);
         void SetContestedPvPTimer(uint32 newTime) {m_contestedPvPTimer = newTime;}
         void ResetContestedPvP()

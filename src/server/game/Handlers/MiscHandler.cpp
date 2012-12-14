@@ -395,16 +395,15 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket& /*recvData*/)
     }
 
     //instant logout in taverns/cities or on taxi or for admins, gm's, mod's if its enabled in worldserver.conf
-    if (GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING) || GetPlayer()->isInFlight() ||
-        GetSecurity() >= AccountTypes(sWorld->getIntConfig(CONFIG_INSTANT_LOGOUT)))
-    {
-        WorldPacket data(SMSG_LOGOUT_RESPONSE, 1+4);
-        data << uint8(0);
-        data << uint32(16777216);
-        SendPacket(&data);
-        LogoutPlayer(true);
-        return;
-    }
+	if(!GetPlayer()->HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
+	{
+		WorldPacket data(SMSG_LOGOUT_RESPONSE, 1+4);
+		data << uint8(0);
+		data << uint32(16777216);
+		SendPacket(&data);
+		LogoutPlayer(true);
+		return;
+	}
 
     // not set flags if player can't free move to prevent lost state at logout cancel
     if (GetPlayer()->CanFreeMove())
@@ -488,6 +487,8 @@ void WorldSession::HandleTogglePvP(WorldPacket& recvData)
         if (!GetPlayer()->pvpInfo.inHostileArea && GetPlayer()->IsPvP())
             GetPlayer()->pvpInfo.endTimer = time(NULL);     // start toggle-off
     }
+	if (!GetPlayer()->pvpInfo.inFFAPvPArea)
+            GetPlayer()->pvpInfo.endFFATimer = time(NULL);     // start toggle-off
 
     //if (OutdoorPvP* pvp = _player->GetOutdoorPvP())
     //    pvp->HandlePlayerActivityChanged(_player);

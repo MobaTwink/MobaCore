@@ -1547,7 +1547,7 @@ void Player::Update(uint32 p_time)
 
     time_t now = time(NULL);
 
-    UpdatePvPFlag(now);
+	UpdateFFAFlag(now);
 
     UpdateContestedPvP(p_time);
 
@@ -19875,14 +19875,25 @@ void Player::UpdateContestedPvP(uint32 diff)
         m_contestedPvPTimer -= diff;
 }
 
-void Player::UpdatePvPFlag(time_t currTime)
-{
-    if (!IsPvP())
+void Player::UpdateFFAFlag(time_t currTime)
+{ 
+	if (pvpInfo.endFFATimer == 0 && !pvpInfo.inFFAPvPArea && !isInCombat())
+	{
+		pvpInfo.endFFATimer = currTime;
         return;
-    if (pvpInfo.endTimer == 0 || currTime < (pvpInfo.endTimer + 300) || pvpInfo.inHostileArea)
-        return;
+	}
 
-    UpdatePvP(false);
+    if (currTime < (pvpInfo.endFFATimer + 30) || pvpInfo.inFFAPvPArea)
+	{
+		if (isInCombat())
+			pvpInfo.endFFATimer = currTime;
+        return;
+	}
+	
+	pvpInfo.endFFATimer = 0;
+	RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+    for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+        (*itr)->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
 }
 
 void Player::UpdateDuelFlag(time_t currTime)
@@ -21341,33 +21352,24 @@ void Player::UpdatePvPState(bool onlyFFA)
     if (!pvpInfo.inNoPvPArea && !isGameMaster()
         && (pvpInfo.inFFAPvPArea || sWorld->IsFFAPvPRealm()))
     {
-        if (!HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
+        if (!HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP) || pvpInfo.endFFATimer != 0)
         {
             SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
             for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
                 (*itr)->SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
         }
     }
-    else if (HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
+    else if (HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP) && pvpInfo.endFFATimer != 0)
     {
-        RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
-        for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
-            (*itr)->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+            pvpInfo.endFFATimer = time(0);                     // start toggle-off
     }
 
     if (onlyFFA)
         return;
 
-    if (pvpInfo.inHostileArea)                               // in hostile area
-    {
-        if (!IsPvP() || pvpInfo.endTimer != 0)
+	if (!IsPvP())
             UpdatePvP(true, true);
-    }
-    else                                                    // in friendly area
-    {
-        if (IsPvP() && !HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP) && pvpInfo.endTimer == 0)
-            pvpInfo.endTimer = time(0);                     // start toggle-off
-    }
+    
 }
 
 void Player::UpdatePvP(bool state, bool override)

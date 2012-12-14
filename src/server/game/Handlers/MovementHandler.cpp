@@ -179,7 +179,7 @@ void WorldSession::HandleMoveWorldportAckOpcode()
 
     // in friendly area
     else if (GetPlayer()->IsPvP() && !GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP))
-        GetPlayer()->UpdatePvP(false, false);
+        GetPlayer()->UpdatePvP(true, true);
 
     // resummon pet
     GetPlayer()->ResummonPetTemporaryUnSummonedIfAny();
@@ -229,7 +229,7 @@ void WorldSession::HandleMoveTeleportAck(WorldPacket& recvData)
 
         // in friendly area
         else if (plMover->IsPvP() && !plMover->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_IN_PVP))
-            plMover->UpdatePvP(false, false);
+            plMover->UpdatePvP(true, true);
     }
 
     // resummon pet
