@@ -2805,9 +2805,9 @@ void AuraEffect::HandleAuraMounted(AuraApplication const* aurApp, uint8 mode, bo
         if (target->HasAura(62061))
         {
             if (GetBase()->HasEffectType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
-                creatureEntry = 24906;
+                creatureEntry = 17266;
             else
-                creatureEntry = 15665;
+                creatureEntry = 17266;
         }
 
         CreatureTemplate const* ci = sObjectMgr->GetCreatureTemplate(creatureEntry);
@@ -5199,9 +5199,9 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                         if (apply)
                         {
                             if (target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
-                                creatureEntry = 24906;
+                                creatureEntry = 17266;
                             else
-                                creatureEntry = 15665;
+                                creatureEntry = 17266;
                         }
                         else
                             creatureEntry = target->GetAuraEffectsByType(SPELL_AURA_MOUNTED).front()->GetMiscValue();

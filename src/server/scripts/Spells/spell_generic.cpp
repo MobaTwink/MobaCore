@@ -3049,17 +3049,17 @@ class spell_gen_mount : public SpellScriptLoader
                     switch (target->GetBaseSkillValue(SKILL_RIDING))
                     {
                         case 0:
-                            mount = _mount0;
+                            mount = _mount100;
                             break;
                         case 75:
-                            mount = _mount60;
+                            mount = _mount100;
                             break;
                         case 150:
                             mount = _mount100;
                             break;
                         case 225:
                             if (canFly)
-                                mount = _mount150;
+                                mount = _mount100;
                             else
                                 mount = _mount100;
                             break;
@@ -3067,9 +3067,9 @@ class spell_gen_mount : public SpellScriptLoader
                             if (canFly)
                             {
                                 if (_mount310 && target->Has310Flyer(false))
-                                    mount = _mount310;
+                                    mount = _mount100;
                                 else
-                                    mount = _mount280;
+                                    mount = _mount100;
                             }
                             else
                                 mount = _mount100;
