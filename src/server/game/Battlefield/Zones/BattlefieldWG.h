@@ -40,8 +40,10 @@ typedef std::set<Group*> GroupSet;
 
 enum WintergrastData
 {
-    BATTLEFIELD_WG_ZONEID                        = 4197,             // Wintergrasp
-    BATTLEFIELD_WG_MAPID                         = 571               // Northrend
+    BATTLEFIELD_WG_ZONEID                        = 4197,             // Wintergrasp 4197
+    BATTLEFIELD_DA_ZONEID                        = 4395,             // Dalaran
+    BATTLEFIELD_WG_MAPID                         = 571,               // Northrend
+	CAPTURE_TIME								 = 300000
 };
 
 enum WintergraspSpells
@@ -161,10 +163,6 @@ class BfGraveyardWG : public BfGraveyard
 
 enum WGGraveyardId
 {
-    BATTLEFIELD_WG_GY_WORKSHOP_NE,
-    BATTLEFIELD_WG_GY_WORKSHOP_NW,
-    BATTLEFIELD_WG_GY_WORKSHOP_SE,
-    BATTLEFIELD_WG_GY_WORKSHOP_SW,
     BATTLEFIELD_WG_GY_KEEP,
     BATTLEFIELD_WG_GY_HORDE,
     BATTLEFIELD_WG_GY_ALLIANCE,
@@ -173,10 +171,6 @@ enum WGGraveyardId
 
 enum WGGossipText
 {
-    BATTLEFIELD_WG_GOSSIPTEXT_GY_NE              = -1850501,
-    BATTLEFIELD_WG_GOSSIPTEXT_GY_NW              = -1850502,
-    BATTLEFIELD_WG_GOSSIPTEXT_GY_SE              = -1850504,
-    BATTLEFIELD_WG_GOSSIPTEXT_GY_SW              = -1850503,
     BATTLEFIELD_WG_GOSSIPTEXT_GY_KEEP            = -1850500,
     BATTLEFIELD_WG_GOSSIPTEXT_GY_HORDE           = -1850505,
     BATTLEFIELD_WG_GOSSIPTEXT_GY_ALLIANCE        = -1850506
@@ -210,6 +204,7 @@ enum WintergraspNpcs
 
     NPC_TAUNKA_SPIRIT_GUIDE                         = 31841, // Horde spirit guide for Wintergrasp
     NPC_DWARVEN_SPIRIT_GUIDE                        = 31842, // Alliance spirit guide for Wintergrasp
+	NPC_RUNEWEAVER_SPIRIT_GUIDE					    = 31846,
     NPC_TOWER_CANNON                                = 28366,
 
     NPC_WINTERGRASP_SIEGE_ENGINE_ALLIANCE           = 28312,
@@ -239,13 +234,9 @@ uint32 const WGQuest[2][6] =
 // 7 in sql, 7 in header
 BfWGCoordGY const WGGraveYard[BATTLEFIELD_WG_GRAVEYARD_MAX] =
 {
-    { 5104.750f, 2300.940f, 368.579f, 0.733038f, 1329, BATTLEFIELD_WG_GY_WORKSHOP_NE, BATTLEFIELD_WG_GOSSIPTEXT_GY_NE, TEAM_NEUTRAL },
-    { 5099.120f, 3466.036f, 368.484f, 5.317802f, 1330, BATTLEFIELD_WG_GY_WORKSHOP_NW, BATTLEFIELD_WG_GOSSIPTEXT_GY_NW, TEAM_NEUTRAL },
-    { 4314.648f, 2408.522f, 392.642f, 6.268125f, 1333, BATTLEFIELD_WG_GY_WORKSHOP_SE, BATTLEFIELD_WG_GOSSIPTEXT_GY_SE, TEAM_NEUTRAL },
-    { 4331.716f, 3235.695f, 390.251f, 0.008500f, 1334, BATTLEFIELD_WG_GY_WORKSHOP_SW, BATTLEFIELD_WG_GOSSIPTEXT_GY_SW, TEAM_NEUTRAL },
-    { 5537.986f, 2897.493f, 517.057f, 4.819249f, 1285, BATTLEFIELD_WG_GY_KEEP, BATTLEFIELD_WG_GOSSIPTEXT_GY_KEEP, TEAM_NEUTRAL },
-    { 5032.454f, 3711.382f, 372.468f, 3.971623f, 1331, BATTLEFIELD_WG_GY_HORDE, BATTLEFIELD_WG_GOSSIPTEXT_GY_HORDE, TEAM_HORDE },
-    { 5140.790f, 2179.120f, 390.950f, 1.972220f, 1332, BATTLEFIELD_WG_GY_ALLIANCE, BATTLEFIELD_WG_GOSSIPTEXT_GY_ALLIANCE, TEAM_ALLIANCE },
+    { 5807.801758f, 588.264221f, 660.939026f, 1.653733f, 1330, BATTLEFIELD_WG_GY_KEEP, BATTLEFIELD_WG_GOSSIPTEXT_GY_KEEP, TEAM_NEUTRAL },
+    { 5660.125488f, 794.830627f, 654.301147f, 5.623914f, 1331, BATTLEFIELD_WG_GY_HORDE, BATTLEFIELD_WG_GOSSIPTEXT_GY_HORDE, TEAM_HORDE },
+    { 5974.947266f, 544.667786f, 661.087036f, 2.607985f, 1332, BATTLEFIELD_WG_GY_ALLIANCE, BATTLEFIELD_WG_GOSSIPTEXT_GY_ALLIANCE, TEAM_ALLIANCE },
 };
 
 /* ######################### *
@@ -412,7 +403,7 @@ class BattlefieldWG : public Battlefield
         bool FindAndRemoveVehicleFromList(Unit* vehicle);
 
         // returns the graveyardId in the specified area.
-        uint8 GetSpiritGraveyardId(uint32 areaId);
+        uint8 GetSpiritGraveyardId(uint32 areaId, uint32 gyteam);
 
         uint32 GetData(uint32 data);
 
@@ -432,8 +423,33 @@ class BattlefieldWG : public Battlefield
 
         uint32 m_tenacityStack;
         uint32 m_saveTimer;
+		
+		// Dalaran Banners timers
+		uint32 m_runeweaverBannerTimerHorde;
+		uint32 m_runeweaverBannerTimerAlliance;
+		uint32 m_eventideBannerTimerHorde;
+		uint32 m_eventideBannerTimerAlliance;
+		uint32 m_memorialBannerTimerHorde;
+		uint32 m_memorialBannerTimerAlliance;
+
+	//	uint8 m_BannerCount;
+
+		Creature* m_spiritHorde;
+		Creature* m_spiritAlliance;
 
         GameObject* m_titansRelic;
+        GameObject* m_runeweaverHorde;
+        GameObject* m_runeweaverAlliance;
+        GameObject* m_runeweaverHContested;
+        GameObject* m_runeweaverAContested;
+        GameObject* m_eventideHorde;
+        GameObject* m_eventideAlliance;
+        GameObject* m_eventideHContested;
+        GameObject* m_eventideAContested;
+        GameObject* m_memorialHorde;
+        GameObject* m_memorialAlliance;
+        GameObject* m_memorialHContested;
+        GameObject* m_memorialAContested;
 };
 
 uint32 const VehNumWorldState[]        = { 3680, 3490 };
@@ -550,7 +566,25 @@ enum WintergraspGameObject
     GO_WINTERGRASP_FORTRESS_GATE                 = 190375,
     GO_WINTERGRASP_VAULT_GATE                    = 191810,
 
-    GO_WINTERGRASP_KEEP_COLLISION_WALL           = 194323
+    GO_WINTERGRASP_KEEP_COLLISION_WALL           = 194323,
+
+	GO_DALARAN_RUNEWEAVER_HORDE_BANNER            = 660000,
+	GO_DALARAN_RUNWEAVER_ALLIANCE_BANNER         = 660001,
+	GO_DALARAN_RUNWEAVER_HCONTESTED_BANNER       = 660002,
+	GO_DALARAN_RUNWEAVER_ACONTESTED_BANNER       = 660003,
+	GO_DALARAN_EVENTIDE_HORDE_BANNER             = 660004,
+	GO_DALARAN_EVENTIDE_ALLIANCE_BANNER          = 660005,
+	GO_DALARAN_EVENTIDE_HCONTESTED_BANNER        = 660006,
+	GO_DALARAN_EVENTIDE_ACONTESTED_BANNER        = 660007,
+	GO_DALARAN_MEMORIAL_HORDE_BANNER             = 660008,
+	GO_DALARAN_MEMORIAL_ALLIANCE_BANNER          = 660009,
+	GO_DALARAN_MEMORIAL_HCONTESTED_BANNER        = 660010,
+	GO_DALARAN_MEMORIAL_ACONTESTED_BANNER        = 660011,
+	
+	GO_DALARAN_AURA_ALLIANCE                     = 180100,
+	GO_DALARAN_AURA_HORDE                        = 180101,
+	GO_DALARAN_AURA_CONTESTED                    = 180102,
+	GO_DALARAN_BANNER_HOLDER                     = 195131
 };
 
 struct WintergraspObjectPositionData

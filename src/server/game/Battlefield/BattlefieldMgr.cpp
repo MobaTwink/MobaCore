@@ -123,9 +123,8 @@ void BattlefieldMgr::Update(uint32 diff)
     m_UpdateTimer += diff;
     if (m_UpdateTimer > BATTLEFIELD_OBJECTIVE_UPDATE_INTERVAL)
     {
-        for (BattlefieldSet::iterator itr = m_BattlefieldSet.begin(); itr != m_BattlefieldSet.end(); ++itr)
-            if ((*itr)->IsEnabled())
-                (*itr)->Update(m_UpdateTimer);
+		BattlefieldWG* bf = (BattlefieldWG*)sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG);
+		bf->Update(m_UpdateTimer);
         m_UpdateTimer = 0;
     }
 }

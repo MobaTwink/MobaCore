@@ -64,7 +64,7 @@ public:
         if (!bf)
             return false;
 
-        bf->StartBattle();
+       //  bf->StartBattle();
 
         if (battleid == 1)
             handler->SendGlobalGMSysMessage("Wintergrasp (Command start used)");

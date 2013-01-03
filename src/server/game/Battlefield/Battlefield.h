@@ -163,7 +163,7 @@ class BfGraveyard
         void RemovePlayer(uint64 player_guid);
 
         // Resurrect players
-        void Resurrect();
+        void Resurrect(uint8 team);
 
         // Move players waiting to that graveyard on the nearest one
         void RelocateDeadPlayers();
@@ -373,7 +373,8 @@ class Battlefield : public ZoneScript
         // Variables that must exist for each battlefield
         uint32 m_TypeId;                                        // See enum BattlefieldTypes
         uint32 m_BattleId;                                      // BattleID (for packet)
-        uint32 m_ZoneId;                                        // ZoneID of Wintergrasp = 4197
+        uint32 m_ZoneId;                                        // ZoneID of Dalaran
+		uint32 m_OldZoneId;										// ZoneID of Wintergrasp = 4197
         uint32 m_MapId;                                         // MapId where is Battlefield
         uint32 m_MaxPlayer;                                     // Maximum number of player that participated to Battlefield
         uint32 m_MinPlayer;                                     // Minimum number of player for Battlefield start
@@ -389,7 +390,8 @@ class Battlefield : public ZoneScript
 
         // Graveyard variables
         GraveyardVect m_GraveyardList;                          // Vector witch contain the different GY of the battle
-        uint32 m_LastResurectTimer;                             // Timer for resurect player every 30 sec
+        uint32 m_LastResurectTimerAlliance;                             // Timer for resurect player every 30 sec
+   //     uint32 m_LastResurectTimerHorde;                             // Timer for resurect player every 30 sec
 
         uint32 m_StartGroupingTimer;                            // Timer for invite players in area 15 minute before start battle
         bool m_StartGrouping;                                   // bool for know if all players in area has been invited

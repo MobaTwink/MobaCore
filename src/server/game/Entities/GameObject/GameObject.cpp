@@ -1539,18 +1539,22 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
+			/*
             if (player->CanUseBattlegroundObject(this))
             {
+			*/
+                player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
+                player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
                 // in battleground check
                 Battleground* bg = player->GetBattleground();
                 if (!bg)
+				{
                     return;
+				}
 
                 if (player->GetVehicle())
                     return;
 
-                player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
-                player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
                 // BG flag click
                 // AB:
                 // 15001
@@ -1560,7 +1564,9 @@ void GameObject::Use(Unit* user)
                 // 15005
                 bg->EventPlayerClickedOnFlag(player, this);
                 return;                                     //we don;t need to delete flag ... it is despawned!
+				/*
             }
+			*/
             break;
         }
 

@@ -196,8 +196,17 @@ class npc_wg_spirit_guide : public CreatureScript
 
             GraveyardVect graveyard = wintergrasp->GetGraveyardVector();
             for (uint8 i = 0; i < graveyard.size(); i++)
-                if (graveyard[i]->GetControlTeamId() == player->GetTeamId())
-                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, sObjectMgr->GetTrinityStringForDBCLocale(((BfGraveyardWG*)graveyard[i])->GetTextId()), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + i);
+				if (graveyard[0]->GetControlTeamId() == player->GetTeamId())
+				{
+					if(i == 1 && player->GetTeamId() == TEAM_HORDE)
+						player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Guide me to the Horde Graveyard", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + i);
+
+					if(i == 2 && player->GetTeamId() == TEAM_ALLIANCE)
+						   player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Guide me to the Alliance Graveyard", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + i);
+
+					if(i < 1)
+						player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Guide me to the Runeweaver Graveyard", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + i);
+				}
 
             player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
             return true;
