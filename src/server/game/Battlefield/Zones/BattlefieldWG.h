@@ -43,7 +43,7 @@ enum WintergrastData
     BATTLEFIELD_WG_ZONEID                        = 4197,             // Wintergrasp 4197
     BATTLEFIELD_DA_ZONEID                        = 4395,             // Dalaran
     BATTLEFIELD_WG_MAPID                         = 571,               // Northrend
-	CAPTURE_TIME								 = 300000
+	CAPTURE_TIME								 = 60000
 };
 
 enum WintergraspSpells

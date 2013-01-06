@@ -1184,6 +1184,11 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
        damageInfo->cleanDamage    = 0;
        return;
     }
+	
+    if (victim->GetTypeId() == TYPEID_PLAYER && !victim->HasInArc(M_PI, this) && !victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
+		damage += CalculateDamage(damageInfo->attackType, false, true);
+    else
+		damage += CalculateDamage(damageInfo->attackType, false, true) / 2 ;
 
     damage += CalculateDamage(damageInfo->attackType, false, true);
     // Add melee damage bonus
