@@ -1228,8 +1228,7 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
             damageInfo->procEx         |= PROC_EX_NORMAL_HIT;
             // Crit bonus calc
             damageInfo->damage += damageInfo->damage;
-            float mod = -0.75f;
-			AddPct(damageInfo->damage, mod);
+			ApplyPct(damageInfo->damage, 0.25f);
             break;
         }
         case MELEE_HIT_NORMAL:
