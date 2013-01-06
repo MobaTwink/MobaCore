@@ -2357,13 +2357,21 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
     unitTarget = unit;
 
     // Reset damage/healing counter
-    m_damage = target->damage;
+	if(missInfo == SPELL_MISS_MISS)
+		m_damage = int32(target->damage / 3);
+	else
+		m_damage = target->damage;
+
     m_healing = -target->damage;
 
     // Fill base trigger info
     uint32 procAttacker = m_procAttacker;
     uint32 procVictim   = m_procVictim;
     uint32 procEx = m_procEx;
+
+	
+	if(missInfo == SPELL_MISS_MISS)
+		missInfo = SPELL_MISS_NONE ;
 
     m_spellAura = NULL; // Set aura to null for every target-make sure that pointer is not used for unit without aura applied
 
@@ -2375,7 +2383,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         spellHitTarget = unit;
     else if (missInfo == SPELL_MISS_REFLECT)                // In case spell reflect from target, do all effect on caster (if hit)
     {
-        if (target->reflectResult == SPELL_MISS_NONE)       // If reflected spell hit caster -> do all effect on him
+        if (target->reflectResult == SPELL_MISS_NONE || target->reflectResult == SPELL_MISS_MISS)       // If reflected spell hit caster -> do all effect on him
         {
             spellHitTarget = m_caster;
             if (m_caster->GetTypeId() == TYPEID_UNIT)
@@ -2386,10 +2394,9 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
     if (spellHitTarget)
     {
         SpellMissInfo missInfo2 = DoSpellHitOnUnit(spellHitTarget, mask, target->scaleAura);
-        if (missInfo2 != SPELL_MISS_NONE)
+        if (missInfo2 != SPELL_MISS_NONE || missInfo2 != SPELL_MISS_MISS)
         {
-            if (missInfo2 != SPELL_MISS_MISS)
-                m_caster->SendSpellMiss(unit, m_spellInfo->Id, missInfo2);
+            m_caster->SendSpellMiss(unit, m_spellInfo->Id, missInfo2);
             m_damage = 0;
             spellHitTarget = NULL;
         }
@@ -2402,8 +2409,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
         m_needComboPoints = false;
         // Restore spell mods for a miss/dodge/parry Cold Blood
         // TODO: check how broad this rule should be
-        if (m_caster->GetTypeId() == TYPEID_PLAYER && (missInfo == SPELL_MISS_MISS ||
-                missInfo == SPELL_MISS_DODGE || missInfo == SPELL_MISS_PARRY))
+        if (m_caster->GetTypeId() == TYPEID_PLAYER && (missInfo == SPELL_MISS_DODGE || missInfo == SPELL_MISS_PARRY))
             m_caster->ToPlayer()->RestoreSpellMods(this, 14177);
     }
 
@@ -2926,7 +2932,7 @@ bool Spell::UpdateChanneledTargetList()
 
     for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
     {
-        if (ihit->missCondition == SPELL_MISS_NONE && (channelTargetEffectMask & ihit->effectMask))
+        if ((ihit->missCondition == SPELL_MISS_NONE || ihit->missCondition == SPELL_MISS_MISS) && (channelTargetEffectMask & ihit->effectMask))
         {
             Unit* unit = m_caster->GetGUID() == ihit->targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID);
 
@@ -3143,7 +3149,7 @@ void Spell::cancel()
 
         case SPELL_STATE_CASTING:
             for (std::list<TargetInfo>::const_iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
-                if ((*ihit).missCondition == SPELL_MISS_NONE)
+                if ((*ihit).missCondition == SPELL_MISS_NONE || (*ihit).missCondition == SPELL_MISS_MISS)
                     if (Unit* unit = m_caster->GetGUID() == ihit->targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID))
                         unit->RemoveOwnedAura(m_spellInfo->Id, m_originalCasterGUID, 0, AURA_REMOVE_BY_CANCEL);
 
@@ -4146,7 +4152,7 @@ void Spell::WriteSpellGoTargets(WorldPacket* data)
     *data << (uint8)0; // placeholder
     for (std::list<TargetInfo>::const_iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end() && hit <= 255; ++ihit)
     {
-        if ((*ihit).missCondition == SPELL_MISS_NONE)       // Add only hits
+        if ((*ihit).missCondition == SPELL_MISS_NONE || (*ihit).missCondition == SPELL_MISS_MISS)       // Add only hits
         {
             *data << uint64(ihit->targetGUID);
             m_channelTargetEffectMask |=ihit->effectMask;
@@ -4165,7 +4171,7 @@ void Spell::WriteSpellGoTargets(WorldPacket* data)
     *data << (uint8)0; // placeholder
     for (std::list<TargetInfo>::const_iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end() && miss <= 255; ++ihit)
     {
-        if (ihit->missCondition != SPELL_MISS_NONE)        // Add only miss
+        if (ihit->missCondition != SPELL_MISS_NONE || ihit->missCondition != SPELL_MISS_MISS)        // Add only miss
         {
             *data << uint64(ihit->targetGUID);
             *data << uint8(ihit->missCondition);
@@ -4441,7 +4447,7 @@ void Spell::TakePower()
                 for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
                     if (ihit->targetGUID == targetGUID)
                     {
-                        if (ihit->missCondition != SPELL_MISS_NONE)
+                        if (ihit->missCondition != SPELL_MISS_NONE || ihit->missCondition != SPELL_MISS_MISS)
                         {
                             hit = false;
                             //lower spell cost on fail (by talent aura)
@@ -4702,7 +4708,7 @@ void Spell::HandleThreatSpells()
 
     for (std::list<TargetInfo>::iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
     {
-        if (ihit->missCondition != SPELL_MISS_NONE)
+        if (ihit->missCondition != SPELL_MISS_NONE || ihit->missCondition != SPELL_MISS_MISS)
             continue;
 
         Unit* target = ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID);
@@ -6595,7 +6601,7 @@ void Spell::DelayedChannel()
     sLog->outDebug(LOG_FILTER_SPELLS_AURAS, "Spell %u partially interrupted for %i ms, new duration: %u ms", m_spellInfo->Id, delaytime, m_timer);
 
     for (std::list<TargetInfo>::const_iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
-        if ((*ihit).missCondition == SPELL_MISS_NONE)
+        if ((*ihit).missCondition == SPELL_MISS_NONE || (*ihit).missCondition == SPELL_MISS_MISS )
             if (Unit* unit = (m_caster->GetGUID() == ihit->targetGUID) ? m_caster : ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID))
                 unit->DelayOwnedAuras(m_spellInfo->Id, m_originalCasterGUID, delaytime);
 
@@ -6953,10 +6959,11 @@ void Spell::DoAllEffectOnLaunchTarget(TargetInfo& targetInfo, float* multiplier)
 {
     Unit* unit = NULL;
     // In case spell hit target, do all effect on that target
-    if (targetInfo.missCondition == SPELL_MISS_NONE)
+
+    if (targetInfo.missCondition == SPELL_MISS_NONE || targetInfo.missCondition == SPELL_MISS_MISS)
         unit = m_caster->GetGUID() == targetInfo.targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, targetInfo.targetGUID);
     // In case spell reflect from target, do all effect on caster (if hit)
-    else if (targetInfo.missCondition == SPELL_MISS_REFLECT && targetInfo.reflectResult == SPELL_MISS_NONE)
+    else if (targetInfo.missCondition == SPELL_MISS_REFLECT && (targetInfo.reflectResult == SPELL_MISS_NONE || targetInfo.reflectResult == SPELL_MISS_MISS ))
         unit = m_caster;
     if (!unit)
         return;
@@ -6992,6 +6999,9 @@ void Spell::DoAllEffectOnLaunchTarget(TargetInfo& targetInfo, float* multiplier)
                 m_damage = int32(m_damage * m_damageMultipliers[i]);
                 m_damageMultipliers[i] *= multiplier[i];
             }
+			if(targetInfo.missCondition == SPELL_MISS_MISS)
+				targetInfo.damage += int32(m_damage / 3);
+
             targetInfo.damage += m_damage;
         }
     }

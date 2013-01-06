@@ -1186,9 +1186,9 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
     }
 	
     if (victim->GetTypeId() == TYPEID_PLAYER && !victim->HasInArc(M_PI, this) && !victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
-		damage += CalculateDamage(damageInfo->attackType, false, true);
+		damage += uint32(CalculateDamage(damageInfo->attackType, false, true) * 1.2f) ;
     else
-		damage += CalculateDamage(damageInfo->attackType, false, true) / 2 ;
+		damage += uint32(CalculateDamage(damageInfo->attackType, false, true) / 2) ;
 
     damage += CalculateDamage(damageInfo->attackType, false, true);
     // Add melee damage bonus
@@ -1216,11 +1216,8 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
             damageInfo->cleanDamage = 0;
             return;
         case MELEE_HIT_MISS:
-            damageInfo->HitInfo        |= HITINFO_MISS;
-            damageInfo->TargetState     = VICTIMSTATE_INTACT;
-            damageInfo->procEx         |= PROC_EX_MISS;
-            damageInfo->damage          = 0;
-            damageInfo->cleanDamage     = 0;
+            damageInfo->damage          = uint32(damage / 3);
+            damageInfo->cleanDamage     = damageInfo->damage;
             break;
         case MELEE_HIT_NORMAL:
             damageInfo->TargetState     = VICTIMSTATE_HIT;
@@ -14363,10 +14360,9 @@ uint32 createProcExtendMask(SpellNonMeleeDamage* damageInfo, SpellMissInfo missC
 {
     uint32 procEx = PROC_EX_NONE;
     // Check victim state
-    if (missCondition != SPELL_MISS_NONE)
+    if (missCondition != SPELL_MISS_NONE || missCondition != SPELL_MISS_MISS)
         switch (missCondition)
         {
-            case SPELL_MISS_MISS:    procEx|=PROC_EX_MISS;   break;
             case SPELL_MISS_RESIST:  procEx|=PROC_EX_RESIST; break;
             case SPELL_MISS_DODGE:   procEx|=PROC_EX_DODGE;  break;
             case SPELL_MISS_PARRY:   procEx|=PROC_EX_PARRY;  break;
