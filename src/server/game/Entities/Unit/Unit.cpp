@@ -1013,7 +1013,14 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
     uint32 crTypeMask = victim->GetCreatureTypeMask();
 
     if (IsDamageReducedByArmor(damageSchoolMask, spellInfo))
+	{
         damage = CalcArmorReducedDamage(victim, damage, spellInfo, attackType);
+		
+		if (victim->GetTypeId() == TYPEID_PLAYER && !victim->HasInArc(M_PI, this) && !victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
+			damage += uint32(damage * 1.10f) ;
+		else
+			damage += uint32(damage * 0.75f) ;
+	}
 
     bool blocked = false;
     // Per-school calc
@@ -1186,9 +1193,9 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
     }
 	
     if (victim->GetTypeId() == TYPEID_PLAYER && !victim->HasInArc(M_PI, this) && !victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
-		damage += uint32(CalculateDamage(damageInfo->attackType, false, true) * 1.2f) ;
+		damage += uint32(CalculateDamage(damageInfo->attackType, false, true) * 1.10f) ;
     else
-		damage += uint32(CalculateDamage(damageInfo->attackType, false, true) / 2) ;
+		damage += uint32(CalculateDamage(damageInfo->attackType, false, true) * 0.75f) ;
 
     damage += CalculateDamage(damageInfo->attackType, false, true);
     // Add melee damage bonus
@@ -1216,9 +1223,15 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
             damageInfo->cleanDamage = 0;
             return;
         case MELEE_HIT_MISS:
-            damageInfo->damage          = uint32(damage / 3);
-            damageInfo->cleanDamage     = damageInfo->damage;
+        {
+            damageInfo->TargetState     = VICTIMSTATE_HIT;
+            damageInfo->procEx         |= PROC_EX_NORMAL_HIT;
+            // Crit bonus calc
+            damageInfo->damage += damageInfo->damage;
+            float mod = 0.25f;
+			AddPct(damageInfo->damage, mod);
             break;
+        }
         case MELEE_HIT_NORMAL:
             damageInfo->TargetState     = VICTIMSTATE_HIT;
             damageInfo->procEx         |= PROC_EX_NORMAL_HIT;
