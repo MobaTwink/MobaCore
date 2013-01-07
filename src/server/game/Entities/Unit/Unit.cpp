@@ -1017,9 +1017,9 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
         damage = CalcArmorReducedDamage(victim, damage, spellInfo, attackType);
 		
 		if (victim->GetTypeId() == TYPEID_PLAYER && !victim->HasInArc(M_PI, this) && !victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
-			damage += uint32(damage * 1.10f) ;
+			damage = uint32(damage * 1.10f) ;
 		else
-			damage += uint32(damage * 0.75f) ;
+			damage = uint32(damage * 0.75f) ;
 	}
 
     bool blocked = false;
@@ -1197,7 +1197,6 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
     else
 		damage += uint32(CalculateDamage(damageInfo->attackType, false, true) * 0.75f) ;
 
-    damage += CalculateDamage(damageInfo->attackType, false, true);
     // Add melee damage bonus
     damage = MeleeDamageBonusDone(damageInfo->target, damage, damageInfo->attackType);
     damage = damageInfo->target->MeleeDamageBonusTaken(this, damage, damageInfo->attackType);
@@ -1226,9 +1225,8 @@ void Unit::CalculateMeleeDamage(Unit* victim, uint32 damage, CalcDamageInfo* dam
         {
             damageInfo->TargetState     = VICTIMSTATE_HIT;
             damageInfo->procEx         |= PROC_EX_NORMAL_HIT;
-            // Crit bonus calc
-            damageInfo->damage += damageInfo->damage;
-			ApplyPct(damageInfo->damage, 0.25f);
+            damageInfo->damage = int32(damage / 3);
+            damageInfo->cleanDamage = int32(damage / 3);
             break;
         }
         case MELEE_HIT_NORMAL:
@@ -2334,7 +2332,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellInfo const* spell)
     // Roll miss
     uint32 tmp = missChance;
     if (roll < tmp)
-        return SPELL_MISS_MISS;
+        return SPELL_MISS_NONE;
 
     // Chance resist mechanic (select max value from every mechanic spell effect)
     int32 resist_mech = 0;
@@ -2352,7 +2350,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellInfo const* spell)
     // Roll chance
     tmp += resist_mech;
     if (roll < tmp)
-        return SPELL_MISS_RESIST;
+        return SPELL_MISS_NONE;
 
     bool canDodge = true;
     bool canParry = true;
@@ -2366,7 +2364,7 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellInfo const* spell)
     int32 resist_chance = victim->GetMechanicResistChance(spell) * 100;
     tmp += resist_chance;
     if (roll < tmp)
-        return SPELL_MISS_RESIST;
+        return SPELL_MISS_NONE;
 
     // Ranged attacks can only miss, resist and deflect
     if (attType == RANGED_ATTACK)
@@ -2374,14 +2372,6 @@ SpellMissInfo Unit::MeleeSpellHitResult(Unit* victim, SpellInfo const* spell)
         canParry = false;
         canDodge = false;
 
-        // only if in front
-        if (victim->HasInArc(M_PI, this) || victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
-        {
-            int32 deflect_chance = victim->GetTotalAuraModifier(SPELL_AURA_DEFLECT_SPELLS) * 100;
-            tmp+=deflect_chance;
-            if (roll < tmp)
-                return SPELL_MISS_DEFLECT;
-        }
         return SPELL_MISS_NONE;
     }
 
@@ -2537,7 +2527,7 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellInfo const* spell)
     int32 rand = irand(0, 10000);
 
     if (rand < tmp)
-        return SPELL_MISS_MISS;
+        return SPELL_MISS_NONE;
 
     // Spells with SPELL_ATTR3_IGNORE_HIT_RESULT will additionally fully ignore
     // resist and deflect chances
@@ -2566,19 +2556,6 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* victim, SpellInfo const* spell)
             tmp += victim->GetMaxPositiveAuraModifierByMiscValue(SPELL_AURA_MOD_DEBUFF_RESISTANCE, int32(spell->Dispel)) * 100;
             tmp += victim->GetMaxNegativeAuraModifierByMiscValue(SPELL_AURA_MOD_DEBUFF_RESISTANCE, int32(spell->Dispel)) * 100;
         }
-    }
-
-   // Roll chance
-    if (rand < tmp)
-        return SPELL_MISS_RESIST;
-
-    // cast by caster in front of victim
-    if (victim->HasInArc(M_PI, this) || victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
-    {
-        int32 deflect_chance = victim->GetTotalAuraModifier(SPELL_AURA_DEFLECT_SPELLS) * 100;
-        tmp += deflect_chance;
-        if (rand < tmp)
-            return SPELL_MISS_DEFLECT;
     }
 
     return SPELL_MISS_NONE;
@@ -14372,7 +14349,7 @@ uint32 createProcExtendMask(SpellNonMeleeDamage* damageInfo, SpellMissInfo missC
 {
     uint32 procEx = PROC_EX_NONE;
     // Check victim state
-    if (missCondition != SPELL_MISS_NONE || missCondition != SPELL_MISS_MISS)
+    if (missCondition != SPELL_MISS_NONE)
         switch (missCondition)
         {
             case SPELL_MISS_RESIST:  procEx|=PROC_EX_RESIST; break;
