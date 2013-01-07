@@ -5634,6 +5634,13 @@ void Player::RepopAtGraveyard()
 {
     // note: this can be called also when the player is alive
     // for example from WorldSession::HandleMovementOpcodes
+	if(HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
+	{
+		pvpInfo.endFFATimer = 0;
+		RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+		for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
+			(*itr)->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+	}
 
     AreaTableEntry const* zone = GetAreaEntryByAreaID(GetAreaId());
 
