@@ -358,8 +358,6 @@ bool SpellMgr::IsSpellValid(SpellInfo const* spellInfo, Player* player, bool msg
     if (!spellInfo)
         return false;
 
-    bool need_check_reagents = false;
-
     // check effects
     for (uint8 i = 0; i < MAX_SPELL_EFFECTS; ++i)
     {
@@ -400,8 +398,6 @@ bool SpellMgr::IsSpellValid(SpellInfo const* spellInfo, Player* player, bool msg
                     }
                     return false;
                 }
-
-                need_check_reagents = true;
                 break;
             }
             case SPELL_EFFECT_LEARN_SPELL:
@@ -419,24 +415,6 @@ bool SpellMgr::IsSpellValid(SpellInfo const* spellInfo, Player* player, bool msg
                     return false;
                 }
                 break;
-            }
-        }
-    }
-
-    if (need_check_reagents)
-    {
-        for (uint8 j = 0; j < MAX_SPELL_REAGENTS; ++j)
-        {
-            if (spellInfo->Reagent[j] > 0 && !sObjectMgr->GetItemTemplate(spellInfo->Reagent[j]))
-            {
-                if (msg)
-                {
-                    if (player)
-                        ChatHandler(player).PSendSysMessage("Craft spell %u have not-exist reagent in DB item (Entry: %u) and then...", spellInfo->Id, spellInfo->Reagent[j]);
-                    else
-                        sLog->outError(LOG_FILTER_SQL, "Craft spell %u have not-exist reagent in DB item (Entry: %u) and then...", spellInfo->Id, spellInfo->Reagent[j]);
-                }
-                return false;
             }
         }
     }

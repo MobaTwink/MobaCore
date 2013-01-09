@@ -3309,14 +3309,7 @@ void Spell::cast(bool skipCheck)
     {
         // Powers have to be taken before SendSpellGo
         TakePower();
-        TakeReagents();                                         // we must remove reagents before HandleEffects to allow place crafted item in same slot
-    }
-    else if (Item* targetItem = m_targets.GetItemTarget())
-    {
-        /// Not own traded item (in trader trade slot) req. reagents including triggered spell case
-        if (targetItem->GetOwnerGUID() != m_caster->GetGUID())
-            TakeReagents();
-    }
+	}
 
     // CAST SPELL
     SendSpellCooldown();
@@ -3420,8 +3413,6 @@ void Spell::handle_immediate()
     TakeCastItem();
 
     // handle ammo consumption for Hunter's volley spell
-    if (m_spellInfo->IsRangedWeaponSpell() && m_spellInfo->IsChanneled())
-        TakeAmmo();
 
     if (m_spellState != SPELL_STATE_CASTING)
         finish(true);                                       // successfully finish spell cast (not last in case autorepeat or channel spell)
@@ -3790,6 +3781,9 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, uint8 cas
     if (result == SPELL_CAST_OK)
         return;
 
+    if (result == SPELL_FAILED_REAGENTS)
+        return;
+
     WorldPacket data(SMSG_CAST_FAILED, (4+1+1));
     data << uint8(cast_count);                              // single cast or multi 2.3 (0/1)
     data << uint32(spellInfo->Id);
@@ -3853,23 +3847,7 @@ void Spell::SendCastResult(Player* caster, SpellInfo const* spellInfo, uint8 cas
             break;
         case SPELL_FAILED_REAGENTS:
         {
-            uint32 missingItem = 0;
-            for (uint32 i = 0; i < MAX_SPELL_REAGENTS; i++)
-            {
-                if (spellInfo->Reagent[i] <= 0)
-                    continue;
-
-                uint32 itemid    = spellInfo->Reagent[i];
-                uint32 itemcount = spellInfo->ReagentCount[i];
-
-                if (!caster->HasItemCount(itemid, itemcount))
-                {
-                    missingItem = itemid;
-                    break;
-                }
-            }
-
-            data << uint32(missingItem);  // first missing item
+            data << uint32(2515);  // first missing item
             break;
         }
         case SPELL_FAILED_PREVENTED_BY_MECHANIC:
@@ -3907,8 +3885,6 @@ void Spell::SendSpellStart()
     if ((IsTriggered() && !m_spellInfo->IsAutoRepeatRangedSpell()) || m_triggeredByAuraSpell)
         castFlags |= CAST_FLAG_PENDING;
 
-    if (m_spellInfo->Attributes & SPELL_ATTR0_REQ_AMMO)
-        castFlags |= CAST_FLAG_AMMO;
     if ((m_caster->GetTypeId() == TYPEID_PLAYER ||
         (m_caster->GetTypeId() == TYPEID_UNIT && m_caster->ToCreature()->isPet()))
          && m_spellInfo->PowerType != POWER_HEALTH)
@@ -3933,9 +3909,6 @@ void Spell::SendSpellStart()
 
     if (castFlags & CAST_FLAG_POWER_LEFT_SELF)
         data << uint32(m_caster->GetPower((Powers)m_spellInfo->PowerType));
-
-    if (castFlags & CAST_FLAG_AMMO)
-        WriteAmmoToPacket(&data);
 
     if (castFlags & CAST_FLAG_UNKNOWN_23)
     {
@@ -4066,21 +4039,8 @@ void Spell::WriteAmmoToPacket(WorldPacket* data)
                 ammoDisplayID = pItem->GetTemplate()->DisplayInfoID;
             else
             {
-                uint32 ammoID = m_caster->ToPlayer()->GetUInt32Value(PLAYER_AMMO_ID);
-                if (ammoID)
-                {
-                    ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(ammoID);
-                    if (pProto)
-                    {
-                        ammoDisplayID = pProto->DisplayInfoID;
-                        ammoInventoryType = pProto->InventoryType;
-                    }
-                }
-                else if (m_caster->HasAura(46699))      // Requires No Ammo
-                {
-                    ammoDisplayID = 5996;                   // normal arrow
-                    ammoInventoryType = INVTYPE_AMMO;
-                }
+				ammoDisplayID = 5996;                   // normal arrow
+				ammoInventoryType = INVTYPE_AMMO;
             }
         }
     }
@@ -4484,35 +4444,6 @@ void Spell::TakePower()
         m_caster->SetLastManaUse(getMSTime());
 }
 
-void Spell::TakeAmmo()
-{
-    if (m_attackType == RANGED_ATTACK && m_caster->GetTypeId() == TYPEID_PLAYER)
-    {
-        Item* pItem = m_caster->ToPlayer()->GetWeaponForAttack(RANGED_ATTACK);
-
-        // wands don't have ammo
-        if (!pItem  || pItem->IsBroken() || pItem->GetTemplate()->SubClass == ITEM_SUBCLASS_WEAPON_WAND)
-            return;
-
-        if (pItem->GetTemplate()->InventoryType == INVTYPE_THROWN)
-        {
-            if (pItem->GetMaxStackCount() == 1)
-            {
-                // decrease durability for non-stackable throw weapon
-                m_caster->ToPlayer()->DurabilityPointLossForEquipSlot(EQUIPMENT_SLOT_RANGED);
-            }
-            else
-            {
-                // decrease items amount for stackable throw weapon
-                uint32 count = 1;
-                m_caster->ToPlayer()->DestroyItemCount(pItem, count, true);
-            }
-        }
-        else if (uint32 ammo = m_caster->ToPlayer()->GetUInt32Value(PLAYER_AMMO_ID))
-            m_caster->ToPlayer()->DestroyItemCount(ammo, 1, true);
-    }
-}
-
 SpellCastResult Spell::CheckRuneCost(uint32 runeCostID)
 {
     if (m_spellInfo->PowerType != POWER_RUNE || !runeCostID)
@@ -4623,54 +4554,6 @@ void Spell::TakeRunePower(bool didHit)
     if (didHit)
         if (int32 rp = int32(runeCostData->runePowerGain * sWorld->getRate(RATE_POWER_RUNICPOWER_INCOME)))
             player->ModifyPower(POWER_RUNIC_POWER, int32(rp));
-}
-
-void Spell::TakeReagents()
-{
-    if (m_caster->GetTypeId() != TYPEID_PLAYER)
-        return;
-
-    ItemTemplate const* castItemTemplate = m_CastItem ? m_CastItem->GetTemplate() : NULL;
-
-    // do not take reagents for these item casts
-    if (castItemTemplate && castItemTemplate->Flags & ITEM_PROTO_FLAG_TRIGGERED_CAST)
-        return;
-
-    Player* p_caster = m_caster->ToPlayer();
-    if (p_caster->CanNoReagentCast(m_spellInfo))
-        return;
-
-    for (uint32 x = 0; x < MAX_SPELL_REAGENTS; ++x)
-    {
-        if (m_spellInfo->Reagent[x] <= 0)
-            continue;
-
-        uint32 itemid = m_spellInfo->Reagent[x];
-        uint32 itemcount = m_spellInfo->ReagentCount[x];
-
-        // if CastItem is also spell reagent
-        if (castItemTemplate && castItemTemplate->ItemId == itemid)
-        {
-            for (int s = 0; s < MAX_ITEM_PROTO_SPELLS; ++s)
-            {
-                // CastItem will be used up and does not count as reagent
-                int32 charges = m_CastItem->GetSpellCharges(s);
-                if (castItemTemplate->Spells[s].SpellCharges < 0 && abs(charges) < 2)
-                {
-                    ++itemcount;
-                    break;
-                }
-            }
-
-            m_CastItem = NULL;
-        }
-
-        // if GetItemTarget is also spell reagent
-        if (m_targets.GetItemTargetEntry() == itemid)
-            m_targets.SetItemTarget(NULL);
-
-        p_caster->DestroyItemCount(itemid, itemcount, true);
-    }
 }
 
 void Spell::HandleThreatSpells()
@@ -6388,7 +6271,7 @@ SpellCastResult Spell::CheckItems()
                     case ITEM_SUBCLASS_WEAPON_GUN:
                     case ITEM_SUBCLASS_WEAPON_BOW:
                     case ITEM_SUBCLASS_WEAPON_CROSSBOW:
-						break;
+break;
                     case ITEM_SUBCLASS_WEAPON_WAND:
                         break;
                     default:
@@ -6837,7 +6720,6 @@ void Spell::HandleLaunchPhase()
     for (Unit::AuraEffectList::const_iterator j = Auras.begin(); j != Auras.end(); ++j)
     {
         if ((*j)->IsAffectedOnSpell(m_spellInfo))
-            usesAmmo=false;
     }
 
     for (std::list<TargetInfo>::iterator ihit= m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
@@ -6848,31 +6730,6 @@ void Spell::HandleLaunchPhase()
         if (!mask)
             continue;
 
-        // do not consume ammo anymore for Hunter's volley spell
-        if (IsTriggered() && m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && m_spellInfo->IsTargetingArea())
-            usesAmmo = false;
-
-        if (usesAmmo)
-        {
-            bool ammoTaken = false;
-            for (uint8 i = 0; i < MAX_SPELL_EFFECTS; i++)
-            {
-                if (!(mask & 1<<i))
-                    continue;
-                switch (m_spellInfo->Effects[i].Effect)
-                {
-                    case SPELL_EFFECT_SCHOOL_DAMAGE:
-                    case SPELL_EFFECT_WEAPON_DAMAGE:
-                    case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
-                    case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
-                    case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
-                    ammoTaken=true;
-                    TakeAmmo();
-                }
-                if (ammoTaken)
-                    break;
-            }
-        }
         DoAllEffectOnLaunchTarget(target, multiplier);
     }
 }

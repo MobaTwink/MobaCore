@@ -769,10 +769,6 @@ SpellInfo::SpellInfo(SpellEntry const* spellEntry)
     StackAmount = spellEntry->StackAmount;
     for (uint8 i = 0; i < 2; ++i)
         Totem[i] = spellEntry->Totem[i];
-    for (uint8 i = 0; i < MAX_SPELL_REAGENTS; ++i)
-        Reagent[i] = spellEntry->Reagent[i];
-    for (uint8 i = 0; i < MAX_SPELL_REAGENTS; ++i)
-        ReagentCount[i] = spellEntry->ReagentCount[i];
     EquippedItemClass = spellEntry->EquippedItemClass;
     EquippedItemSubClassMask = spellEntry->EquippedItemSubClassMask;
     EquippedItemInventoryTypeMask = spellEntry->EquippedItemInventoryTypeMask;

@@ -342,8 +342,6 @@ public:
     float  Speed;
     uint32 StackAmount;
     uint32 Totem[2];
-    int32  Reagent[MAX_SPELL_REAGENTS];
-    uint32 ReagentCount[MAX_SPELL_REAGENTS];
     int32  EquippedItemClass;
     int32  EquippedItemSubClassMask;
     int32  EquippedItemInventoryTypeMask;
