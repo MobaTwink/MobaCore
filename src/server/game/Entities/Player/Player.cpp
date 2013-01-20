@@ -1546,8 +1546,9 @@ void Player::Update(uint32 p_time)
     SetCanDelayTeleport(false);
 
     time_t now = time(NULL);
-
-	UpdateFFAFlag(now);
+	
+	if(HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
+		UpdateFFAFlag(now);
 
     UpdateContestedPvP(p_time);
 
@@ -2467,7 +2468,9 @@ void Player::RemoveFromWorld()
         StopCastingBindSight();
         UnsummonPetTemporaryIfAny();
         sOutdoorPvPMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
-        sBattlefieldMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
+		
+		if (GetZoneId() == 4395)
+			sBattlefieldMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
 
     ///- Do not add/remove the player from the object storage
@@ -5656,14 +5659,17 @@ void Player::RepopAtGraveyard()
     // Special handle for battleground maps
     if (Battleground* bg = GetBattleground())
         ClosestGrave = bg->GetClosestGraveYard(this);
-    else
-    {
-        Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG);
-        ClosestGrave = bf->GetClosestGraveYard(this);
-		/*
-        else
-            ClosestGrave = sObjectMgr->GetClosestGraveYard(GetPositionX(), GetPositionY(), GetPositionZ(), GetMapId(), GetTeam());
-			*/
+    else {
+		if (GetZoneId() == 4395) {
+			Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG);
+			ClosestGrave = bf->GetClosestGraveYard(this);
+		} else {
+			if (GetTeamId()) {
+				TeleportTo(571, 5975.184f, 544.48f, 661.088f, 2.505f);
+			} else {
+				TeleportTo(571, 5660.318f, 794.845f, 654.302f, 5.827f);
+			}
+		}
     }
 
     // stop countdown until repop
@@ -5738,8 +5744,6 @@ void Player::UpdateLocalChannels(uint32 newZone)
     if (!cMgr)
         return;
 
-    std::string current_zone_name = current_zone->area_name[GetSession()->GetSessionDbcLocale()];
-
     for (uint32 i = 0; i < sChatChannelsStore.GetNumRows(); ++i)
     {
         if (ChatChannelsEntry const* channel = sChatChannelsStore.LookupEntry(i))
@@ -5748,62 +5752,19 @@ void Player::UpdateLocalChannels(uint32 newZone)
 
             for (JoinedChannelsList::iterator itr = m_channels.begin(); itr != m_channels.end(); ++itr)
             {
+                if ((*itr)->GetChannelId() != 1)
+                    break;
+
                 if ((*itr)->GetChannelId() == i)
                 {
                     usedChannel = *itr;
                     break;
                 }
             }
-
+			// for fun
             Channel* removeChannel = NULL;
-            Channel* joinChannel = NULL;
-            bool sendRemove = true;
-
-            if (CanJoinConstantChannelInZone(channel, current_zone))
-            {
-                if (!(channel->flags & CHANNEL_DBC_FLAG_GLOBAL))
-                {
-                    if (channel->flags & CHANNEL_DBC_FLAG_CITY_ONLY && usedChannel)
-                        continue;                            // Already on the channel, as city channel names are not changing
-
-                    char new_channel_name_buf[100];
-                    char const* currentNameExt;
-
-                    if (channel->flags & CHANNEL_DBC_FLAG_CITY_ONLY)
-                        currentNameExt = sObjectMgr->GetTrinityStringForDBCLocale(LANG_CHANNEL_CITY);
-                    else
-                        currentNameExt = current_zone_name.c_str();
-
-                    snprintf(new_channel_name_buf, 100, channel->pattern[m_session->GetSessionDbcLocale()], currentNameExt);
-
-                    joinChannel = cMgr->GetJoinChannel(new_channel_name_buf, channel->ChannelID);
-                    if (usedChannel)
-                    {
-                        if (joinChannel != usedChannel)
-                        {
-                            removeChannel = usedChannel;
-                            sendRemove = false;              // Do not send leave channel, it already replaced at client
-                        }
-                        else
-                            joinChannel = NULL;
-                    }
-                }
-                else
-                    joinChannel = cMgr->GetJoinChannel(channel->pattern[m_session->GetSessionDbcLocale()], channel->ChannelID);
-            }
-            else
-                removeChannel = usedChannel;
-
-            if (joinChannel)
-                joinChannel->Join(GetGUID(), "");            // Changed Channel: ... or Joined Channel: ...
-
-            if (removeChannel)
-            {
-                removeChannel->Leave(GetGUID(), sendRemove); // Leave old channel
-                std::string name = removeChannel->GetName(); // Store name, (*i)erase in LeftChannel
-                LeftChannel(removeChannel);                  // Remove from player's channel list
-                cMgr->LeftChannel(name);                     // Delete if empty
-            }
+            Channel* joinChannel = cMgr->GetJoinChannel("General", 1);
+			joinChannel->Join(GetGUID(), "");
         }
     }
 }
@@ -7303,6 +7264,60 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
             if (v_level <= k_grey)
                 return false;
 
+			if (plrVictim->GetZoneId() == 4395 && sBattlefieldMgr->amountHorde != sBattlefieldMgr->amountAlliance) {
+				float minCount = 10.0f;
+				float amountKiller = 1.0f ;
+				float amountVictim = 1.0f ;
+				float diff = 1.0f;
+				float diffMax = 1.0f;
+				float honorMax = 1.6f ;
+				float honorMin = 1.6f ;
+
+				if (GetTeamId()) {
+					amountKiller = (float)sBattlefieldMgr->amountHorde ;
+					amountVictim = (float)sBattlefieldMgr->amountAlliance ; 
+				} else {
+					amountKiller = (float)sBattlefieldMgr->amountAlliance ;
+					amountVictim = (float)sBattlefieldMgr->amountHorde ;
+				}
+				if (!amountKiller) {
+					amountKiller = 1.0f;
+				}
+				if (!amountVictim) {
+					amountVictim = 1.0f;
+				}
+				if (amountKiller > amountVictim) {
+					if (amountVictim < minCount) {
+						float add = ( 2*(minCount - amountVictim)) / 3;
+						amountVictim += add;
+						amountKiller += add;
+					}
+					diffMax = amountVictim * honorMax;
+					diff = diffMax - amountKiller ;
+					if(diff > 0) {
+						honor_f = (honor_f / (diffMax - amountVictim)) * diff ;
+						if (honor_f < 1.0f) {
+							honor_f = 1.0f;
+						}
+					} else {
+						honor_f = 1.0f ;
+					}
+				}
+				else {
+					if (amountKiller < minCount) {
+						float add = ( 2*(minCount - amountKiller)) / 3;
+						amountVictim += add;
+						amountKiller += add;
+					}
+					diffMax = amountKiller * honorMin;
+					if(amountVictim / amountKiller < honorMax) {
+						honor_f += ( (honor_f*5) / diffMax) * (amountVictim - amountKiller) ;
+					} else {
+						honor_f *= 6 ;
+					}
+				}
+			}
+
             // PLAYER_CHOSEN_TITLE VALUES DESCRIPTION
             //  [0]      Just name
             //  [1..14]  Alliance honor titles and player name
@@ -7355,6 +7370,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
         AddPct(honor_f, GetMaxPositiveAuraModifier(SPELL_AURA_MOD_HONOR_GAIN_PCT));
     }
     honor_f *= ( GetSession()->GetSecurity() > 0 ) ? sWorld->getRate(RATE_HONOR) : 0;
+
     // Back to int now
     honor = int32(honor_f);
     // honor - for show honor points in log
@@ -7390,12 +7406,16 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
         if (victim->GetTypeId() == TYPEID_PLAYER)
         {
             // Check if allowed to receive it in current map
+			/*
             uint8 MapType = sWorld->getIntConfig(CONFIG_PVP_TOKEN_MAP_TYPE);
             if ((MapType == 1 && !InBattleground() && !HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
                 || (MapType == 2 && !HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
                 || (MapType == 3 && !InBattleground())
-                || (MapType == 4 && victim->GetZoneId() != 3358))
+                || (MapType == 4 && victim->GetZoneId() != 4398))
 
+                return true; */
+
+			if(!HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
                 return true;
 
             uint32 itemId = sWorld->getIntConfig(CONFIG_PVP_TOKEN_ID);
@@ -7589,11 +7609,15 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
     {
         sOutdoorPvPMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
         sOutdoorPvPMgr->HandlePlayerEnterZone(this, newZone);
-        sBattlefieldMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
-        sBattlefieldMgr->HandlePlayerEnterZone(this, newZone);
         SendInitWorldStates(newZone, newArea);              // only if really enters to new zone, not just area change, works strange...
         if (Guild* guild = GetGuild())
             guild->UpdateMemberData(this, GUILD_MEMBER_DATA_ZONEID, newZone);
+		
+		if (newZone == 4395)
+			sBattlefieldMgr->HandlePlayerEnterZone(this, newZone);
+
+		if (m_zoneUpdateId == 4395 && GetMapId() == 571)
+			sBattlefieldMgr->HandlePlayerLeaveZone(this, m_zoneUpdateId);
     }
 
     // group update
@@ -19889,7 +19913,7 @@ void Player::UpdateFFAFlag(time_t currTime)
         return;
 	}
 
-    if (currTime < (pvpInfo.endFFATimer + 30) || pvpInfo.inFFAPvPArea)
+    if (currTime < (pvpInfo.endFFATimer + 15) || pvpInfo.inFFAPvPArea)
 	{
 		if (isInCombat())
 			pvpInfo.endFFATimer = currTime;
