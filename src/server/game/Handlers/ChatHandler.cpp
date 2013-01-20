@@ -443,17 +443,17 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
 							userName      = fields[0].GetString();
 						}
 			
-						userName = (GetPlayer()->GetTeam() == HORDE) ? userName+"|cfffa2b2b" : userName+"|cff3898fa";
+						color = (GetPlayer()->GetTeam() == HORDE) ? "|cfffa2b2b" : "|cff3898fa";
 						switch(GetPlayer()->GetSession()->GetSecurity())
 						{
-							case 0: rank = ("|cff939393<"+userName+">|r");  break;
-							case 1: rank = ("|cffefc9a0<"+userName+">|r");  break;
-							case 2: rank = ("|cffc784ff<"+userName+">|r");  break;
-							case 3: rank = ("|cff9ffd43<"+userName+">|r");  break;
-							case 4: rank = ("|cff01b2f1<"+userName+">|r");  break;
+							case 0: rank = ("|cff939393"+userName+"|r");  break;
+							case 1: rank = ("|cffefc9a0"+userName+"|r");  break;
+							case 2: rank = ("|cffc784ff"+userName+"|r");  break;
+							case 3: rank = ("|cff9ffd43"+userName+"|r");  break;
+							case 4: rank = ("|cff01b2f1"+userName+"|r");  break;
 						} 
 			
-						msg = rank+" "+msg ;
+						msg = color+"<"+rank+color+"> |r"+msg ;
 						//sWorld->SendGlobalText(SetChatText.c_str(), 0);
 					}
 
