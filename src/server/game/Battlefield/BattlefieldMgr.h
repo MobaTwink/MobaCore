@@ -46,6 +46,9 @@ class BattlefieldMgr
     // called when player resurrects
     void HandlePlayerResurrects(Player * player, uint32 areaflag);
     // return assigned battlefield
+	bool RatioHonor(Player * player, float honor_f);
+	// return honor ratio
+
     Battlefield* GetBattlefieldToZoneId(uint32 zoneid);
     Battlefield* GetBattlefieldByBattleId(uint32 battleid);
 
@@ -63,6 +66,9 @@ class BattlefieldMgr
 
     typedef std::vector < Battlefield * >BattlefieldSet;
     typedef std::map < uint32 /* zoneid */ , Battlefield * >BattlefieldMap;
+    uint32 amountHorde;
+    uint32 amountAlliance;
+
   private:
     // contains all initiated battlefield events
     // used when initing / cleaning up

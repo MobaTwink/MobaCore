@@ -24,6 +24,8 @@
 BattlefieldMgr::BattlefieldMgr()
 {
     m_UpdateTimer = 0;
+    amountHorde = 0;
+    amountAlliance = 0;
     //sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Instantiating BattlefieldMgr");
 }
 
@@ -71,28 +73,18 @@ void BattlefieldMgr::AddZone(uint32 zoneid, Battlefield *handle)
 
 void BattlefieldMgr::HandlePlayerEnterZone(Player * player, uint32 zoneid)
 {
-    BattlefieldMap::iterator itr = m_BattlefieldMap.find(zoneid);
-    if (itr == m_BattlefieldMap.end())
-        return;
-
-    if (itr->second->HasPlayer(player) || !itr->second->IsEnabled())
-        return;
-
-    itr->second->HandlePlayerEnterZone(player, zoneid);
-    sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Player %u entered outdoorpvp id %u", player->GetGUIDLow(), itr->second->GetTypeId());
+	if(player->GetTeamId())
+		amountHorde = (amountHorde > 0) ? amountHorde + 1 : 1;
+	else
+		amountAlliance = (amountAlliance > 0) ? amountAlliance + 1 : 1;
 }
 
 void BattlefieldMgr::HandlePlayerLeaveZone(Player * player, uint32 zoneid)
 {
-    BattlefieldMap::iterator itr = m_BattlefieldMap.find(zoneid);
-    if (itr == m_BattlefieldMap.end())
-        return;
-
-    // teleport: remove once in removefromworld, once in updatezone
-    if (!itr->second->HasPlayer(player))
-        return;
-    itr->second->HandlePlayerLeaveZone(player, zoneid);
-    sLog->outDebug(LOG_FILTER_BATTLEFIELD, "Player %u left outdoorpvp id %u", player->GetGUIDLow(), itr->second->GetTypeId());
+	if(player->GetTeamId())
+		amountHorde = (amountHorde > 0) ? amountHorde - 1 : 0;
+	else
+		amountAlliance = (amountAlliance > 0) ? amountAlliance - 1 : 0;
 }
 
 Battlefield *BattlefieldMgr::GetBattlefieldToZoneId(uint32 zoneid)
