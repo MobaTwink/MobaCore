@@ -823,12 +823,12 @@ void ArenaTeam::ArenaTry(Player* player)
 	ArenaTeamMember* member = GetMember(player->GetGUID());
 	
 	//UpdateTeam
-	uint8 mod = -5;
+	int32 mod = 5;
 	
-    if (int32(Stats.Rating) + mod < 0)
+    if (int32(Stats.Rating) - mod < 0)
         mod = 0;
 		
-	Stats.Rating += mod;
+	Stats.Rating -= mod;
 	
     // Update team's rank, start with rank 1 and increase until no team with more rating was found
     Stats.Rank = 1;
