@@ -3812,17 +3812,6 @@ void ObjectMgr::LoadQuests()
             }
         }
 
-        if (qinfo->RequiredSkillPoints)
-        {
-            if (qinfo->RequiredSkillPoints > sWorld->GetConfigMaxSkillValue())
-            {
-                sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredSkillPoints` = %u but max possible skill is %u, quest can't be done.",
-                    qinfo->GetQuestId(), qinfo->RequiredSkillPoints, sWorld->GetConfigMaxSkillValue());
-                // no changes, quest can't be done for this requirement
-            }
-        }
-        // else Skill quests can have 0 skill level, this is ok
-
         if (qinfo->RequiredFactionId2 && !sFactionStore.LookupEntry(qinfo->RequiredFactionId2))
         {
             sLog->outError(LOG_FILTER_SQL, "Quest %u has `RequiredFactionId2` = %u but faction template %u does not exist, quest can't be done.",
