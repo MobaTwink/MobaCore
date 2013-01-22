@@ -25789,11 +25789,3 @@ Guild* Player::GetGuild()
     uint32 guildId = GetGuildId();
     return guildId ? sGuildMgr->GetGuildById(guildId) : NULL;
 }
-
-void Player::SetBGTeam(uint32 team) {
-    m_bgData.bgTeam = team;
-    uint32 bgTeam = 0;
-    if (team > 0)
-        bgTeam = team == ALLIANCE ? 1 : 0;
-    SetByteValue(PLAYER_BYTES_3, 3, bgTeam);
-}

@@ -161,7 +161,7 @@ void BattlegroundMgr::Update(uint32 diff)
     }
 }
 
-void BattlegroundMgr::BuildBattlegroundStatusPacket(WorldPacket* data, Battleground* bg, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint8 arenatype, uint8 uiFrame)
+void BattlegroundMgr::BuildBattlegroundStatusPacket(WorldPacket* data, Battleground* bg, uint8 QueueSlot, uint8 StatusID, uint32 Time1, uint32 Time2, uint8 arenatype, uint32 arenaFaction)
 {
     // we can be in 2 queues in same time...
 
@@ -206,8 +206,11 @@ void BattlegroundMgr::BuildBattlegroundStatusPacket(WorldPacket* data, Battlegro
             *data << uint64(0);                             // 3.3.5, unknown
             *data << uint32(Time1);                         // time to bg auto leave, 0 at bg start, 120000 after bg end, milliseconds
             *data << uint32(Time2);                         // time from bg start, milliseconds
-			if (bg->GetStatus() == STATUS_IN_PROGRESS) {
-				*data << uint8(uiFrame);
+			if(arenaFaction == ALLIANCE) {
+				*data << uint8(1);
+			} else {
+			//if(arenaFaction == HORDE) {
+				*data << uint8(0);
 			}
             break;
         default:
