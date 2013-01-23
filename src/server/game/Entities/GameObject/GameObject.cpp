@@ -1516,14 +1516,6 @@ void GameObject::Use(Unit* user)
             if (!targetPlayer || targetPlayer == player || !targetPlayer->IsInSameRaidWith(player))
                 return;
 
-            //required lvl checks!
-            uint8 level = player->getLevel();
-            if (level < info->meetingstone.minLevel)
-                return;
-            level = targetPlayer->getLevel();
-            if (level < info->meetingstone.minLevel)
-                return;
-
             if (info->entry == 194097)
                 spellId = 61994;                            // Ritual of Summoning
             else
@@ -1545,6 +1537,8 @@ void GameObject::Use(Unit* user)
 			*/
                 player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
                 player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
+				player->RemoveAura(1022);
+				player->RemoveAura(642);
                 // in battleground check
                 Battleground* bg = player->GetBattleground();
                 if (!bg)
@@ -1601,6 +1595,8 @@ void GameObject::Use(Unit* user)
 
                 player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
                 player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
+				player->RemoveAura(1022);
+				player->RemoveAura(642);
                 // BG flag dropped
                 // WS:
                 // 179785 - Silverwing Flag

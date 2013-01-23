@@ -5192,6 +5192,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                     if ((canFailAtMax || skillValue < sWorld->GetConfigMaxSkillValue()) && reqSkillValue > irand(skillValue - 25, skillValue + 37))
                         return SPELL_FAILED_TRY_AGAIN;
                 }
+				m_caster->RemoveAura(1022);
+				m_caster->RemoveAura(642);
                 break;
             }
             case SPELL_EFFECT_SUMMON_DEAD_PET:

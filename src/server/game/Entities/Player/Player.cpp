@@ -23719,8 +23719,7 @@ bool Player::CanUseBattlegroundObject(GameObject* gameobject)
 
     // BUG: sometimes when player clicks on flag in AB - client won't send gameobject_use, only gameobject_report_use packet
     // Note: Mount, stealth and invisibility will be removed when used
-    return (!isTotalImmune() &&                            // Damage immune
-            !HasAura(SPELL_RECENTLY_DROPPED_FLAG) &&       // Still has recently held flag debuff
+    return (!HasAura(SPELL_RECENTLY_DROPPED_FLAG) &&       // Still has recently held flag debuff
             isAlive());                                    // Alive
 }
 
@@ -23791,20 +23790,6 @@ void Player::InitGlyphsForLevel()
         value |= 0x20;
 
     SetUInt32Value(PLAYER_GLYPHS_ENABLED, value);
-}
-
-bool Player::isTotalImmune()
-{
-    AuraEffectList const& immune = GetAuraEffectsByType(SPELL_AURA_SCHOOL_IMMUNITY);
-
-    uint32 immuneMask = 0;
-    for (AuraEffectList::const_iterator itr = immune.begin(); itr != immune.end(); ++itr)
-    {
-        immuneMask |= (*itr)->GetMiscValue();
-        if (immuneMask & SPELL_SCHOOL_MASK_ALL)            // total immunity
-            return true;
-    }
-    return false;
 }
 
 bool Player::HasTitle(uint32 bitIndex)
