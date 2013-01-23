@@ -7246,6 +7246,12 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
         if (!victim || victim == this || victim->HasAuraType(SPELL_AURA_NO_PVP_CREDIT))
             return false;
 
+		if (victim->HasAura(23451)) {
+			CastSpell(this, 23451, true);
+		}
+		if (victim->HasAura(23505)) {
+			CastSpell(this, 23505, true);
+		}
         victim_guid = victim->GetGUID();
 
         if (Player* plrVictim = victim->ToPlayer())
