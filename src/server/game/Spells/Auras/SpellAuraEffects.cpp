@@ -2162,18 +2162,17 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                             return;
 						}
 						uint32 FactionTemp = target->getFaction();
-						if (target->ToPlayer->GetTeam() == HORDE) {
-							FactionTemp = 83;
+						if (target->ToPlayer()->GetTeam() == HORDE) {
+							FactionTemp = 1;
 						} else {
-							FactionTemp = 81;
+							FactionTemp = 2;
 						}
-						if (Pet* pet = target->ToPlayer->GetPet()) {
+						if (Pet* pet = target->ToPlayer()->GetPet()) {
 							pet->setFaction(FactionTemp);
 							pet->getHostileRefManager().setOnlineOfflineState(false);
 						}
-						target->setFaction(FactionTemp);
 						target->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
-						target->ToPlayer->ResetContestedPvP();
+						target->ToPlayer()->ResetContestedPvP();
 						target->getHostileRefManager().setOnlineOfflineState(false);
 						target->CombatStopWithPets();
 
@@ -2182,42 +2181,52 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                             // Blood Elf
                             case RACE_BLOODELF:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 17829 : 17830);
+								target->setFaction(1629);
                                 break;
                             // Orc
                             case RACE_ORC:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10139 : 10140);
+								target->setFaction(1);
                                 break;
                             // Troll
                             case RACE_TROLL:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10135 : 10134);
+								target->setFaction(3);
                                 break;
                             // Tauren
                             case RACE_TAUREN:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10136 : 10147);
+								target->setFaction(115);
                                 break;
                             // Undead
                             case RACE_UNDEAD_PLAYER:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10146 : 10145);
+								target->setFaction(4);
                                 break;
                             // Draenei
                             case RACE_DRAENEI:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 17827 : 17828);
+								target->setFaction(1610);
                                 break;
                             // Dwarf
                             case RACE_DWARF:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10141 : 10142);
+								target->setFaction(116);
                                 break;
                             // Gnome
                             case RACE_GNOME:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10148 : 10149);
+								target->setFaction(6);
                                 break;
                             // Human
                             case RACE_HUMAN:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10137 : 10138);
+								target->setFaction(2);
                                 break;
                             // Night Elf
                             case RACE_NIGHTELF:
                                 target->SetDisplayId(target->getGender() == GENDER_MALE ? 10143 : 10144);
+								target->setFaction(5);
                                 break;
                             default:
                                 break;
@@ -2358,8 +2367,18 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
         if (target->getTransForm() == GetId())
             target->setTransForm(0);
 
-        target->RestoreDisplayId();
-
+		if (GetId() == 16739 && target->GetTypeId() == TYPEID_PLAYER) {
+			target->ToPlayer()->setFactionForRace(target->ToPlayer()->getRace());
+			if (Pet* pet = target->ToPlayer()->GetPet()) {
+				pet->setFaction(target->getFaction());
+				pet->getHostileRefManager().setOnlineOfflineState(true);
+			}
+			target->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+			target->ToPlayer()->ResetContestedPvP();
+			target->getHostileRefManager().setOnlineOfflineState(false);
+			target->CombatStopWithPets();
+		}
+		target->RestoreDisplayId();
         // Dragonmaw Illusion (restore mount model)
         if (GetId() == 42016 && target->GetMountID() == 16314)
         {
