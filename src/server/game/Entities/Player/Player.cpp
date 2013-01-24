@@ -7245,7 +7245,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
     {
         if (!victim || victim == this || victim->HasAuraType(SPELL_AURA_NO_PVP_CREDIT))
             return false;
-
+		
 		if (victim->HasAura(23451)) {
 			CastSpell(this, 23451, true);
 		}
@@ -19925,7 +19925,10 @@ void Player::UpdateFFAFlag(time_t currTime)
 			pvpInfo.endFFATimer = currTime;
         return;
 	}
-	
+    ResetContestedPvP();
+    getHostileRefManager().setOnlineOfflineState(false);
+    CombatStopWithPets();
+
 	pvpInfo.endFFATimer = 0;
 	RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
     for (ControlList::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
