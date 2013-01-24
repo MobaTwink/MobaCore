@@ -2158,8 +2158,24 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                     // Orb of Deception
                     case 16739:
                     {
-                        if (target->GetTypeId() != TYPEID_PLAYER)
+                        if (target->GetTypeId() != TYPEID_PLAYER) {
                             return;
+						}
+						uint32 FactionTemp = target->getFaction();
+						if (target->ToPlayer->GetTeam() == HORDE) {
+							FactionTemp = 83;
+						} else {
+							FactionTemp = 81;
+						}
+						if (Pet* pet = target->ToPlayer->GetPet()) {
+							pet->setFaction(FactionTemp);
+							pet->getHostileRefManager().setOnlineOfflineState(false);
+						}
+						target->setFaction(FactionTemp);
+						target->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+						target->ToPlayer->ResetContestedPvP();
+						target->getHostileRefManager().setOnlineOfflineState(false);
+						target->CombatStopWithPets();
 
                         switch (target->getRace())
                         {
