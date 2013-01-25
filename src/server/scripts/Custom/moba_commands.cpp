@@ -23,18 +23,20 @@ class moba_commands : public CommandScript
        }
 	   static bool HandleTalentsCommand(ChatHandler* handler, const char* /*args*/)
 	   {
-		   if( !handler->GetSession()->GetPlayer()->HasAuraType(SPELL_AURA_ARENA_PREPARATION)
-			   && handler->GetSession()->GetPlayer()->InArena()
-			   || handler->GetSession()->GetPlayer()->isInCombat() )
+		   Player* player = handler->GetSession()->GetPlayer();
+		   if( !player->HasAuraType(SPELL_AURA_ARENA_PREPARATION)
+			   && player->InArena()
+			   || player->isInCombat() )
 		   {
 			   handler->SendSysMessage(LANG_YOU_IN_COMBAT);
 			   handler->SetSentErrorMessage(true);
 			   return false;
 		   }
 		   
-		   handler->GetSession()->GetPlayer()->resetTalents(true);
-		   handler->GetSession()->GetPlayer()->SendTalentsInfoData(false);
-		   ChatHandler(handler->GetSession()->GetPlayer()).PSendSysMessage(LANG_RESET_TALENTS);
+		   player->resetTalents(true);
+		   player->CastSpell(player, 14867, true);
+		   player->SendTalentsInfoData(false);
+		   ChatHandler(player).PSendSysMessage(LANG_RESET_TALENTS);
 		   return true;
 	   }
 
