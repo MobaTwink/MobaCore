@@ -1315,29 +1315,14 @@ void GameObject::Use(Unit* user)
             {
                 case GO_READY:                              // ready for loot
                 {
-                    uint32 zone, subzone;
-                    GetZoneAndAreaId(zone, subzone);
-
-                    int32 zone_skill = sObjectMgr->GetFishingBaseSkillLevel(subzone);
-                    if (!zone_skill)
-                        zone_skill = sObjectMgr->GetFishingBaseSkillLevel(zone);
-
-                    //provide error, no fishable zone or area should be 0
-                    if (!zone_skill)
-                        sLog->outError(LOG_FILTER_SQL, "Fishable areaId %u are not properly defined in `skill_fishing_base_level`.", subzone);
-
+                    int32 zone_skill = 300;
                     int32 skill = player->GetSkillValue(SKILL_FISHING);
-
                     int32 chance;
-                    if (skill < zone_skill)
-                    {
-                        chance = int32(pow((double)skill/zone_skill, 2) * 100);
-                        if (chance < 1)
-                            chance = 1;
-                    }
-                    else
+                    if (skill < zone_skill) {
+                        chance = int32((skill/6) + 50);
+                    } else {
                         chance = 100;
-
+					}
                     int32 roll = irand(1, 100);
 
                     sLog->outDebug(LOG_FILTER_GENERAL, "Fishing check (skill: %i zone min skill: %i chance %i roll: %i", skill, zone_skill, chance, roll);
