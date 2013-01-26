@@ -5425,20 +5425,6 @@ SpellCastResult Spell::CheckCast(bool strict)
 
                 break;
             }
-            case SPELL_AURA_FLY:
-            case SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED:
-            {
-                // not allow cast fly spells if not have req. skills  (all spells is self target)
-                // allow always ghost flight spells
-                if (m_originalCaster && m_originalCaster->GetTypeId() == TYPEID_PLAYER && m_originalCaster->isAlive())
-                {
-                    Battlefield* Bf = sBattlefieldMgr->GetBattlefieldToZoneId(m_originalCaster->GetZoneId());
-                    if (AreaTableEntry const* area = GetAreaEntryByAreaID(m_originalCaster->GetAreaId()))
-                        if (area->flags & AREA_FLAG_NO_FLY_ZONE  || (Bf && !Bf->CanFlyIn()))
-                            return (_triggeredCastFlags & TRIGGERED_DONT_REPORT_CAST_ERROR) ? SPELL_FAILED_DONT_REPORT : SPELL_FAILED_NOT_HERE;
-                }
-                break;
-            }
             case SPELL_AURA_PERIODIC_MANA_LEECH:
             {
                 if (m_spellInfo->Effects[i].IsTargetingArea())

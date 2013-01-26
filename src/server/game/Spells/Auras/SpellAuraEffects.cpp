@@ -564,13 +564,6 @@ int32 AuraEffect::CalculateAmount(Unit* caster)
 
                         amount += (int32)DoneActualBenefit;
 
-                        // Arena - Dampening
-                        AuraEffect const* pAurEff = caster->GetAuraEffect(74410, 0);
-                        if (!pAurEff)
-                            pAurEff = caster->GetAuraEffect(74411, 0);  // Battleground - Dampening
-                        if (pAurEff)
-                            AddPct(amount, pAurEff->GetAmount());
-
                         return amount;
                     }
                     break;
@@ -2891,7 +2884,9 @@ void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode
         if (target->HasAuraType(GetAuraType()) || target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
             return;
     }
-
+	if (target->GetTypeId() == TYPEID_PLAYER /* && !target->ToPlayer()->isGameMaster() */) {
+		return;
+	} else { return; }
     //! Not entirely sure if this should be sent for creatures as well, but I don't think so.
     target->SetCanFly(apply);
     if (!apply)
@@ -3276,50 +3271,6 @@ void AuraEffect::HandleAuraModIncreaseMountedSpeed(AuraApplication const* aurApp
 
 void AuraEffect::HandleAuraModIncreaseFlightSpeed(AuraApplication const* aurApp, uint8 mode, bool apply) const
 {
-    if (!(mode & AURA_EFFECT_HANDLE_CHANGE_AMOUNT_SEND_FOR_CLIENT_MASK))
-        return;
-
-    Unit* target = aurApp->GetTarget();
-
-    //! Update ability to fly
-    if (GetAuraType() == SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED)
-    {
-        // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
-        if (mode & AURA_EFFECT_HANDLE_SEND_FOR_CLIENT_MASK && (apply || (!target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !target->HasAuraType(SPELL_AURA_FLY))))
-        {
-            target->SetCanFly(apply);
-            if (!apply)
-            {
-                target->m_movementInfo.SetFallTime(0);
-                target->RemoveUnitMovementFlag(MOVEMENTFLAG_MASK_MOVING_FLY);
-            }
-
-            Player* player = target->ToPlayer();
-            if (!player)
-                player = target->m_movedPlayer;
-
-            if (player)
-                player->SendMovementCanFlyChange();
-
-            //! We still need to initiate a server-side MoveFall here,
-            //! which requires MSG_MOVE_FALL_LAND on landing.
-        }
-
-        //! Someone should clean up these hacks and remove it from this function. It doesn't even belong here.
-        if (mode & AURA_EFFECT_HANDLE_REAL)
-        {
-            //Players on flying mounts must be immune to polymorph
-            if (target->GetTypeId() == TYPEID_PLAYER)
-                target->ApplySpellImmune(GetId(), IMMUNITY_MECHANIC, MECHANIC_POLYMORPH, apply);
-
-            // Dragonmaw Illusion (overwrite mount model, mounted aura already applied)
-            if (apply && target->HasAuraEffect(42016, 0) && target->GetMountID())
-                target->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 16314);
-        }
-    }
-
-    if (mode & AURA_EFFECT_HANDLE_CHANGE_AMOUNT_MASK)
-        target->UpdateSpeed(MOVE_FLIGHT, true);
 }
 
 void AuraEffect::HandleAuraModIncreaseSwimSpeed(AuraApplication const* aurApp, uint8 mode, bool /*apply*/) const
@@ -5100,11 +5051,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                         case 52172:  // Coyote Spirit Despawn Aura
                         case 60244:  // Blood Parrot Despawn Aura
                             target->CastSpell((Unit*)NULL, GetAmount(), true, NULL, this);
-                            break;
-                        case 58600: // Restricted Flight Area
-                        case 58730: // Restricted Flight Area
-                            if (aurApp->GetRemoveMode() == AURA_REMOVE_BY_EXPIRE)
-                                target->CastSpell(target, 58601, true);
                             break;
                     }
                     break;

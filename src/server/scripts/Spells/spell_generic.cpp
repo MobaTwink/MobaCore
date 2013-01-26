@@ -3032,51 +3032,7 @@ class spell_gen_mount : public SpellScriptLoader
                     // Prevent stacking of mounts and client crashes upon dismounting
                     target->RemoveAurasByType(SPELL_AURA_MOUNTED, 0, GetHitAura());
 
-                    // Triggered spell id dependent on riding skill and zone
-                    bool canFly = false;
-                    uint32 map = GetVirtualMapForMapAndZone(target->GetMapId(), target->GetZoneId());
-                    if (map == 530 || (map == 571 && target->HasSpell(SPELL_COLD_WEATHER_FLYING)))
-                        canFly = true;
-
-                    float x, y, z;
-                    target->GetPosition(x, y, z);
-                    uint32 areaFlag = target->GetBaseMap()->GetAreaFlag(x, y, z);
-                    AreaTableEntry const* area = sAreaStore.LookupEntry(areaFlag);
-                    if (!area || (canFly && (area->flags & AREA_FLAG_NO_FLY_ZONE)))
-                        canFly = false;
-
-                    uint32 mount = 0;
-                    switch (target->GetBaseSkillValue(SKILL_RIDING))
-                    {
-                        case 0:
-                            mount = _mount100;
-                            break;
-                        case 75:
-                            mount = _mount100;
-                            break;
-                        case 150:
-                            mount = _mount100;
-                            break;
-                        case 225:
-                            if (canFly)
-                                mount = _mount100;
-                            else
-                                mount = _mount100;
-                            break;
-                        case 300:
-                            if (canFly)
-                            {
-                                if (_mount310 && target->Has310Flyer(false))
-                                    mount = _mount100;
-                                else
-                                    mount = _mount100;
-                            }
-                            else
-                                mount = _mount100;
-                            break;
-                        default:
-                            break;
-                    }
+                    uint32 mount = _mount100;
 
                     if (mount)
                     {

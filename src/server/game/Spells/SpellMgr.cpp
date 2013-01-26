@@ -1095,28 +1095,6 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
     // Extra conditions -- leaving the possibility add extra conditions...
     switch (spellId)
     {
-        case 58600: // No fly Zone - Dalaran
-        {
-            if (!player)
-                return false;
-
-            AreaTableEntry const* pArea = GetAreaEntryByAreaID(player->GetAreaId());
-            if (!(pArea && pArea->flags & AREA_FLAG_NO_FLY_ZONE))
-                return false;
-            if (!player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !player->HasAuraType(SPELL_AURA_FLY))
-                return false;
-            break;
-        }
-        case 58730: // No fly Zone - Wintergrasp
-        {
-            if (!player)
-                return false;
-
-            Battlefield* Bf = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId());
-            if (!Bf || Bf->CanFlyIn() || (!player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !player->HasAuraType(SPELL_AURA_FLY)))
-                return false;
-            break;
-        }
         case 68719: // Oil Refinery - Isle of Conquest.
         case 68720: // Quarry - Isle of Conquest.
         {
@@ -1162,16 +1140,6 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
                 return battlefieldWG->IsEnabled() && (player->GetTeamId() == battlefieldWG->GetDefenderTeam()) && !battlefieldWG->IsWarTime();
             break;
         }
-        case 74411: // Battleground - Dampening
-        {
-            if (!player)
-                return false;
-
-            if (Battlefield* bf = sBattlefieldMgr->GetBattlefieldToZoneId(player->GetZoneId()))
-                return bf->IsWarTime();
-            break;
-        }
-
     }
 
     return true;
