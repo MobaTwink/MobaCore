@@ -334,36 +334,6 @@ class spell_gen_pet_summoned : public SpellScriptLoader
         }
 };
 
-class spell_gen_remove_flight_auras : public SpellScriptLoader
-{
-    public:
-        spell_gen_remove_flight_auras() : SpellScriptLoader("spell_gen_remove_flight_auras") {}
-
-        class spell_gen_remove_flight_auras_SpellScript : public SpellScript
-        {
-            PrepareSpellScript(spell_gen_remove_flight_auras_SpellScript);
-
-            void HandleScript(SpellEffIndex /*effIndex*/)
-            {
-                if (Unit* target = GetHitUnit())
-                {
-                    target->RemoveAurasByType(SPELL_AURA_FLY);
-                    target->RemoveAurasByType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED);
-                }
-            }
-
-            void Register()
-            {
-                OnEffectHitTarget += SpellEffectFn(spell_gen_remove_flight_auras_SpellScript::HandleScript, EFFECT_1, SPELL_EFFECT_SCRIPT_EFFECT);
-            }
-        };
-
-        SpellScript* GetSpellScript() const
-        {
-            return new spell_gen_remove_flight_auras_SpellScript();
-        }
-};
-
 // 66118 Leeching Swarm
 enum LeechingSwarmSpells
 {
@@ -3274,7 +3244,6 @@ void AddSC_generic_spell_scripts()
     new spell_gen_leeching_swarm();
     new spell_gen_parachute();
     new spell_gen_pet_summoned();
-    new spell_gen_remove_flight_auras();
     new spell_gen_trick();
     new spell_gen_trick_or_treat();
     new spell_creature_permanent_feign_death();

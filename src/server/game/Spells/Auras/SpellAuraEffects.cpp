@@ -2872,29 +2872,10 @@ void AuraEffect::HandleAuraMounted(AuraApplication const* aurApp, uint8 mode, bo
 }
 
 void AuraEffect::HandleAuraAllowFlight(AuraApplication const* aurApp, uint8 mode, bool apply) const
-{
-    if (!(mode & AURA_EFFECT_HANDLE_SEND_FOR_CLIENT_MASK))
-        return;
-
+{ 
     Unit* target = aurApp->GetTarget();
 
-    if (!apply)
-    {
-        // do not remove unit flag if there are more than this auraEffect of that kind on unit on unit
-        if (target->HasAuraType(GetAuraType()) || target->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED))
-            return;
-    }
-	if (target->GetTypeId() == TYPEID_PLAYER /* && !target->ToPlayer()->isGameMaster() */) {
-		return;
-	} else { return; }
-    //! Not entirely sure if this should be sent for creatures as well, but I don't think so.
     target->SetCanFly(apply);
-    if (!apply)
-    {
-        target->RemoveUnitMovementFlag(MOVEMENTFLAG_MASK_MOVING_FLY);
-        target->GetMotionMaster()->MoveFall();
-        target->m_movementInfo.SetFallTime(0);
-    }
 
     Player* player = target->ToPlayer();
     if (!player)

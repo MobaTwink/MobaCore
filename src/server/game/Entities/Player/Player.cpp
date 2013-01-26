@@ -24126,7 +24126,7 @@ bool Player::IsKnowHowFlyIn(uint32 mapid, uint32 zone) const
 {
     // continent checked in SpellInfo::CheckLocation at cast and area update
     uint32 v_map = GetVirtualMapForMapAndZone(mapid, zone);
-    return v_map != 571 || HasSpell(54197); // Cold Weather Flying
+    return v_map != 602; // Cold Weather Flying
 }
 
 void Player::learnSpellHighRank(uint32 spellid)
@@ -25738,7 +25738,7 @@ bool Player::SetHover(bool enable)
 
 void Player::SendMovementSetCanFly(bool apply)
 {
-    WorldPacket data(apply ? SMSG_MOVE_SET_CAN_FLY : SMSG_MOVE_UNSET_CAN_FLY, 12);
+    WorldPacket data(SMSG_MOVE_SET_CAN_FLY, 12);
     data.append(GetPackGUID());
     data << uint32(0);          //! movement counter
     SendDirectMessage(&data);
