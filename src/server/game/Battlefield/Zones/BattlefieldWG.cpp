@@ -109,8 +109,8 @@ bool BattlefieldWG::SetupBattlefield()
 	SpawnCreature(NPC_DWARVEN_SPIRIT_GUIDE, 5660.125488f, 794.830627f, 654.301147f, 5.623914f, TEAM_ALLIANCE); // Spirit Guide Alliance
 	SpawnCreature(NPC_TAUNKA_SPIRIT_GUIDE,  5974.947266f, 544.667786f, 661.087036f, 2.607985f, TEAM_HORDE);    // Spirit Guide Horde
     SpawnGameObject(GO_DALARAN_BANNER_HOLDER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f); // Banner Position Runeweaver 
-    SpawnGameObject(GO_DALARAN_BANNER_HOLDER, 5641.049316f, 687.493347f, 651.992920f, 5.888998f); // Banner Position Eventide
-    SpawnGameObject(GO_DALARAN_BANNER_HOLDER, 5967.001465f, 613.845093f, 650.627136f, 2.810238f); // Banner Position Memorial (South)
+  //  SpawnGameObject(GO_DALARAN_BANNER_HOLDER, 5641.049316f, 687.493347f, 651.992920f, 5.888998f); // Banner Position Eventide
+  //  SpawnGameObject(GO_DALARAN_BANNER_HOLDER, 5967.001465f, 613.845093f, 650.627136f, 2.810238f); // Banner Position Memorial (South)
 	m_spiritHorde    = SpawnCreature(NPC_TAUNKA_SPIRIT_GUIDE,  5807.801758f, 588.264221f, 660.939026f, 1.653733f, TEAM_HORDE);
 	m_spiritAlliance = SpawnCreature(NPC_DWARVEN_SPIRIT_GUIDE, 5807.801758f, 588.264221f, 660.939026f, 1.653733f, TEAM_ALLIANCE);
 
@@ -118,8 +118,8 @@ bool BattlefieldWG::SetupBattlefield()
 	{
         HideNpc(m_spiritAlliance);
 		m_runeweaverHorde      = SpawnGameObject(GO_DALARAN_RUNEWEAVER_HORDE_BANNER,      5805.020508f, 639.484070f, 647.782959f, 2.515712f);
-		m_eventideAlliance     = SpawnGameObject(GO_DALARAN_EVENTIDE_ALLIANCE_BANNER,    5641.049316f, 687.493347f, 651.992920f, 5.888998f);
-		m_memorialAlliance     = SpawnGameObject(GO_DALARAN_MEMORIAL_ALLIANCE_BANNER,    5967.001465f, 613.845093f, 650.627136f, 2.810238f);
+	//	m_eventideAlliance     = SpawnGameObject(GO_DALARAN_EVENTIDE_ALLIANCE_BANNER,    5641.049316f, 687.493347f, 651.992920f, 5.888998f);
+	//	m_memorialAlliance     = SpawnGameObject(GO_DALARAN_MEMORIAL_ALLIANCE_BANNER,    5967.001465f, 613.845093f, 650.627136f, 2.810238f);
 //		m_BannerCount = 1;
 //		SpawnGameObject(GO_DALARAN_AURA_HORDE,    5805.020508f, 639.484070f, 647.782959f, 2.515712f); // Aura Position Runeweaver 
 //		SpawnGameObject(GO_DALARAN_AURA_ALLIANCE, 5633.313477f, 691.144043f, 650.627136f, 2.810238f); // Aura Position Memorial (South)
@@ -129,8 +129,8 @@ bool BattlefieldWG::SetupBattlefield()
 	{
         HideNpc(m_spiritHorde);
 		m_runeweaverAlliance   = SpawnGameObject(GO_DALARAN_RUNWEAVER_ALLIANCE_BANNER,   5805.020508f, 639.484070f, 647.782959f, 2.515712f);
-		m_eventideHorde        = SpawnGameObject(GO_DALARAN_EVENTIDE_HORDE_BANNER,       5641.049316f, 687.493347f, 651.992920f, 5.888998f);
-		m_memorialHorde        = SpawnGameObject(GO_DALARAN_MEMORIAL_HORDE_BANNER,       5967.001465f, 613.845093f, 650.627136f, 2.810238f);
+	//	m_eventideHorde        = SpawnGameObject(GO_DALARAN_EVENTIDE_HORDE_BANNER,       5641.049316f, 687.493347f, 651.992920f, 5.888998f);
+	//	m_memorialHorde        = SpawnGameObject(GO_DALARAN_MEMORIAL_HORDE_BANNER,       5967.001465f, 613.845093f, 650.627136f, 2.810238f);
 //		m_BannerCount = 2;
 //		SpawnGameObject(GO_DALARAN_AURA_ALLIANCE, 5805.020508f, 639.484070f, 647.782959f, 2.515712f); // Aura Position Runeweaver 
 //		SpawnGameObject(GO_DALARAN_AURA_HORDE,    5633.313477f, 691.144043f, 650.627136f, 2.810238f); // Aura Position Memorial (South)
