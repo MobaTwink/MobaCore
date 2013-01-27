@@ -255,7 +255,7 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* Source)
         if (GetTeamScore(TEAM_ALLIANCE) < BG_WS_MAX_TEAM_SCORE)
             AddPoint(ALLIANCE, 1);
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_ALLIANCE);
-        RewardReputationToTeam(890, m_ReputationCapture, ALLIANCE);
+        RewardReputationToTeam(946, m_ReputationCapture, ALLIANCE);
     }
     else
     {
@@ -273,7 +273,7 @@ void BattlegroundWS::EventPlayerCapturedFlag(Player* Source)
         if (GetTeamScore(TEAM_HORDE) < BG_WS_MAX_TEAM_SCORE)
             AddPoint(HORDE, 1);
         PlaySoundToAll(BG_WS_SOUND_FLAG_CAPTURED_HORDE);
-        RewardReputationToTeam(889, m_ReputationCapture, HORDE);
+        RewardReputationToTeam(947, m_ReputationCapture, HORDE);
     }
     //for flag capture is reward 2 honorable kills
     RewardHonorToTeam(GetBonusHonorFromKill(2), Source->GetTeam());
@@ -682,19 +682,9 @@ void BattlegroundWS::Reset()
     _flagState[TEAM_HORDE]           = BG_WS_FLAG_STATE_ON_BASE;
     m_TeamScores[TEAM_ALLIANCE]      = 0;
     m_TeamScores[TEAM_HORDE]         = 0;
-
-    if (sBattlegroundMgr->IsBGWeekend(GetTypeID()))
-    {
-        m_ReputationCapture = 45;
-        m_HonorWinKills = 3;
-        m_HonorEndKills = 4;
-    }
-    else
-    {
-        m_ReputationCapture = 35;
-        m_HonorWinKills = 1;
-        m_HonorEndKills = 2;
-    }
+    m_ReputationCapture              = 85;
+    m_HonorWinKills                  = 1;
+    m_HonorEndKills                  = 4;
     _minutesElapsed                  = 0;
     _lastFlagCaptureTeam             = 0;
     _bothFlagsKept                   = false;

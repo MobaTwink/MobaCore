@@ -934,12 +934,13 @@ void Battleground::EndBattleground(uint32 winner)
 			{
 				player->ModifyArenaPoints((team == winner) ? 25 : 5);
 				player->ModifyHonorPoints(25);
+                player->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(1011), (team == winner) ? 35 : 25);
 				
-				if(team == winner)
+				if(team == winner) {
 					ArenaTeam->ArenaWin(player);
-				else
+				} else {
 					ArenaTeam->ArenaTry(player);
-
+				}
 				ArenaTeam->SaveToDB();
 				ArenaTeam->NotifyStatsChanged();
 			}
