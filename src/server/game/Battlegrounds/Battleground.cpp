@@ -488,7 +488,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
 		{
             // Announce BG starting
             if (sWorld->getBoolConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_ENABLE))
-                sWorld->SendWorldText(MOBA_BG_OPEN_SOON, GetName());
+                sWorld->SendWorldText(NEVA_BG_OPEN_SOON, GetName());
 		}
     }
     // After 1 minute or 30 seconds, warning is signaled

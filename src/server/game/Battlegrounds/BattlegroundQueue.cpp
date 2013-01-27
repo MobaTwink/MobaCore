@@ -224,13 +224,13 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
 			    std::string name("|Hplayer:"+leader->GetName()+"|h"+leader->GetName()+"|h|r");
                 // System message
 				if (q_min_level == 10)
-					sWorld->SendWorldText(MOBA_BG_QUEU, bgName, color.c_str(), name.c_str(), qAlliance, qHorde);
+					sWorld->SendWorldText(NEVA_BG_QUEU, bgName, color.c_str(), name.c_str(), qAlliance, qHorde);
 
 				else if (ArenaType == 3)
-					sWorld->SendWorldText(MOBA_BG_QUEU, "3v3", color.c_str(), name.c_str(), qAlliance, qHorde);
+					sWorld->SendWorldText(NEVA_BG_QUEU, "3v3", color.c_str(), name.c_str(), qAlliance, qHorde);
 
 				else if (ArenaType == 5 )
-					sWorld->SendWorldText(MOBA_ARENA_DUEL,  color.c_str(), name.c_str());
+					sWorld->SendWorldText(NEVA_ARENA_DUEL,  color.c_str(), name.c_str());
 
 				else if (ArenaType == 2 )
 				{
@@ -240,11 +240,11 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
 						uint32 rate(RatedTeam->GetRating());
 						std::ostringstream oss; oss << rate;
 						std::string rank("|cffffffff"+oss.str()+"|r");
-						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, rank.c_str(), color.c_str(), name.c_str());
+						sWorld->SendWorldText(NEVA_ARENA_SKIRMISH, ArenaType, ArenaType, rank.c_str(), color.c_str(), name.c_str());
 					}
 					else
 					{
-						sWorld->SendWorldText(MOBA_ARENA_SKIRMISH, ArenaType, ArenaType, "|cff939393No Team|r", color.c_str(), name.c_str());
+						sWorld->SendWorldText(NEVA_ARENA_SKIRMISH, ArenaType, ArenaType, "|cff939393No Team|r", color.c_str(), name.c_str());
 					}
 				}
 			}

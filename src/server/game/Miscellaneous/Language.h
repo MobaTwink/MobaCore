@@ -1099,21 +1099,21 @@ enum TrinityStrings
     LANG_AUTO_BROADCAST                 = 11000,
     LANG_INVALID_REALMID                = 11001,
 
-	//Moba Custom Announces
-	MOBA_ARENA_DUEL		                     = 12000,
-	MOBA_ARENA_SKIRMISH	                     = 12001,
-	MOBA_BG_QUEU		                     = 12002,
-	MOBA_ARATHI_QUEU	                     = 12005,
-	MOBA_BG_OPEN_SOON	                     = 12003,
-	MOBA_BG_STARTED		                     = 12004,
-	MOBA_GLOBAL_CHAT	                     = 12006,
-	MOBA_CHATBOX		                     = 12007,
-	MOBA_DALARAN_ALLIANCE_RUNWEAVER_ATTACK   = 12008,
-	MOBA_DALARAN_ALLIANCE_RUNWEAVER_CONTROL  = 12009,
-	MOBA_DALARAN_ALLIANCE_RUNWEAVER_DEFEND   = 12010,
-	MOBA_DALARAN_HORDE_RUNWEAVER_ATTACK      = 12011,
-	MOBA_DALARAN_HORDE_RUNWEAVER_CONTROL     = 12012,
-	MOBA_DALARAN_HORDE_RUNWEAVER_DEFEND      = 12013
+	//Neva Custom Announces
+	NEVA_ARENA_DUEL		                     = 12000,
+	NEVA_ARENA_SKIRMISH	                     = 12001,
+	NEVA_BG_QUEU		                     = 12002,
+	NEVA_ARATHI_QUEU	                     = 12005,
+	NEVA_BG_OPEN_SOON	                     = 12003,
+	NEVA_BG_STARTED		                     = 12004,
+	NEVA_GLOBAL_CHAT	                     = 12006,
+	NEVA_CHATBOX		                     = 12007,
+	NEVA_DALARAN_ALLIANCE_RUNWEAVER_ATTACK   = 12008,
+	NEVA_DALARAN_ALLIANCE_RUNWEAVER_CONTROL  = 12009,
+	NEVA_DALARAN_ALLIANCE_RUNWEAVER_DEFEND   = 12010,
+	NEVA_DALARAN_HORDE_RUNWEAVER_ATTACK      = 12011,
+	NEVA_DALARAN_HORDE_RUNWEAVER_CONTROL     = 12012,
+	NEVA_DALARAN_HORDE_RUNWEAVER_DEFEND      = 12013
 
 /* SQL to add to the DB :
 DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12013';

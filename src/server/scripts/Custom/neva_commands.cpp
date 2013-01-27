@@ -2,10 +2,10 @@
 #include "Chat.h"
 #include "Language.h"
 
-class moba_commands : public CommandScript
+class neva_commands : public CommandScript
 {
    public:
-       moba_commands() : CommandScript("mobacommands") { }
+       neva_commands() : CommandScript("nevacommands") { }
 
        static bool HandleArenaCommand(ChatHandler* handler, const char* /*args*/)
        {
@@ -42,18 +42,18 @@ class moba_commands : public CommandScript
 
        ChatCommand* GetCommands() const
        {
-           static ChatCommand MobaCommands[] =
+           static ChatCommand NevaCommands[] =
            {
                { "arena",          SEC_PLAYER,          false, &HandleArenaCommand,		 "", NULL },
                { "bg",		       SEC_PLAYER,          false, &HandleBGCommand,		 "", NULL },
 			   { "talents",        SEC_PLAYER,          false, &HandleTalentsCommand,	 "", NULL },
                { NULL,             0,			    	false, NULL,		    	     "", NULL }
            };
-           return MobaCommands;
+           return NevaCommands;
        }
 };
 
-void AddSC_moba_commands()
+void AddSC_neva_commands()
 {
-   new moba_commands();
+   new neva_commands();
 }
