@@ -1017,9 +1017,9 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
         damage = CalcArmorReducedDamage(victim, damage, spellInfo, attackType);
 		
 		if (victim->GetTypeId() == TYPEID_PLAYER && !victim->HasInArc(M_PI, this) && !victim->HasAuraType(SPELL_AURA_IGNORE_HIT_DIRECTION))
-			damage = uint32(damage * 1.10f) ;
+			damage = uint32(damage * 1.05f) ;
 		else
-			damage = uint32(damage * 0.75f) ;
+			damage = uint32(damage * 0.85f) ;
 	}
 
     bool blocked = false;
