@@ -161,6 +161,8 @@ bool BattlefieldWG::Update(uint32 diff)
 
 			m_runeweaverHorde = SpawnGameObject(GO_DALARAN_RUNEWEAVER_HORDE_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
 
+			sWorld->SendWorldText(MOBA_DALARAN_HORDE_RUNWEAVER_CONTROL);
+
 			ShowNpc(m_spiritHorde, false);
 			HideNpc(m_spiritAlliance);
 //			m_BannerCount++;
@@ -181,6 +183,8 @@ bool BattlefieldWG::Update(uint32 diff)
 				m_runeweaverAContested->RemoveFromWorld();
 
 			m_runeweaverHorde = SpawnGameObject(GO_DALARAN_RUNWEAVER_ALLIANCE_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
+
+			sWorld->SendWorldText(MOBA_DALARAN_ALLIANCE_RUNWEAVER_CONTROL);
 
 			ShowNpc(m_spiritAlliance, false);
 			HideNpc(m_spiritHorde);
@@ -467,6 +471,8 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId)
 		if (BfGraveyard* graveyard = GetGraveyardById(0))
 			graveyard->GiveControlTo(TEAM_NEUTRAL);
 		
+		sWorld->SendWorldText(MOBA_DALARAN_ALLIANCE_RUNWEAVER_ATTACK);
+		
 		m_runeweaverBannerTimerAlliance = CAPTURE_TIME;
 		go->RemoveFromWorld();
 		m_runeweaverAContested = SpawnGameObject(GO_DALARAN_RUNWEAVER_ACONTESTED_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
@@ -477,6 +483,8 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId)
 	{
 		if (BfGraveyard* graveyard = GetGraveyardById(0))
 			graveyard->GiveControlTo(TEAM_NEUTRAL);
+
+		sWorld->SendWorldText(MOBA_DALARAN_HORDE_RUNWEAVER_ATTACK);
 		
 		m_runeweaverBannerTimerHorde = CAPTURE_TIME;
 		go->RemoveFromWorld();
@@ -488,6 +496,8 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId)
 	{
 		if (BfGraveyard* graveyard = GetGraveyardById(0))
 			graveyard->GiveControlTo(TEAM_ALLIANCE);
+
+		sWorld->SendWorldText(MOBA_DALARAN_ALLIANCE_RUNWEAVER_DEFEND);
 		
 		m_runeweaverBannerTimerHorde = 0;
 		go->RemoveFromWorld();
@@ -501,6 +511,8 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId)
 	{
 		if (BfGraveyard* graveyard = GetGraveyardById(0))
 			graveyard->GiveControlTo(TEAM_HORDE);
+
+		sWorld->SendWorldText(MOBA_DALARAN_ALLIANCE_HORDE_DEFEND);
 		
 		m_runeweaverBannerTimerAlliance = 0;
 		go->RemoveFromWorld();

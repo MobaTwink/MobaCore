@@ -1100,24 +1100,36 @@ enum TrinityStrings
     LANG_INVALID_REALMID                = 11001,
 
 	//Moba Custom Announces
-	MOBA_ARENA_DUEL						= 12000,
-	MOBA_ARENA_SKIRMISH					= 12001,
-	MOBA_BG_QUEU						= 12002,
-	MOBA_ARATHI_QUEU					= 12005,
-	MOBA_BG_OPEN_SOON					= 12003,
-	MOBA_BG_STARTED						= 12004,
-	MOBA_GLOBAL_CHAT					= 12006,
-	MOBA_CHATBOX						= 12007
+	MOBA_ARENA_DUEL		                     = 12000,
+	MOBA_ARENA_SKIRMISH	                     = 12001,
+	MOBA_BG_QUEU		                     = 12002,
+	MOBA_ARATHI_QUEU	                     = 12005,
+	MOBA_BG_OPEN_SOON	                     = 12003,
+	MOBA_BG_STARTED		                     = 12004,
+	MOBA_GLOBAL_CHAT	                     = 12006,
+	MOBA_CHATBOX		                     = 12007,
+	MOBA_DALARAN_ALLIANCE_RUNWEAVER_ATTACK   = 12008,
+	MOBA_DALARAN_ALLIANCE_RUNWEAVER_CONTROL  = 12009,
+	MOBA_DALARAN_ALLIANCE_RUNWEAVER_DEFEND   = 12010,
+	MOBA_DALARAN_HORDE_RUNWEAVER_ATTACK      = 12011,
+	MOBA_DALARAN_HORDE_RUNWEAVER_CONTROL     = 12012,
+	MOBA_DALARAN_HORDE_RUNWEAVER_DEFEND      = 12013
 
 /* SQL to add to the DB :
-DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12005';
+DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12013';
 INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
 ('12005', '[|cffff961b%s|r]:|cffffffff %s|r join\'d.', '[|cffff961b%s|r]:|cffffffff%s|r est rentrer.'),
 ('12004', '[|cff9d69f3%s|r]:|cff74fa2b Started!|r', '[|cff9d69f3%s|r]:|cff74fa2b Commence!|r'),
 ('12003', '[|cff9d69f3%s|r]:|cff49fcaa Open in 2min...|r', '[|cff9d69f3%s|r]:|cff49fcaa Débute dans 2min...|r'),
 ('12002', '[|cff9d69f3%s|r]:|cffffffff %s|r join\'d -|cff3898fa %u Alliance|r for|cfffa2b2b %u Horde|r.', '[|cff9d69f3%s|r]:|cffffffff %s|r est dans la file -|cff3898fa %u Alliance|r pour|cfffa2b2b %u Horde|r.'),
 ('12001', '[|cffff0006%uv%u|r]:|cffffffff %s|r join\'d.', '[|cffff0006%uv%u|r]:|cffffffff %s|r est prêt.'),
-('12000', '[|cff79f369Duels|r]:|cffffffff %s|r join\'d.', '[|cff79f369Duels|r]:|cffffffff %s|r est prêt.');
+('12000', '[|cff79f369Duels|r]:|cffffffff %s|r join\'d.', '[|cff79f369Duels|r]:|cffffffff %s|r est prêt.'),
+('12008', '|cff3898faThe Runeweaver Square graveyard will be controled by the Alliance in a minute.', '|cff3898faL\'Alliance contrôlera le cimetière de la place Tissrune dans une minute.'),
+('12009', '|cff3898faThe Alliance is controling the Runeweaver Square graveyard.', '|cff3898faL\'Alliance contrôle le cimetière de la place Tissrune.'),
+('12010', '|cff3898faThe Alliance defended the Runeweaver Square graveyard.', '|cff3898faL\'Alliance à défendu le cimetière de la place Tissrune.'),
+('12011', '|cfffa2b2bThe Runeweaver Square graveyard will be controled by the Horde in a minute.', '|cfffa2b2bLa Horde contrôlera le cimetière de la place Tissrune dans une minute.'),
+('12012', '|cfffa2b2bThe Horde is controling the Runeweaver Square graveyard.', '|cfffa2b2bLa Horde contrôle le cimetière de la place Tissrune.'),
+('12013', '|cfffa2b2bThe Horde defended the Runeweaver Square graveyard.', '|cfffa2b2bLa Horde à défendu le cimetière de la place Tissrune.');
 */
 
     // NOT RESERVED IDS                   12000-1999999999
