@@ -512,7 +512,7 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId)
 		if (BfGraveyard* graveyard = GetGraveyardById(0))
 			graveyard->GiveControlTo(TEAM_HORDE);
 
-		sWorld->SendWorldText(MOBA_DALARAN_ALLIANCE_HORDE_DEFEND);
+		sWorld->SendWorldText(MOBA_DALARAN_HORDE_RUNWEAVER_DEFEND);
 		
 		m_runeweaverBannerTimerAlliance = 0;
 		go->RemoveFromWorld();
