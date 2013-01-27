@@ -1823,9 +1823,12 @@ void Player::Update(uint32 p_time)
         TeleportTo(m_teleport_dest, m_teleport_options);
 	
 	//Give Speed Buff Yo
-    uint32 zone = GetZoneId();
-    if ((zone == 3358 || zone == 3711))
-		CastSpell(this, isInCombat() ? 22586 : 22590, true);
+	uint32 visual_buff = 35847;
+    if (GetZoneId() == 4395 && isInCombat()) {
+		CastSpell(this, visual_buff, true);
+    } else {
+        RemoveAurasDueToSpell(visual_buff);
+    }
 }
 
 void Player::setDeathState(DeathState s)
