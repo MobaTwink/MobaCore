@@ -13,3 +13,4 @@ build*/
 *.BACKUP.*
 *.BASE.*
 *.LOCAL.*
+src/server/www/
