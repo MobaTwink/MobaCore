@@ -1294,15 +1294,6 @@ uint32 Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
 
     if (!isAlive())
     {
-        if (type == DAMAGE_FALL)                               // DealDamage not apply item durability loss at self damage
-        {
-            sLog->outDebug(LOG_FILTER_PLAYER, "We are fall to death, loosing 10 percents durability");
-            DurabilityLossAll(0.10f, false);
-            // durability lost message
-            WorldPacket data2(SMSG_DURABILITY_DAMAGE_DEATH, 0);
-            GetSession()->SendPacket(&data2);
-        }
-
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DEATHS_FROM, 1, type);
     }
 
@@ -7238,8 +7229,40 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
     UpdateHonorFields();
 
     // do not reward honor in arenas, but return true to enable onkill spellproc
-    if (InBattleground() && GetBattleground() && GetBattleground()->isArena())
+    if (InBattleground() && GetBattleground() && GetBattleground()->isArena()) {
         return true;
+    }
+	if (victim->ToPlayer()) {
+		std::string msg("");
+		std::string killArray[9] = { "destroyed", "slain", "murdered", "executed", "butchered", "assassinate", "slaughter", "massacred", "killed" };
+		std::string killText = killArray[uint32(urand(0, 8))];
+		std::string name("|Hplayer:"+GetName()+"|h"+GetName()+"|h|r");;
+		std::string victimename("[|Hplayer:"+victim->GetName()+"|h"+victim->GetName()+"|h]|r");
+		std::string areaName("an Arena");
+		if (victim->ToPlayer()->GetTeamId()) {
+			victimename = "|cfffa2b2b"+victimename;
+		} else {
+			victimename = "|cff0089fe"+victimename;
+		}
+		if (GetTeamId()) {
+			name = "|cfffa2b2b"+name;
+		} else {
+			name = "|cff0089fe"+name;
+		}
+		if (victim == this) {
+			msg = name+" has extinguish his own life !";
+		} else {
+			if (!InArena()) {
+				AreaTableEntry const* area = GetAreaEntryByAreaID(GetAreaId());
+				if (area)
+				{
+					areaName = area->area_name[0];
+				}
+			}
+			msg = victimename+" has been "+killText+" by "+name+" in "+areaName+"." ;
+		}
+        sWorld->SendGlobalText(msg.c_str(), 0);
+    }
 
     // Promote to float for calculations
     float honor_f = (float)honor;

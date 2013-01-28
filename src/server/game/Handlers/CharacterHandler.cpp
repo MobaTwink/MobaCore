@@ -839,7 +839,24 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
         // send server info
         if (sWorld->getIntConfig(CONFIG_ENABLE_SINFO_LOGIN) == 1)
             chH.PSendSysMessage(_FULLVERSION);
-
+		
+		std::string userName("console");
+		PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_NAME);
+		stmt->setUInt32(0, GetAccountId() /*pCurrChar->GetSession()->GetAccountId() */);
+		PreparedQueryResult result = LoginDatabase.Query(stmt);
+		if (result) {
+			Field* fields = result->Fetch();
+			userName      = fields[0].GetString();
+		}
+		switch(GetPlayer()->GetSession()->GetSecurity()) {
+			case 0: userName = ("|cff939393"+userName+"|r");  break;
+			case 1: userName = ("|cffefc9a0"+userName+"|r");  break;
+			case 2: userName = ("|cffc784ff"+userName+"|r");  break;
+			case 3: userName = ("|cff9ffd43"+userName+"|r");  break;
+			case 4: userName = ("|cff01b2f1"+userName+"|r");  break;
+		} 
+		sWorld->SendGlobalText(("<|Hplayer:"+pCurrChar->GetName()+"|h"+userName+"|h> is online.").c_str(), 0);
+		
         sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Sent server info");
     }
 

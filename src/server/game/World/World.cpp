@@ -2236,12 +2236,10 @@ void World::SendGlobalText(const char* text, WorldSession* self)
     char* buf = strdup(text);
     char* pos = buf;
 
-    while (char* line = ChatHandler::LineFromMessage(pos))
-    {
-        ChatHandler::FillMessageData(&data, NULL, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, NULL, 0, line, NULL);
+    while (char* line = ChatHandler::LineFromMessage(pos)) {
+        ChatHandler::FillMessageData(&data, NULL, CHAT_MSG_COMBAT_MISC_INFO, LANG_UNIVERSAL, NULL, 0, line, NULL);
         SendGlobalMessage(&data, self);
     }
-
     free(buf);
 }
 
