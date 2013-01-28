@@ -418,45 +418,32 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
             ChatHandler::FillMessageData(&data, this, CHAT_MSG_BATTLEGROUND_LEADER, lang, "", 0, msg.c_str(), NULL);
             group->BroadcastPacket(&data, false);
         } break;
-        case CHAT_MSG_CHANNEL:
-        {
-            if (ChannelMgr* cMgr = ChannelMgr::forTeam(_player->GetTeam()))
-            {
-                if (Channel* chn = cMgr->GetChannel(channel, _player))
-				{
-					if( chn->GetChannelId() == 1)
-					{
+        case CHAT_MSG_CHANNEL: {
+            if (ChannelMgr* cMgr = ChannelMgr::forTeam(_player->GetTeam())) {
+                if (Channel* chn = cMgr->GetChannel(channel, _player)) {
+					if( chn->GetChannelId() == 1) {
 						sScriptMgr->OnPlayerChat(GetPlayer(), type, lang, msg);
 						std::string color("|cffffffff");
 						std::string rank("<Console>");
 						std::string name(GetPlayer()->GetName());
 						std::string userName("console");
-
-						// Get Account name :
 						PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_NAME);
 						stmt->setUInt32(0, GetPlayer()->GetSession()->GetAccountId());
 						PreparedQueryResult result = LoginDatabase.Query(stmt);
-			
-						if (result)
-						{
+						if (result) {
 							Field* fields = result->Fetch();
 							userName      = fields[0].GetString();
 						}
-			
 						color = (GetPlayer()->GetTeam() == HORDE) ? "|cfffa2b2b" : "|cff3898fa";
-						switch(GetPlayer()->GetSession()->GetSecurity())
-						{
+						switch(GetPlayer()->GetSession()->GetSecurity()) {
 							case 0: rank = ("|cff939393"+userName+"|r");  break;
 							case 1: rank = ("|cffefc9a0"+userName+"|r");  break;
 							case 2: rank = ("|cffc784ff"+userName+"|r");  break;
 							case 3: rank = ("|cff9ffd43"+userName+"|r");  break;
 							case 4: rank = ("|cff01b2f1"+userName+"|r");  break;
 						} 
-			
 						msg = color+"<"+rank+color+"> |r"+msg ;
-						//sWorld->SendGlobalText(SetChatText.c_str(), 0);
 					}
-
                     sScriptMgr->OnPlayerChat(_player, type, lang, msg, chn);
                     chn->Say(_player->GetGUID(), msg.c_str(), lang);
                 }
