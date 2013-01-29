@@ -434,7 +434,7 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recvData)
 							Field* fields = result->Fetch();
 							userName      = fields[0].GetString();
 						}
-						color = (GetPlayer()->GetTeam() == HORDE) ? "|cfffa2b2b" : "|cff3898fa";
+						color = (GetPlayer()->GetTeam() == HORDE) ? "|cffff2400" : "|cff00aeff";
 						switch(GetPlayer()->GetSession()->GetSecurity()) {
 							case 0: rank = ("|cff939393"+userName+"|r");  break;
 							case 1: rank = ("|cffefc9a0"+userName+"|r");  break;

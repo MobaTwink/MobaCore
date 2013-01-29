@@ -220,7 +220,7 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, Battlegr
                         qAlliance, (MinPlayers > qAlliance) ? MinPlayers - qAlliance : (uint32)0, qHorde, (MinPlayers > qHorde) ? MinPlayers - qHorde : (uint32)0);
                 }
 				
-			    std::string color((ginfo->Team == HORDE) ? "|cfffa2b2b" : "|cff3898fa");
+			    std::string color((ginfo->Team == HORDE) ? "|cffff2400" : "|cff00aeff");
 			    std::string name("|Hplayer:"+leader->GetName()+"|h"+leader->GetName()+"|h|r");
                 // System message
 				if (q_min_level == 10)

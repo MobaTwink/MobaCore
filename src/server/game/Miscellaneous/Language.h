@@ -1121,15 +1121,15 @@ INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
 ('12005', '[|cffff961b%s|r]:|cffffffff %s|r join\'d.', '[|cffff961b%s|r]:|cffffffff%s|r est rentrer.'),
 ('12004', '[|cff9d69f3%s|r]:|cff74fa2b Started!|r', '[|cff9d69f3%s|r]:|cff74fa2b Commence!|r'),
 ('12003', '[|cff9d69f3%s|r]:|cff49fcaa Open in 2min...|r', '[|cff9d69f3%s|r]:|cff49fcaa Débute dans 2min...|r'),
-('12002', '[|cff9d69f3%s|r]:|cffffffff %s|r join\'d -|cff3898fa %u Alliance|r for|cfffa2b2b %u Horde|r.', '[|cff9d69f3%s|r]:|cffffffff %s|r est dans la file -|cff3898fa %u Alliance|r pour|cfffa2b2b %u Horde|r.'),
+('12002', '[|cff9d69f3%s|r]:|cffffffff %s|r join\'d -|cff00aeff %u Alliance|r for|cffff2400 %u Horde|r.', '[|cff9d69f3%s|r]:|cffffffff %s|r est dans la file -|cff00aeff %u Alliance|r pour|cffff2400 %u Horde|r.'),
 ('12001', '[|cffff0006%uv%u|r]:|cffffffff %s|r join\'d.', '[|cffff0006%uv%u|r]:|cffffffff %s|r est prêt.'),
 ('12000', '[|cff79f369Duels|r]:|cffffffff %s|r join\'d.', '[|cff79f369Duels|r]:|cffffffff %s|r est prêt.'),
-('12008', '|cff3898faThe Runeweaver Square graveyard will be controled by the Alliance in a minute.', '|cff3898faL\'Alliance contrôlera le cimetière de la place Tissrune dans une minute.'),
-('12009', '|cff3898faThe Alliance is controling the Runeweaver Square graveyard.', '|cff3898faL\'Alliance contrôle le cimetière de la place Tissrune.'),
-('12010', '|cff3898faThe Alliance defended the Runeweaver Square graveyard.', '|cff3898faL\'Alliance à défendu le cimetière de la place Tissrune.'),
-('12011', '|cfffa2b2bThe Runeweaver Square graveyard will be controled by the Horde in a minute.', '|cfffa2b2bLa Horde contrôlera le cimetière de la place Tissrune dans une minute.'),
-('12012', '|cfffa2b2bThe Horde is controling the Runeweaver Square graveyard.', '|cfffa2b2bLa Horde contrôle le cimetière de la place Tissrune.'),
-('12013', '|cfffa2b2bThe Horde defended the Runeweaver Square graveyard.', '|cfffa2b2bLa Horde à défendu le cimetière de la place Tissrune.');
+('12008', '|cff00aeffThe Runeweaver Square graveyard will be controled by the Alliance in a minute.', '|cff00aeffL\'Alliance contrôlera le cimetière de la place Tissrune dans une minute.'),
+('12009', '|cff00aeffThe Alliance is controling the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance contrôle le cimetière de la place Tissrune.'),
+('12010', '|cff00aeffThe Alliance defended the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance à défendu le cimetière de la place Tissrune.'),
+('12011', '|cffff2400The Runeweaver Square graveyard will be controled by the Horde in a minute.', '|cffff2400La Horde contrôlera le cimetière de la place Tissrune dans une minute.'),
+('12012', '|cffff2400The Horde is controling the Runeweaver Square graveyard.', '|cffff2400La Horde contrôle le cimetière de la place Tissrune.'),
+('12013', '|cffff2400The Horde defended the Runeweaver Square graveyard.', '|cffff2400La Horde à défendu le cimetière de la place Tissrune.');
 */
 
     // NOT RESERVED IDS                   12000-1999999999
