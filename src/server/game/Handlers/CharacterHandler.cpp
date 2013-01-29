@@ -842,13 +842,13 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 		
 		std::string userName("console");
 		PreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_NAME);
-		stmt->setUInt32(0, GetAccountId() /*pCurrChar->GetSession()->GetAccountId() */);
+		stmt->setUInt32(0, GetAccountId());
 		PreparedQueryResult result = LoginDatabase.Query(stmt);
 		if (result) {
 			Field* fields = result->Fetch();
 			userName      = fields[0].GetString();
 		}
-		switch(GetPlayer()->GetSession()->GetSecurity()) {
+		switch(GetSecurity()) {
 			case 0: userName = ("|cff939393"+userName+"|r");  break;
 			case 1: userName = ("|cffefc9a0"+userName+"|r");  break;
 			case 2: userName = ("|cffc784ff"+userName+"|r");  break;

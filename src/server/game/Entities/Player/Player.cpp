@@ -438,13 +438,43 @@ KillRewarder::KillRewarder(Player* killer, Unit* victim, bool isBattleGround) :
     _groupRate(1.0f), _maxNotGrayMember(NULL), _count(0), _sumLevel(0), _xp(0),
     _isFullXP(false), _maxLevel(0), _isBattleGround(isBattleGround), _isPvP(false)
 {
-    // mark the credit as pvp if victim is player
-    if (victim->GetTypeId() == TYPEID_PLAYER)
+	if (victim->GetTypeId() == TYPEID_PLAYER) { // mark the credit as pvp if victim is player
         _isPvP = true;
-    // or if its owned by player and its not a vehicle
-    else if (IS_PLAYER_GUID(victim->GetCharmerOrOwnerGUID()))
-        _isPvP = !victim->IsVehicle();
-
+		if (killer->InArena() || !killer->InBattleground()) {
+			Player* plrVictim = victim->ToPlayer();
+			std::string msg("");
+			std::string killArray[9] = { "destroyed", "slain", "murdered", "executed", "butchered", "assassinate", "slaughter", "massacred", "killed" };
+			std::string killText = killArray[uint32(urand(0, 8))];
+			std::string name("|Hplayer:"+killer->GetName()+"|h"+killer->GetName()+"|h|r]");;
+			std::string victimename("|Hplayer:"+plrVictim->GetName()+"|h"+plrVictim->GetName()+"|h|r]");
+			std::string areaName("an Arena");
+			if (plrVictim->GetTeamId()) {
+				victimename = " [|cffff2400"+victimename;
+			} else {
+				victimename = " [|cff00aeff"+victimename;
+			}
+			if (killer->GetTeamId()) {
+				name = "[|cffff2400"+name;
+			} else {
+				name = "[|cff00aeff"+name;
+			}
+			if (plrVictim == killer) {
+				msg = name+" has extinguish his own life !";
+			} else {
+				if (!killer->InArena()) {
+					AreaTableEntry const* area = GetAreaEntryByAreaID(killer->GetAreaId());
+					if (area) {
+						areaName = area->area_name[0];
+					}
+				}
+				msg = name+" has "+killText+victimename+" in "+areaName+"." ;
+			}
+			sWorld->SendGlobalText(msg.c_str(), 0);
+		}
+	}
+    else if (IS_PLAYER_GUID(victim->GetCharmerOrOwnerGUID())) {
+        _isPvP = !victim->IsVehicle(); // or if its owned by player and its not a vehicle
+	}
     _InitGroupData();
 }
 
@@ -1292,8 +1322,7 @@ uint32 Player::EnvironmentalDamage(EnviromentalDamage type, uint32 damage)
 
     uint32 final_damage = DealDamage(this, damage, NULL, SELF_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
-    if (!isAlive())
-    {
+    if (!isAlive()) {
         UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DEATHS_FROM, 1, type);
     }
 
@@ -7232,70 +7261,37 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
     if (InBattleground() && GetBattleground() && GetBattleground()->isArena()) {
         return true;
     }
-	if (victim->ToPlayer()) {
-		std::string msg("");
-		std::string killArray[9] = { "destroyed", "slain", "murdered", "executed", "butchered", "assassinate", "slaughter", "massacred", "killed" };
-		std::string killText = killArray[uint32(urand(0, 8))];
-		std::string name("|Hplayer:"+GetName()+"|h"+GetName()+"|h|r");;
-		std::string victimename("[|Hplayer:"+victim->GetName()+"|h"+victim->GetName()+"|h]|r");
-		std::string areaName("an Arena");
-		if (victim->ToPlayer()->GetTeamId()) {
-			victimename = "|cfffa2b2b"+victimename;
-		} else {
-			victimename = "|cff0089fe"+victimename;
-		}
-		if (GetTeamId()) {
-			name = "|cfffa2b2b"+name;
-		} else {
-			name = "|cff0089fe"+name;
-		}
-		if (victim == this) {
-			msg = name+" has extinguish his own life !";
-		} else {
-			if (!InArena()) {
-				AreaTableEntry const* area = GetAreaEntryByAreaID(GetAreaId());
-				if (area)
-				{
-					areaName = area->area_name[0];
-				}
-			}
-			msg = victimename+" has been "+killText+" by "+name+" in "+areaName+"." ;
-		}
-        sWorld->SendGlobalText(msg.c_str(), 0);
-    }
 
     // Promote to float for calculations
     float honor_f = (float)honor;
 
-    if (honor_f <= 0)
-    {
-        if (!victim || victim == this || victim->HasAuraType(SPELL_AURA_NO_PVP_CREDIT))
+    if (honor_f <= 0) {
+        if (!victim || victim == this || victim->HasAuraType(SPELL_AURA_NO_PVP_CREDIT)) {
             return false;
-		
-		if (victim->HasAura(23451)) {
-			CastSpell(this, 23451, true);
 		}
-		if (victim->HasAura(23505)) {
-			CastSpell(this, 23505, true);
-		}
+		if (victim->HasAura(23451)) { CastSpell(this, 23451, true); } // AURA_STOLEN_SPRINT       = 23451,
+		if (victim->HasAura(23505)) { CastSpell(this, 23505, true); } // AURA_STOLEN_BERSERK      = 23505,
+		if (victim->HasAura(25037)) { CastSpell(this, 25037, true); } // AURA_STOLEN_RHUM5        = 25037,
+		if (victim->HasAura(20875)) { CastSpell(this, 20875, true); } // AURA_STOLEN_RHUM10       = 20875,
+		if (victim->HasAura(25804)) { CastSpell(this, 25804, true); } // AURA_STOLEN_RHUM15       = 25804,
+		if (victim->HasAura(37058)) { CastSpell(this, 37058, true); } // AURA_STOLEN_WHISKEY      = 37058,
+		if (victim->HasAura(6615))  { CastSpell(this, 6615,  true); } // AURA_STOLEN_FREEACTION   = 6615
         victim_guid = victim->GetGUID();
 
-        if (Player* plrVictim = victim->ToPlayer())
-        {
-            if (GetTeam() == plrVictim->GetTeam() && !sWorld->IsFFAPvPRealm())
+        if (Player* plrVictim = victim->ToPlayer()) {
+            if (GetTeam() == plrVictim->GetTeam() && !sWorld->IsFFAPvPRealm()) {
                 return false;
-
-			//No Honor from Noobs
-			if (plrVictim->GetSession()->GetSecurity() == 0)
+			}
+			if (plrVictim->GetSession()->GetSecurity() == 0) {
                 return false;
-
+			}
             uint8 k_level = getLevel();
             uint8 k_grey = Trinity::XP::GetGrayLevel(k_level);
             uint8 v_level = victim->getLevel();
 
-            if (v_level <= k_grey)
+            if (v_level <= k_grey) {
                 return false;
-
+			}
 			if (plrVictim->GetZoneId() == 4395 && sBattlefieldMgr->amountHorde != sBattlefieldMgr->amountAlliance) {
 				float minCount = 10.0f;
 				float amountKiller = 1.0f ;
@@ -7326,6 +7322,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
 					}
 					diffMax = amountVictim * honorMax;
 					diff = diffMax - amountKiller ;
+
 					if(diff > 0) {
 						honor_f = (honor_f / (diffMax - amountVictim)) * diff ;
 						if (honor_f < 1.0f) {
@@ -7342,6 +7339,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
 						amountKiller += add;
 					}
 					diffMax = amountKiller * honorMin;
+
 					if(amountVictim / amountKiller < honorMax) {
 						honor_f += ( (honor_f*5) / diffMax) * (amountVictim - amountKiller) ;
 					} else {
