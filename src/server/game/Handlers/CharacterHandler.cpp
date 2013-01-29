@@ -855,7 +855,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 			case 3: userName = ("|cff9ffd43"+userName+"|r");  break;
 			case 4: userName = ("|cff01b2f1"+userName+"|r");  break;
 		} 
-		sWorld->SendGlobalText(("<|Hplayer:"+pCurrChar->GetName()+"|h"+userName+"|h> is online.").c_str(), 0);
+		sWorld->SendGlobalText(("|Hplayer:"+pCurrChar->GetName()+"|h"+userName+"|h is online.").c_str(), 0);
 		
         sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Sent server info");
     }
