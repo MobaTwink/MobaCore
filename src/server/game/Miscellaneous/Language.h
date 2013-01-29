@@ -1118,12 +1118,14 @@ enum TrinityStrings
 /* SQL to add to the DB :
 DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12013';
 INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
-('12005', '[|cffff961b%s|r]:|cffffffff %s|r join\'d.', '[|cffff961b%s|r]:|cffffffff%s|r est rentrer.'),
+('12000', '[|cff79f369Duels|r]:%s %s is looking for a fight.', '[|cff79f369Duels|r]:%s %s recherche un adversaire.'),
+('12001', '[|cffff0006%uv%u|r]: %s -%s %s is ready.', '[|cffff0006%uv%u|r]: %s -%s %s est pret.'),
+('12002', '[|cff9d69f3%s|r]:%s %s is in the queue -|cff00aeff %u Alliance|r for|cffff2400 %u Horde|r.', '[|cff9d69f3%s|r]:%s %s est dans la file -|cff00aeff %u Alliance|r pour|cffff2400 %u Horde|r.'),
+('12003', '[|cff9d69f3%s|r]:|cff49fcaa Open in 2min...|r', '[|cff9d69f3%s|r]:|cff49fcaa Debute dans 2min...|r'),
 ('12004', '[|cff9d69f3%s|r]:|cff74fa2b Started!|r', '[|cff9d69f3%s|r]:|cff74fa2b Commence!|r'),
-('12003', '[|cff9d69f3%s|r]:|cff49fcaa Open in 2min...|r', '[|cff9d69f3%s|r]:|cff49fcaa Débute dans 2min...|r'),
-('12002', '[|cff9d69f3%s|r]:|cffffffff %s|r join\'d -|cff00aeff %u Alliance|r for|cffff2400 %u Horde|r.', '[|cff9d69f3%s|r]:|cffffffff %s|r est dans la file -|cff00aeff %u Alliance|r pour|cffff2400 %u Horde|r.'),
-('12001', '[|cffff0006%uv%u|r]:|cffffffff %s|r join\'d.', '[|cffff0006%uv%u|r]:|cffffffff %s|r est prêt.'),
-('12000', '[|cff79f369Duels|r]:|cffffffff %s|r join\'d.', '[|cff79f369Duels|r]:|cffffffff %s|r est prêt.'),
+('12005', '[|cffff961b%s|r]:%s %s is on the battlefield.', '[|cffff961b%s|r]:%s %s a rejoint la bataille.'),
+('12006', '%s [%s%s|r]: %s', '%s [%s%s|r]: %s'),
+('12007', '%s%s [', '%s%s ['),
 ('12008', '|cff00aeffThe Runeweaver Square graveyard will be controled by the Alliance in a minute.', '|cff00aeffL\'Alliance contrôlera le cimetière de la place Tissrune dans une minute.'),
 ('12009', '|cff00aeffThe Alliance is controling the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance contrôle le cimetière de la place Tissrune.'),
 ('12010', '|cff00aeffThe Alliance defended the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance à défendu le cimetière de la place Tissrune.'),
