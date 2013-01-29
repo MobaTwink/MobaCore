@@ -445,18 +445,18 @@ KillRewarder::KillRewarder(Player* killer, Unit* victim, bool isBattleGround) :
 			std::string msg("");
 			std::string killArray[9] = { "destroyed", "slain", "murdered", "executed", "butchered", "assassinate", "slaughter", "massacred", "killed" };
 			std::string killText = killArray[uint32(urand(0, 8))];
-			std::string name("|Hplayer:"+killer->GetName()+"|h"+killer->GetName()+"|h|r]");;
-			std::string victimename("|Hplayer:"+plrVictim->GetName()+"|h"+plrVictim->GetName()+"|h|r]");
+			std::string name("|Hplayer:"+killer->GetName()+"|h"+killer->GetName()+"|h|r");;
+			std::string victimename("|Hplayer:"+plrVictim->GetName()+"|h"+plrVictim->GetName()+"|h|r");
 			std::string areaName("an Arena");
 			if (plrVictim->GetTeamId()) {
-				victimename = " [|cffff2400"+victimename;
+				victimename = " |cffff2400"+victimename;
 			} else {
-				victimename = " [|cff00aeff"+victimename;
+				victimename = " |cff00aeff"+victimename;
 			}
 			if (killer->GetTeamId()) {
-				name = "[|cffff2400"+name;
+				name = "|cffff2400"+name;
 			} else {
-				name = "[|cff00aeff"+name;
+				name = "|cff00aeff"+name;
 			}
 			if (plrVictim == killer) {
 				msg = name+" has extinguish his own life !";
@@ -7261,7 +7261,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
     if (InBattleground() && GetBattleground() && GetBattleground()->isArena()) {
         return true;
     }
-
+	
     // Promote to float for calculations
     float honor_f = (float)honor;
 
@@ -7292,61 +7292,6 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
             if (v_level <= k_grey) {
                 return false;
 			}
-			if (plrVictim->GetZoneId() == 4395 && sBattlefieldMgr->amountHorde != sBattlefieldMgr->amountAlliance) {
-				float minCount = 10.0f;
-				float amountKiller = 1.0f ;
-				float amountVictim = 1.0f ;
-				float diff = 1.0f;
-				float diffMax = 1.0f;
-				float honorMax = 1.6f ;
-				float honorMin = 1.6f ;
-
-				if (GetTeamId()) {
-					amountKiller = (float)sBattlefieldMgr->amountHorde ;
-					amountVictim = (float)sBattlefieldMgr->amountAlliance ; 
-				} else {
-					amountKiller = (float)sBattlefieldMgr->amountAlliance ;
-					amountVictim = (float)sBattlefieldMgr->amountHorde ;
-				}
-				if (!amountKiller) {
-					amountKiller = 1.0f;
-				}
-				if (!amountVictim) {
-					amountVictim = 1.0f;
-				}
-				if (amountKiller > amountVictim) {
-					if (amountVictim < minCount) {
-						float add = ( 2*(minCount - amountVictim)) / 3;
-						amountVictim += add;
-						amountKiller += add;
-					}
-					diffMax = amountVictim * honorMax;
-					diff = diffMax - amountKiller ;
-
-					if(diff > 0) {
-						honor_f = (honor_f / (diffMax - amountVictim)) * diff ;
-						if (honor_f < 1.0f) {
-							honor_f = 1.0f;
-						}
-					} else {
-						honor_f = 1.0f ;
-					}
-				}
-				else {
-					if (amountKiller < minCount) {
-						float add = ( 2*(minCount - amountKiller)) / 3;
-						amountVictim += add;
-						amountKiller += add;
-					}
-					diffMax = amountKiller * honorMin;
-
-					if(amountVictim / amountKiller < honorMax) {
-						honor_f += ( (honor_f*5) / diffMax) * (amountVictim - amountKiller) ;
-					} else {
-						honor_f *= 6 ;
-					}
-				}
-			}
 
             // PLAYER_CHOSEN_TITLE VALUES DESCRIPTION
             //  [0]      Just name
@@ -7369,7 +7314,62 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
             else
                 victim_guid = 0;                        // Don't show HK: <rank> message, only log.
 
-            honor_f = ceil(Trinity::Honor::hk_honor_at_level_f(k_level) * (v_level - k_grey) / (k_level - k_grey));
+            honor_f = Trinity::Honor::hk_honor_at_level_f(k_level) * (v_level - k_grey) / (k_level - k_grey);
+			
+			if (plrVictim->GetZoneId() == 4395 && sBattlefieldMgr->amountHorde != sBattlefieldMgr->amountAlliance) {
+				float minCount = 10.0f;
+				float amountKiller = 1.0f;
+				float amountVictim = 1.0f;
+				float diff = 1.0f;
+				float diffMax = 1.0f;
+				float honorMax = 1.6f;
+				float honorMin = 0.6f;
+				if (GetTeamId()) {
+					amountKiller = (float)sBattlefieldMgr->amountHorde;
+					amountVictim = (float)sBattlefieldMgr->amountAlliance; 
+				} else {
+					amountKiller = (float)sBattlefieldMgr->amountAlliance;
+					amountVictim = (float)sBattlefieldMgr->amountHorde;
+				}
+				if (!amountKiller) {
+					amountKiller = 1.0f;
+				}
+				if (!amountVictim) {
+					amountVictim = 1.0f;
+				}
+				if (amountKiller > amountVictim) {
+					if (amountVictim < minCount) {
+						float add = ( 2*(minCount - amountVictim)) / 3;
+						amountVictim += add;
+						amountKiller += add;
+					}
+					diffMax = amountVictim * honorMax;
+					diff = diffMax - amountKiller;
+
+					if(diff > 0) {
+						honor_f = (honor_f / (diffMax - amountVictim)) * diff;
+						if (honor_f < 1.0f) {
+							honor_f = 1.0f;
+						}
+					} else {
+						honor_f = 1.0f;
+					}
+				}
+				else {
+					if (amountKiller < minCount) {
+						float add = ( 2*(minCount - amountKiller)) / 3;
+						amountVictim += add;
+						amountKiller += add;
+					}
+					diffMax = amountKiller * honorMin;
+
+					if(amountVictim / amountKiller < honorMax) {
+						honor_f += ( (honor_f*5) / diffMax) * (amountVictim - amountKiller);
+					} else {
+						honor_f *= 6;
+					}
+				}	
+			}
 
             // count the number of playerkills in one day
             ApplyModUInt32Value(PLAYER_FIELD_KILLS, 1, true);
@@ -7402,7 +7402,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
     honor_f *= ( GetSession()->GetSecurity() > 0 ) ? sWorld->getRate(RATE_HONOR) : 0;
 
     // Back to int now
-    honor = int32(honor_f);
+    honor = int32(ceil(honor_f));
     // honor - for show honor points in log
     // victim_guid - for show victim name in log
     // victim_rank [1..4]  HK: <dishonored rank>

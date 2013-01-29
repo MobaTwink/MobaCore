@@ -78,6 +78,16 @@ class BattlefieldMgr
     BattlefieldMap m_BattlefieldMap;
     // update interval
     uint32 m_UpdateTimer;
+    uint32 m_AnnounceTimer;
+	enum updatedTimers { ANNOUNCE_UPDATE_INTERVAL = 30*MINUTE*IN_MILLISECONDS };
+	float rateUndernumber;
+	float rateOutnumber;
+	float minCount;
+	float amountUndernumber;
+	float amountOutnumber;
+	float diffMax;
+	float honorMax;
+	float honorMin;
 };
 
 #define sBattlefieldMgr ACE_Singleton<BattlefieldMgr, ACE_Null_Mutex>::instance()
