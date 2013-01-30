@@ -1117,7 +1117,7 @@ enum TrinityStrings
 	NEVA_CHEST_EVENT                         = 12014
 
 /* SQL to add to the DB :
-DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12013';
+DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12014';
 INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
 ('12000', '[|cff79f369Duels|r]:%s %s is looking for a fight.', '[|cff79f369Duels|r]:%s %s recherche un adversaire.'),
 ('12001', '[|cffff0006%uv%u|r]: %s -%s %s is ready.', '[|cffff0006%uv%u|r]: %s -%s %s est pret.'),
@@ -1127,12 +1127,12 @@ INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
 ('12005', '[|cffff961b%s|r]:%s %s is on the battlefield.', '[|cffff961b%s|r]:%s %s a rejoint la bataille.'),
 ('12006', '%s [%s%s|r]: %s', '%s [%s%s|r]: %s'),
 ('12007', '%s%s [', '%s%s ['),
-('12008', '|cff00aeffThe Runeweaver Square graveyard will be controled by the Alliance in a minute.', '|cff00aeffL\'Alliance contrôlera le cimetière de la place Tissrune dans une minute.'),
-('12009', '|cff00aeffThe Alliance is controling the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance contrôle le cimetière de la place Tissrune.'),
-('12010', '|cff00aeffThe Alliance defended the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance à défendu le cimetière de la place Tissrune.'),
-('12011', '|cffff2400The Runeweaver Square graveyard will be controled by the Horde in a minute.', '|cffff2400La Horde contrôlera le cimetière de la place Tissrune dans une minute.'),
-('12012', '|cffff2400The Horde is controling the Runeweaver Square graveyard.', '|cffff2400La Horde contrôle le cimetière de la place Tissrune.'),
-('12013', '|cffff2400The Horde defended the Runeweaver Square graveyard.', '|cffff2400La Horde à défendu le cimetière de la place Tissrune.'),
+('12008', '|cff00aeffThe Runeweaver Square graveyard will be controled by the Alliance in a minute.', '|cff00aeffL\'Alliance contrôlera le cimetière de la place Tisserune dans une minute.'),
+('12009', '|cff00aeffThe Alliance is controling the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance contrôle le cimetière de la place Tisserune.'),
+('12010', '|cff00aeffThe Alliance defended the Runeweaver Square graveyard.', '|cff00aeffL\'Alliance à défendu le cimetière de la place Tisserune.'),
+('12011', '|cffff2400The Runeweaver Square graveyard will be controled by the Horde in a minute.', '|cffff2400La Horde contrôlera le cimetière de la place Tisserune dans une minute.'),
+('12012', '|cffff2400The Horde is controling the Runeweaver Square graveyard.', '|cffff2400La Horde contrôle le cimetière de la place Tisserune.'),
+('12013', '|cffff2400The Horde defended the Runeweaver Square graveyard.', '|cffff2400La Horde à défendu le cimetière de la place Tisserune.'),
 ('12014', '|cff74fa2bThe Chest of the Underbelly is here, fight to the death motherfuckers !!', '|cff74fa2bLe Coffre des Entrailles est là, combattez jusqu\à la mort bande de chiens galeux !');
 */
 
