@@ -43,7 +43,8 @@ enum WintergrastData
     BATTLEFIELD_WG_ZONEID                        = 4197,             // Wintergrasp 4197
     BATTLEFIELD_DA_ZONEID                        = 4395,             // Dalaran
     BATTLEFIELD_WG_MAPID                         = 571,               // Northrend
-	CAPTURE_TIME								 = 60000
+	CAPTURE_TIME								 = MINUTE*IN_MILLISECONDS,
+	CHEST_TIME							    	 = 12*HOUR*IN_MILLISECONDS
 };
 
 enum WintergraspSpells
@@ -329,6 +330,8 @@ class BattlefieldWG : public Battlefield
          */
         bool Update(uint32 diff);
 
+		bool AnnonceChest;
+
         /**
          * \brief Called when a creature is created
          * - Update vehicle count
@@ -429,8 +432,12 @@ class BattlefieldWG : public Battlefield
 		uint32 m_runeweaverBannerTimerAlliance;
 		uint32 m_eventideBannerTimerHorde;
 		uint32 m_eventideBannerTimerAlliance;
+		uint32 m_eventideBankTimer;
 		uint32 m_memorialBannerTimerHorde;
 		uint32 m_memorialBannerTimerAlliance;
+		uint32 m_memorialBankTimer;
+		uint32 m_chestTimer;
+		uint32 m_chestDepopTimer;
 
 	//	uint8 m_BannerCount;
 
@@ -446,10 +453,17 @@ class BattlefieldWG : public Battlefield
         GameObject* m_eventideAlliance;
         GameObject* m_eventideHContested;
         GameObject* m_eventideAContested;
+        GameObject* m_eventideSprint;
+        GameObject* m_eventideRegen;
+        GameObject* m_eventideBerserk;
         GameObject* m_memorialHorde;
         GameObject* m_memorialAlliance;
         GameObject* m_memorialHContested;
         GameObject* m_memorialAContested;
+        GameObject* m_memorialSprint;
+        GameObject* m_memorialRegen;
+        GameObject* m_memorialBereserk;
+        GameObject* m_chest;
 };
 
 uint32 const VehNumWorldState[]        = { 3680, 3490 };
@@ -580,6 +594,12 @@ enum WintergraspGameObject
 	GO_DALARAN_MEMORIAL_ALLIANCE_BANNER          = 660009,
 	GO_DALARAN_MEMORIAL_HCONTESTED_BANNER        = 660010,
 	GO_DALARAN_MEMORIAL_ACONTESTED_BANNER        = 660011,
+	
+	GO_DALARAN_CHEST	                         = 900000,
+
+	GO_DALARAN_BUFF_SPRINT                       = 990011,
+	GO_DALARAN_BUFF_REGEN                        = 990022,
+	GO_DALARAN_BUFF_BERSERK                      = 990033,
 	
 	GO_DALARAN_AURA_ALLIANCE                     = 180100,
 	GO_DALARAN_AURA_HORDE                        = 180101,

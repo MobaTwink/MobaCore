@@ -2081,6 +2081,9 @@ void Spell::EffectOpenLock(SpellEffIndex effIndex)
     {
         GameObjectTemplate const* goInfo = gameObjTarget->GetGOInfo();
         // Arathi Basin banner opening. // TODO: Verify correctness of this check
+		if (goInfo->entry == 900000) {
+				sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG)->ProcessEvent(gameObjTarget, 0);
+		}
         if ((goInfo->type == GAMEOBJECT_TYPE_BUTTON && goInfo->button.noDamageImmune) ||
             (goInfo->type == GAMEOBJECT_TYPE_GOOBER && goInfo->goober.losOK))
         {
@@ -2104,8 +2107,7 @@ void Spell::EffectOpenLock(SpellEffIndex effIndex)
             }
 			else
 			{
-				Battlefield* bf = sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG);
-				bf->ProcessEvent(gameObjTarget, 0);
+				sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG)->ProcessEvent(gameObjTarget, 0);
                 return;
 			}
         }

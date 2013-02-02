@@ -63,6 +63,9 @@ bool BattlefieldWG::SetupBattlefield()
     m_TimeForAcceptInvite = 20;
     m_StartGroupingTimer = 15 * MINUTE * IN_MILLISECONDS;
     m_StartGrouping = false;
+	m_chestDepopTimer = 0;
+	m_chestTimer = 1 * MINUTE * IN_MILLISECONDS;
+	AnnonceChest = true;
 
     m_tenacityStack = 0;
 
@@ -166,6 +169,37 @@ bool BattlefieldWG::Update(uint32 diff)
 			ShowNpc(m_spiritHorde, false);
 			HideNpc(m_spiritAlliance);
 //			m_BannerCount++;
+		}
+	}
+	uint32 PlayerCount = sWorld->GetPlayerCount();
+	if (PlayerCount > 1) {
+		if (m_chestTimer > diff) {
+			if (m_chestTimer > (5*MINUTE*IN_MILLISECONDS)) {
+				if (PlayerCount > 24) {
+					PlayerCount = 24;
+				}
+				m_chestTimer -= ceil(PlayerCount / 2) * diff;
+			} else {
+				if (AnnonceChest) {
+					sWorld->SendWorldText(NEVA_CHEST_SOON);
+					AnnonceChest = false;
+				}
+				m_chestTimer -= diff;
+			}
+		} else {
+			sWorld->SendWorldText(NEVA_CHEST_EVENT);
+			m_chest = SpawnGameObject(GO_DALARAN_CHEST, 5804.437500f, 640.036133f, 609.886597f, 2.32635f);
+			m_chestTimer = CHEST_TIME;
+			AnnonceChest = true;
+		}
+	}
+
+	if (m_chestDepopTimer) {
+		if (m_chestDepopTimer > diff) {
+			m_chestDepopTimer -= diff;
+		} else {
+			m_chestDepopTimer = 0;
+		    m_chest->RemoveFromWorld();
 		}
 	}
 
@@ -576,6 +610,9 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId)
 		go->RemoveFromWorld();
 		m_memorialHorde = SpawnGameObject(GO_DALARAN_MEMORIAL_HORDE_BANNER, 5967.001465f, 613.845093f, 650.627136f, 2.810238f); 
 //		m_BannerCount++;
+	}
+	if (go->GetEntry() == GO_DALARAN_CHEST) {
+		m_chestDepopTimer = 4*MINUTE*IN_MILLISECONDS;
 	}
 }
 
