@@ -469,6 +469,9 @@ KillRewarder::KillRewarder(Player* killer, Unit* victim, bool isBattleGround) :
 				}
 				msg = name+" has "+killText+victimename+" in "+areaName+"." ;
 			}
+			if (killer->GetZoneId() == 4395 && killer->HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP)) {
+				killer->AddItem(43016, 1);
+			}
 			sWorld->SendGlobalText(msg.c_str(), 0);
 		}
 	}
@@ -7420,40 +7423,17 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
 
     ApplyModUInt32Value(PLAYER_FIELD_TODAY_CONTRIBUTION, honor, true);
 
-    if (InBattleground() && honor > 0)
-    {
-        if (Battleground* bg = GetBattleground())
-        {
-            bg->UpdatePlayerScore(this, SCORE_BONUS_HONOR, honor, false); //false: prevent looping
-        }
-    }
-
-    if (sWorld->getBoolConfig(CONFIG_PVP_TOKEN_ENABLE) && pvptoken)
-    {
-        if (!victim || victim == this || victim->HasAuraType(SPELL_AURA_NO_PVP_CREDIT))
-            return true;
-
-        if (victim->GetTypeId() == TYPEID_PLAYER)
-        {
-            // Check if allowed to receive it in current map
-			/*
-            uint8 MapType = sWorld->getIntConfig(CONFIG_PVP_TOKEN_MAP_TYPE);
-            if ((MapType == 1 && !InBattleground() && !HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
-                || (MapType == 2 && !HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
-                || (MapType == 3 && !InBattleground())
-                || (MapType == 4 && victim->GetZoneId() != 4398))
-
-                return true; */
-
-			if(!HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP))
-                return true;
-
-            uint32 itemId = sWorld->getIntConfig(CONFIG_PVP_TOKEN_ID);
-            int32 count = sWorld->getIntConfig(CONFIG_PVP_TOKEN_COUNT);
-
-            if (AddItem(itemId, count))
-                ChatHandler(this).PSendSysMessage("You have been awarded a token for slaying another player.");
-        }
+    if (honor > 0) {
+		if (InBattleground()) {
+			if (Battleground* bg = GetBattleground()) {
+				bg->UpdatePlayerScore(this, SCORE_BONUS_HONOR, honor, false); //false: prevent looping
+			}
+		} else {
+			if (!HasByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP)) {
+				FactionEntry const* factionEntryPvp = sFactionStore.LookupEntry(GetTeamId() ? 947 : 946);
+				GetReputationMgr().ModifyReputation(factionEntryPvp, ceil(honor / 2));
+			}
+		}
     }
 
     return true;
