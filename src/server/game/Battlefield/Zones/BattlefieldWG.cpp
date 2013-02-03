@@ -64,7 +64,8 @@ bool BattlefieldWG::SetupBattlefield()
     m_StartGroupingTimer = 15 * MINUTE * IN_MILLISECONDS;
     m_StartGrouping = false;
 	m_chestDepopTimer = 0;
-	m_chestTimer = 1 * MINUTE * IN_MILLISECONDS;
+	//m_chestTimer = uint32(urand(CHEST_TIME*0.25f, CHEST_TIME*0.75f));
+	m_chestTimer = 1* MINUTE * IN_MILLISECONDS;
 	AnnonceChest = true;
 
     m_tenacityStack = 0;
@@ -194,7 +195,7 @@ bool BattlefieldWG::Update(uint32 diff)
 		}
 	}
 
-	if (m_chestDepopTimer) {
+	if (m_chestDepopTimer && m_chest) {
 		if (m_chestDepopTimer > diff) {
 			m_chestDepopTimer -= diff;
 		} else {
@@ -611,7 +612,7 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId)
 		m_memorialHorde = SpawnGameObject(GO_DALARAN_MEMORIAL_HORDE_BANNER, 5967.001465f, 613.845093f, 650.627136f, 2.810238f); 
 //		m_BannerCount++;
 	}
-	if (go->GetEntry() == GO_DALARAN_CHEST) {
+	if (go->GetEntry() == GO_DALARAN_CHEST && m_chest) {
 		m_chestDepopTimer = 4*MINUTE*IN_MILLISECONDS;
 	}
 }
