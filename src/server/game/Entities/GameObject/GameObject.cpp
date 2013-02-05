@@ -474,6 +474,10 @@ void GameObject::Update(uint32 diff)
                             if (ok->ToPlayer()->InBattleground())
                                 if (Battleground* bg = ok->ToPlayer()->GetBattleground())
                                     bg->HandleTriggerBuff(GetGUID());
+
+                            if (ok->ToPlayer()->GetZoneId() == 4395) {
+								sBattlefieldMgr->GetBattlefieldByBattleId(BATTLEFIELD_BATTLEID_WG)->ProcessEvent(this, 0);
+							}
                         }
                     }
                 }

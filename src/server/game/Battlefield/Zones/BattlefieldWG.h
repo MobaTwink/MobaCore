@@ -439,6 +439,7 @@ class BattlefieldWG : public Battlefield
 		uint32 m_chestTimer;
 		uint32 m_chestDepopTimer;
 
+
 	//	uint8 m_BannerCount;
 
 		Creature* m_spiritHorde;
@@ -453,24 +454,22 @@ class BattlefieldWG : public Battlefield
         GameObject* m_eventideAlliance;
         GameObject* m_eventideHContested;
         GameObject* m_eventideAContested;
-        GameObject* m_eventideSprint;
-        GameObject* m_eventideRegen;
-        GameObject* m_eventideBerserk;
+        GameObject* m_eventideBuff;
         GameObject* m_memorialHorde;
         GameObject* m_memorialAlliance;
         GameObject* m_memorialHContested;
         GameObject* m_memorialAContested;
-        GameObject* m_memorialSprint;
-        GameObject* m_memorialRegen;
-        GameObject* m_memorialBereserk;
+        GameObject* m_memorialBuff;
         GameObject* m_chest;
 };
 
+uint32 const EventideBuffs[]            = { 990011, 990022, 990022, 990022, 990033 };
+uint32 const MemorialBuffs[]            = { 990012, 990023, 990023, 990023, 990034 };
 uint32 const VehNumWorldState[]        = { 3680, 3490 };
 uint32 const MaxVehNumWorldState[]     = { 3681, 3491 };
 uint32 const ClockWorldState[]         = { 3781, 4354 };
 uint32 const WintergraspFaction[]      = { 1732, 1735, 35 };
-float const WintergraspStalkerPos[]    = { 4948.985f, 2937.789f, 550.5172f, 1.815142f };
+float  const WintergraspStalkerPos[]   = { 4948.985f, 2937.789f, 550.5172f, 1.815142f };
 
 uint8 const WG_MAX_OBJ              = 32;
 uint8 const WG_MAX_TURRET           = 15;
@@ -582,7 +581,7 @@ enum WintergraspGameObject
 
     GO_WINTERGRASP_KEEP_COLLISION_WALL           = 194323,
 
-	GO_DALARAN_RUNEWEAVER_HORDE_BANNER            = 660000,
+	GO_DALARAN_RUNEWEAVER_HORDE_BANNER           = 660000,
 	GO_DALARAN_RUNWEAVER_ALLIANCE_BANNER         = 660001,
 	GO_DALARAN_RUNWEAVER_HCONTESTED_BANNER       = 660002,
 	GO_DALARAN_RUNWEAVER_ACONTESTED_BANNER       = 660003,
@@ -590,10 +589,16 @@ enum WintergraspGameObject
 	GO_DALARAN_EVENTIDE_ALLIANCE_BANNER          = 660005,
 	GO_DALARAN_EVENTIDE_HCONTESTED_BANNER        = 660006,
 	GO_DALARAN_EVENTIDE_ACONTESTED_BANNER        = 660007,
+	GO_DALARAN_EVENTIDE_BUFF_SPRINT              = 990011,
+	GO_DALARAN_EVENTIDE_BUFF_REGEN               = 990022,
+	GO_DALARAN_EVENTIDE_BUFF_BERSERK             = 990033,
 	GO_DALARAN_MEMORIAL_HORDE_BANNER             = 660008,
 	GO_DALARAN_MEMORIAL_ALLIANCE_BANNER          = 660009,
 	GO_DALARAN_MEMORIAL_HCONTESTED_BANNER        = 660010,
 	GO_DALARAN_MEMORIAL_ACONTESTED_BANNER        = 660011,
+	GO_DALARAN_MEMORIAL_BUFF_SPRINT              = 990012,
+	GO_DALARAN_MEMORIAL_BUFF_REGEN               = 990023,
+	GO_DALARAN_MEMORIAL_BUFF_BERSERK             = 990034,
 	
 	GO_DALARAN_CHEST	                         = 900000,
 
