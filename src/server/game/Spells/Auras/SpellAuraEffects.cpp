@@ -2154,27 +2154,33 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
                         if (target->GetTypeId() != TYPEID_PLAYER) {
                             return;
 						}
-						uint32 FactionTemp = target->getFaction();
-						if (target->ToPlayer()->GetTeam() == HORDE) {
-							FactionTemp = 1;
-						} else {
-							FactionTemp = 2;
-						}
-						if (Pet* pet = target->ToPlayer()->GetPet()) {
-							pet->setFaction(FactionTemp);
+						Player* player = target->ToPlayer();
+						if (Pet* pet = player->GetPet()) {
+							pet->setFaction(player->GetTeamId() ? 1 : 2);
 							pet->getHostileRefManager().setOnlineOfflineState(false);
 						}
-						target->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
-						target->ToPlayer()->ResetContestedPvP();
-						target->getHostileRefManager().setOnlineOfflineState(false);
-						target->CombatStopWithPets();
-
-						if (target->ToPlayer()->GetTeamId()) {
-							target->SetDisplayId(23500);
-							target->setFaction(116);
+						player->RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
+						player->ResetContestedPvP();
+						player->getHostileRefManager().setOnlineOfflineState(false);
+						player->CombatStopWithPets();
+						if (player->GetTeamId()) {
+							if (player->getGender()) {
+								int32 randRace[3] = { 19724, 20581, 20323 };
+								player->SetDisplayId(randRace[(urand(0,2))]);
+							} else {
+								int32 randRace[4] = { 20321, 20368, 20578, 20585 };
+								player->SetDisplayId(randRace[(urand(0,3))]);
+							}
+							player->setFaction(1);
 						} else {
-							target->SetDisplayId(22481);
-							target->setFaction(2);
+							if (player->getGender()) {
+								int32 randRace[3] = { 20584, 20316, 20579 };
+								player->SetDisplayId(randRace[(urand(0,2))]);
+							} else {
+								int32 randRace[4] = { 19723, 20317, 20318, 20580 };
+								player->SetDisplayId(randRace[(urand(0,3))]);
+							}
+							player->setFaction(2);
 						}
                         break;
                     }
