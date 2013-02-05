@@ -2178,7 +2178,7 @@ void AuraEffect::HandleAuraTransform(AuraApplication const* aurApp, uint8 mode, 
 								player->SetDisplayId(randRace[(urand(0,2))]);
 							} else {
 								int32 randRace[3] = { 20321, 20368, 20585 };
-								player->SetDisplayId(randRace[(urand(0,3))]);
+								player->SetDisplayId(randRace[(urand(0,2))]);
 							}
 							player->setFaction(2);
 						}
