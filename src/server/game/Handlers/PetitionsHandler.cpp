@@ -824,26 +824,6 @@ void WorldSession::HandleTurnInPetitionOpcode(WorldPacket & recvData)
     // Get petition signatures from db
     uint8 signatures;
 
-    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_PETITION_SIGNATURE);
-    stmt->setUInt32(0, GUID_LOPART(petitionGuid));
-    result = CharacterDatabase.Query(stmt);
-
-    if (result)
-        signatures = uint8(result->GetRowCount());
-    else
-        signatures = 0;
-
-    uint32 requiredSignatures = (type == GUILD_CHARTER_TYPE) ? sWorld->getIntConfig(CONFIG_MIN_PETITION_SIGNS) : 0;
-
-    // Notify player if signatures are missing
-    if (signatures < requiredSignatures)
-    {
-        data.Initialize(SMSG_TURN_IN_PETITION_RESULTS, 4);
-        data << (uint32)PETITION_TURN_NEED_MORE_SIGNATURES;
-        SendPacket(&data);
-        return;
-    }
-
     // Proceed with guild/arena team creation
 
     // Delete charter item
@@ -864,14 +844,6 @@ void WorldSession::HandleTurnInPetitionOpcode(WorldPacket & recvData)
         sGuildMgr->AddGuild(guild);
 
         Guild::SendCommandResult(this, GUILD_COMMAND_CREATE, ERR_GUILD_COMMAND_SUCCESS, name);
-
-        // Add members from signatures
-        for (uint8 i = 0; i < signatures; ++i)
-        {
-            Field* fields = result->Fetch();
-            guild->AddMember(MAKE_NEW_GUID(fields[0].GetUInt32(), 0, HIGHGUID_PLAYER));
-            result->NextRow();
-        }
     }
     else
     {
@@ -891,16 +863,6 @@ void WorldSession::HandleTurnInPetitionOpcode(WorldPacket & recvData)
         // Register arena team
         sArenaTeamMgr->AddArenaTeam(arenaTeam);
         sLog->outDebug(LOG_FILTER_NETWORKIO, "PetitonsHandler: Arena team (guid: %u) added to ObjectMgr", arenaTeam->GetId());
-
-        // Add members
-        for (uint8 i = 0; i < signatures; ++i)
-        {
-            Field* fields = result->Fetch();
-            uint32 memberGUID = fields[0].GetUInt32();
-            sLog->outDebug(LOG_FILTER_NETWORKIO, "PetitionsHandler: Adding arena team (guid: %u) member %u", arenaTeam->GetId(), memberGUID);
-            arenaTeam->AddMember(MAKE_NEW_GUID(memberGUID, 0, HIGHGUID_PLAYER));
-            result->NextRow();
-        }
     }
 
     SQLTransaction trans = CharacterDatabase.BeginTransaction();
