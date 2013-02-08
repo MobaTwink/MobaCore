@@ -43,8 +43,7 @@ bool BattlefieldWG::SetupBattlefield() {
     m_StartGroupingTimer = 15 * MINUTE * IN_MILLISECONDS;
     m_StartGrouping = false;
 	m_chestDepopTimer = 0;
-	//m_chestTimer = uint32(urand(CHEST_TIME*0.25f, CHEST_TIME*0.75f));
-	m_chestTimer = 1* MINUTE * IN_MILLISECONDS;
+	m_chestTimer = uint32(urand(CHEST_TIME*0.25f, CHEST_TIME*0.75f));
 	AnnonceChest = true;
 
     m_tenacityStack = 0;
@@ -164,6 +163,7 @@ bool BattlefieldWG::Update(uint32 diff) {
 		if (m_chestDepopTimer > diff) {
 			m_chestDepopTimer -= diff;
 		} else {
+			m_chest->RemoveFromWorld();
 			m_chestDepopTimer = 0;
 		}
 	}
