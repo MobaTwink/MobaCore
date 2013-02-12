@@ -138,13 +138,14 @@ bool BattlefieldWG::Update(uint32 diff) {
 			HideNpc(m_spiritHorde);
 		}
 	}
-	if (uint32 PlayerCount = sWorld->GetPlayerCount() > 1) {
+	uint32 PlayerCount = sWorld->GetPlayerCount();
+	if (PlayerCount > 1) {
 		if (m_chestTimer > diff) {
 			if (m_chestTimer > (5*MINUTE*IN_MILLISECONDS)) {
-				if (PlayerCount > 24) {
-					PlayerCount = 24;
+				if (PlayerCount > 30) {
+					PlayerCount = 30;
 				}
-				m_chestTimer -= ceil(PlayerCount / 2) * diff;
+				m_chestTimer -= PlayerCount * diff;
 			} else {
 				if (AnnonceChest) {
 					sWorld->SendWorldText(NEVA_CHEST_SOON);
