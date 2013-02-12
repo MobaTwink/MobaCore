@@ -16,7 +16,7 @@ class neva_commands : public CommandScript
 
        static bool HandleBGCommand(ChatHandler* handler, const char* /*args*/)
        {
- 			BattlegroundTypeId bgTypeId = BATTLEGROUND_AB;
+ 			BattlegroundTypeId bgTypeId = BATTLEGROUND_WS;
 			handler->GetSession()->SendBattleGroundList(handler->GetSession()->GetPlayer()->GetGUID(), bgTypeId);
 			return true;
 
