@@ -12190,6 +12190,10 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
     if (isInCombat() || HasUnitState(UNIT_STATE_EVADE))
         return;
+	if (Player* player = ToPlayer()) {
+		Dismount(); 
+        RemoveAurasByType(SPELL_AURA_MOUNTED);
+	}
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
