@@ -5515,7 +5515,7 @@ uint32 Spell::GetCCDelay(SpellInfo const* _spell)
     const uint32 delayForInstantSpells2 = 50;
     const uint32 delayForInstantSpells3 = 160;
     const uint32 delayForInstantSpells4 = 230;
-    const uint32 NOdelayForInstantSpells = 0;
+    const uint32 NOdelayForInstantSpells = 145;
 
     switch(_spell->SpellFamilyName)
     {
@@ -5524,11 +5524,11 @@ uint32 Spell::GetCCDelay(SpellInfo const* _spell)
             if (_spell->SpellFamilyFlags[0] & 0x8 ||      // Frozen trap
 				_spell->Id == 57879 ||                    // Snake Trap
                 _spell->SpellFamilyFlags[2] & 0x00024000) // Explosive and Immolation Trap
-                return 0;
+                return NOdelayForInstantSpells;
 
             // Entrapment
             if (_spell->SpellIconID == 20)
-                return 0;
+                return NOdelayForInstantSpells;
             break;
         case SPELLFAMILY_DEATHKNIGHT:
             // Death Grip
@@ -5559,7 +5559,7 @@ uint32 Spell::GetCCDelay(SpellInfo const* _spell)
         case SPELLFAMILY_MAGE:
             // Polymorph
             if (_spell->Id == 12826)
-                return delayForInstantSpells3;
+                return NOdelayForInstantSpells;
             // Deep Freeze
             if (_spell->Id == 44572)
                 return delayForInstantSpells2;
@@ -5570,6 +5570,9 @@ uint32 Spell::GetCCDelay(SpellInfo const* _spell)
         case SPELLFAMILY_WARRIOR:
             // Intercept
             if (_spell->Id == 20253)
+                return delayForInstantSpells2;
+            // Charge
+            if (_spell->Id == 11578)
                 return delayForInstantSpells2;
             // Charge
             if (_spell->Id == 7922)
@@ -5603,7 +5606,7 @@ uint32 Spell::GetCCDelay(SpellInfo const* _spell)
         if (_spell->HasAura(auraWithCCD[i]))
             return delayForInstantSpells;
 
-    return 0;
+    return NOdelayForInstantSpells;
 
 }
 
