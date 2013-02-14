@@ -1077,9 +1077,10 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
                 damage -= damageInfo->blocked;
             }
 
-            if (attackType != RANGED_ATTACK)
+            if (attackType != RANGED_ATTACK) {
+				if (spellInfo->SpellIconID == 26) { damage = int32((float)damage * 0.90f); } // Nerf Overpower by 10%
                 ApplyResilience(victim, NULL, &damage, crit, CR_CRIT_TAKEN_MELEE);
-            else
+			} else
                 ApplyResilience(victim, NULL, &damage, crit, CR_CRIT_TAKEN_RANGED);
             break;
         }
