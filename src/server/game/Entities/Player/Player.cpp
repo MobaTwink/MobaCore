@@ -440,6 +440,10 @@ KillRewarder::KillRewarder(Player* killer, Unit* victim, bool isBattleGround) :
 {
 	if (victim->GetTypeId() == TYPEID_PLAYER) { // mark the credit as pvp if victim is player
         _isPvP = true;
+		int32 const StolenAura[7] = { 23451, 23505, 25037, 20875, 25804, 37058, 6615 };
+		for (uint8 i=0; i<7; i++) {
+			if (victim->HasAura(StolenAura[i])) { killer->CastSpell(killer, StolenAura[i], true); }
+		}
 		if (killer->InArena() || !killer->InBattleground()) {
 			Player* plrVictim = victim->ToPlayer();
 			std::string msg("");
@@ -7272,13 +7276,6 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
         if (!victim || victim == this || victim->HasAuraType(SPELL_AURA_NO_PVP_CREDIT)) {
             return false;
 		}
-		if (victim->HasAura(23451)) { CastSpell(this, 23451, true); } // AURA_STOLEN_SPRINT       = 23451,
-		if (victim->HasAura(23505)) { CastSpell(this, 23505, true); } // AURA_STOLEN_BERSERK      = 23505,
-		if (victim->HasAura(25037)) { CastSpell(this, 25037, true); } // AURA_STOLEN_RHUM5        = 25037,
-		if (victim->HasAura(20875)) { CastSpell(this, 20875, true); } // AURA_STOLEN_RHUM10       = 20875,
-		if (victim->HasAura(25804)) { CastSpell(this, 25804, true); } // AURA_STOLEN_RHUM15       = 25804,
-		if (victim->HasAura(37058)) { CastSpell(this, 37058, true); } // AURA_STOLEN_WHISKEY      = 37058,
-		if (victim->HasAura(6615))  { CastSpell(this, 6615,  true); } // AURA_STOLEN_FREEACTION   = 6615
         victim_guid = victim->GetGUID();
 
         if (Player* plrVictim = victim->ToPlayer()) {
