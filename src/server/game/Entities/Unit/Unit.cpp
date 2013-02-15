@@ -1078,7 +1078,26 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
             }
 
             if (attackType != RANGED_ATTACK) {
-				if (spellInfo->SpellIconID == 26) { damage = int32((float)damage * 0.90f); } // Nerf Overpower by 10%
+				switch (spellInfo->SpellIconID) {
+					case 26:		// Overpower
+					case 2309:		// Crusader Strike
+						damage = int32((float)damage / 1.1f);
+						break;
+					case 561:		// Sceal of Command
+					case 2639:      // Obliterate
+						damage = int32((float)damage / 1.35f);
+						break;
+					case 2624:		// Blood Strike
+					case 2719:		// Plague Strike
+					case 2725:		// Blood Boil
+						damage = int32((float)damage / 1.9f);
+						break;
+					case 2751:		// Death Strike
+						damage = int32((float)damage / 3.0f);
+						break;
+					default:
+						break;
+				}
                 ApplyResilience(victim, NULL, &damage, crit, CR_CRIT_TAKEN_MELEE);
 			} else
                 ApplyResilience(victim, NULL, &damage, crit, CR_CRIT_TAKEN_RANGED);
@@ -1094,7 +1113,17 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
                 damageInfo->HitInfo |= SPELL_HIT_TYPE_CRIT;
                 damage = SpellCriticalDamageBonus(spellInfo, damage, victim);
             }
-
+			
+			switch (spellInfo->SpellIconID) {
+				case 88:  		// Death Coil
+					damage = int32((float)damage / 1.9f);
+					break;
+				case 2721:		// Icy Touch
+					damage = int32((float)damage / 3.0f);
+					break;
+				default:
+					break;
+			}
             ApplyResilience(victim, NULL, &damage, crit, CR_CRIT_TAKEN_SPELL);
             break;
         }
