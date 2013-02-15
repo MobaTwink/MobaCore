@@ -2706,6 +2706,23 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
                 int32 limitduration = GetDiminishingReturnsLimitDuration(m_diminishGroup, aurSpellInfo);
                 float diminishMod = unit->ApplyDiminishingToDuration(m_diminishGroup, duration, m_originalCaster, m_diminishLevel, limitduration);
 
+				switch (m_spellAura->GetId()) {
+					case 48018:   // Demonic Circle
+						duration -= 4*MINUTE*IN_MILLISECONDS;
+						break;
+					case 55078:   // Blood Plague
+					case 55095:   // Frost Fever
+						duration -= 4*IN_MILLISECONDS;
+						break;
+					case 1044:    // Hand of Freedom
+					case 6136:    // Chilled
+					case 50435:   // Icy Clutch
+					case 66020:   // Chain of Ice (trinket)
+						duration = 4*IN_MILLISECONDS;
+						break;
+					default:
+						break;
+				}
                 // unit is immune to aura if it was diminished to 0 duration
                 if (diminishMod == 0.0f)
                 {
