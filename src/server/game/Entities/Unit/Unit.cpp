@@ -1087,6 +1087,7 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 					case 2639:      // Obliterate
 						damage = int32((float)damage / 1.35f);
 						break;
+					case 2310:      // Shadow Cleave
 					case 2624:		// Blood Strike
 					case 2719:		// Plague Strike
 					case 2725:		// Blood Boil
@@ -1120,6 +1121,9 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 					break;
 				case 2721:		// Icy Touch
 					damage = int32((float)damage / 3.0f);
+					break;
+				case 937:		// Immolation Aura
+					damage = int32((float)damage / 10.0f);
 					break;
 				default:
 					break;
