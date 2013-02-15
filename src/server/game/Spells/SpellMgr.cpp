@@ -3250,6 +3250,9 @@ void SpellMgr::LoadDbcDataCorrections()
 		case 5171: case 6774: // Slice and Dice
 			spellInfo->AttributesEx3 |= SPELL_ATTR3_NO_INITIAL_AGGRO;
             break;
+			case 49575:
+				spellInfo->EffectMiscValueB[0] = 30;
+            break;
             case 53241: // Marked for Death (Rank 1)
             case 53243: // Marked for Death (Rank 2)
             case 53244: // Marked for Death (Rank 3)
