@@ -3930,6 +3930,25 @@ void Unit::RemoveAurasWithMechanic(uint32 mechanic_mask, AuraRemoveMode removemo
     }
 }
 
+void Unit::RemoveDispellableAuras(bool negative) {
+	uint32 dispelMask = (negative) ? (1<<DISPEL_MAGIC) : ((1<<DISPEL_MAGIC) | (1<<DISPEL_DISEASE) | (1<<DISPEL_POISON));
+	AuraMap const& auras = GetOwnedAuras();
+	for (AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr) {
+		Aura* aura = itr->second;
+		AuraApplication * aurApp = aura->GetApplicationOfTarget(GetGUID());
+		if (!aurApp)                   { continue; }
+		if (aura->IsPassive())         { continue; } // don't remove passive auras
+		if (negative) {
+			if (!aurApp->IsPositive()) { continue; } // only remove positive aura
+		} else {
+			if (aurApp->IsPositive())  { continue; } // don't remove positive aura
+		}
+        if (aura->GetSpellInfo()->GetDispelMask() & dispelMask) {
+			aura->Remove(AURA_REMOVE_BY_ENEMY_SPELL);
+		}
+	}
+}
+
 void Unit::RemoveAreaAurasDueToLeaveWorld()
 {
     // make sure that all area auras not applied on self are removed - prevent access to deleted pointer later

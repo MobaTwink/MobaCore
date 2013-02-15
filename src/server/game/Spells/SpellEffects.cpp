@@ -2519,6 +2519,16 @@ void Spell::EffectDispel(SpellEffIndex effIndex)
     if (dispel_list.empty())
         return;
 
+	switch (m_spellInfo->Id) {
+		case 8012:
+			unitTarget->RemoveDispellableAuras(true);
+			return;
+		case 4987:
+			unitTarget->RemoveDispellableAuras(false);
+			return;
+		default:
+			break;
+	}
     // Ok if exist some buffs for dispel try dispel it
     uint32 failCount = 0;
     DispelChargesList success_list;
