@@ -1526,8 +1526,8 @@ void GameObject::Use(Unit* user)
 			*/
                 player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
                 player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
-				player->RemoveAura(1022);
-				player->RemoveAura(642);
+				int32 const BannedAura[5] = { 1022, 642, 31224, 55019, 3747 };
+				for (uint8 i=0; i<5; i++) { player->RemoveAura(BannedAura[i]); }
                 // in battleground check
                 Battleground* bg = player->GetBattleground();
                 if (!bg)
@@ -1584,8 +1584,8 @@ void GameObject::Use(Unit* user)
 
                 player->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);
                 player->RemoveAurasByType(SPELL_AURA_MOD_INVISIBILITY);
-				player->RemoveAura(1022);
-				player->RemoveAura(642);
+				int32 const BannedAura[2] = { 1022, 642 };
+				for (uint8 i=0; i<2; i++) { player->RemoveAura(BannedAura[i]); }
                 // BG flag dropped
                 // WS:
                 // 179785 - Silverwing Flag
