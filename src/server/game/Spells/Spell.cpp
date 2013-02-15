@@ -4861,7 +4861,11 @@ SpellCastResult Spell::CheckCast(bool strict)
             if (m_caster->GetEntry() != WORLD_TRIGGER) // Ignore LOS for gameobjects casts (wrongly casted by a trigger)
                 if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS) && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(target))
                     return SPELL_FAILED_LINE_OF_SIGHT;
-        }
+        } else {
+			if (m_spellInfo->Id == 4987 ) {
+				return SPELL_FAILED_BAD_TARGETS;
+			}
+		}
     }
 
     // Check for line of sight for spells with dest
