@@ -5194,8 +5194,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                     if ((canFailAtMax || skillValue < sWorld->GetConfigMaxSkillValue()) && reqSkillValue > irand(skillValue - 25, skillValue + 37))
                         return SPELL_FAILED_TRY_AGAIN;
                 }
-				m_caster->RemoveAura(1022);
-				m_caster->RemoveAura(642);
+				int32 const BannedAura[5] = { 1022, 642, 31224, 55019, 3747 };
+				for (uint8 i=0; i<5; i++) { m_caster->RemoveAura(BannedAura[i]); }
                 break;
             }
             case SPELL_EFFECT_SUMMON_DEAD_PET:
