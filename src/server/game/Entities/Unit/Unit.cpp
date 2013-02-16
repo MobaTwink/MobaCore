@@ -3935,7 +3935,11 @@ void Unit::RemoveAurasWithMechanic(uint32 mechanic_mask, AuraRemoveMode removemo
 }
 
 void Unit::RemoveDispellableAuras(bool negative) {
-	uint32 dispelMask = (negative) ? (1<<DISPEL_MAGIC) : ((1<<DISPEL_MAGIC) | (1<<DISPEL_DISEASE) | (1<<DISPEL_POISON));
+	uint32 dispelMask = (1<<DISPEL_MAGIC);
+	if (!negative) {
+		dispelMask = ((1<<DISPEL_MAGIC) | (1<<DISPEL_DISEASE) | (1<<DISPEL_POISON));
+		CastSpell(this, 57723);
+	}
 	AuraMap const& auras = GetOwnedAuras();
 	for (AuraMap::const_iterator itr = auras.begin(); itr != auras.end(); ++itr) {
 		Aura* aura = itr->second;

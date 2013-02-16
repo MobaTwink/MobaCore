@@ -2714,6 +2714,9 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
 					case 55095:   // Frost Fever
 						duration -= 4*IN_MILLISECONDS;
 						break;
+					case 57723:   // Stated (Heroism limitation)
+						duration = 15*IN_MILLISECONDS;
+						break;
 					case 1044:    // Hand of Freedom
 					case 6136:    // Chilled
 					case 50435:   // Icy Clutch
@@ -4863,10 +4866,10 @@ SpellCastResult Spell::CheckCast(bool strict)
             if (m_caster->GetEntry() != WORLD_TRIGGER) // Ignore LOS for gameobjects casts (wrongly casted by a trigger)
                 if (!(m_spellInfo->AttributesEx2 & SPELL_ATTR2_CAN_TARGET_NOT_IN_LOS) && VMAP::VMapFactory::checkSpellForLoS(m_spellInfo->Id) && !m_caster->IsWithinLOSInMap(target))
                     return SPELL_FAILED_LINE_OF_SIGHT;
-        } else {
-			if (m_spellInfo->Id == 4987 ) {
-				return SPELL_FAILED_BAD_TARGETS;
-			}
+        }
+		if (m_spellInfo->Id == 4987) {
+			if (target == m_caster)     { return SPELL_FAILED_BAD_TARGETS;      }
+			if (target->HasAura(57723)) { return SPELL_FAILED_CASTER_AURASTATE; }
 		}
     }
 
