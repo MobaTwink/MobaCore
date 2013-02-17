@@ -2719,6 +2719,8 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
 						break;
 					case 1044:    // Hand of Freedom
 					case 6136:    // Chilled
+						duration -= 1*IN_MILLISECONDS;
+						break;
 					case 50435:   // Icy Clutch
 						duration = 4*IN_MILLISECONDS;
 						break;
