@@ -894,11 +894,18 @@ void Battleground::EndBattleground(uint32 winner)
         uint32 winner_arena = player->GetRandomWinner() ? BG_REWARD_WINNER_ARENA_LAST : BG_REWARD_WINNER_ARENA_FIRST;
 		
 		// Custom Token rewards
-		uint32
-			itemId = 43016,
-			winner_count = 10,
-			loser_count = 5,
-		    itemCount = (team == winner) ? winner_count : loser_count;
+		uint32 itemId = (team == winner)? 52005 : 43347;
+		switch (m_ArenaType) {
+			case ARENA_TYPE_2v2:
+			case ARENA_TYPE_3v3:
+				itemId = (team == winner)? 19296 : 11887;
+				break;
+			case ARENA_TYPE_5v5:
+				itemId = (team == winner)? 19298 : 21315;
+				break;
+			default:
+				break;
+		}
 		ItemPosCountVec dest;
 
         // Reward winner team
@@ -921,20 +928,17 @@ void Battleground::EndBattleground(uint32 winner)
                 UpdatePlayerScore(player, SCORE_BONUS_HONOR, GetBonusHonorFromKill(loser_kills));
         }
 
-		if (player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, itemCount) == EQUIP_ERR_OK && !isArena() )
+		if (player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, 1) == EQUIP_ERR_OK)
 		{
 			Item* item = player->StoreNewItem(dest, itemId, true, Item::GenerateItemRandomPropertyId(itemId));
-			player->SendNewItem(item, itemCount, true, false);
+			player->SendNewItem(item, 1, true, false);
 		}
-
-		if ( m_ArenaType == 2 )
-		{
+		if ( m_ArenaType && m_ArenaType < ARENA_TYPE_5v5 ) {
 			ArenaTeam* ArenaTeam = sArenaTeamMgr->GetArenaTeamByCaptain(player->GetGUIDLow());
-			if (ArenaTeam)
-			{
-				player->ModifyArenaPoints((team == winner) ? 25 : 5);
-				player->ModifyHonorPoints(25);
-                player->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(1011), (team == winner) ? 35 : 25);
+			if (ArenaTeam) {
+				player->ModifyArenaPoints((team == winner) ? 13*m_ArenaType : 3*m_ArenaType);
+				player->ModifyHonorPoints(13*m_ArenaType);
+                player->GetReputationMgr().ModifyReputation(sFactionStore.LookupEntry(1011), (team == winner) ? 18*m_ArenaType : 13*m_ArenaType);
 				
 				if(team == winner) {
 					ArenaTeam->ArenaWin(player);
