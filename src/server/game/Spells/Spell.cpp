@@ -5604,7 +5604,7 @@ uint32 Spell::GetCCDelay(SpellInfo const* _spell)
                 return delayForInstantSpells2;
             // Charge
             if (_spell->Id == 7922)
-                return NOdelayForInstantSpells;
+                return delayForInstantSpells2;
             // Charge trig.
             if (_spell->Id == 65929)
                 return NOdelayForInstantSpells;
