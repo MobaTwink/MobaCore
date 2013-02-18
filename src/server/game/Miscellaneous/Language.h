@@ -1115,10 +1115,14 @@ enum TrinityStrings
 	NEVA_DALARAN_HORDE_RUNWEAVER_CONTROL     = 12012,
 	NEVA_DALARAN_HORDE_RUNWEAVER_DEFEND      = 12013,
 	NEVA_CHEST_EVENT                         = 12014,
-	NEVA_CHEST_SOON                          = 12015
+	NEVA_CHEST_SOON                          = 12015,
+	NEVA_2v2_ARENA_SOON                      = 12016,
+	NEVA_3v3_ARENA_SOON                      = 12017,
+	NEVA_DUEL_SOON                           = 12018,
+	NEVA_BG_SOON                             = 12019
 
 /* SQL to add to the DB :
-DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12015';
+DELETE FROM `trinity_string` WHERE `entry` BETWEEN '12000' AND '12019';
 INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
 ('12000', '[|cff79f369Duels|r]:%s %s is looking for a fight.', '[|cff79f369Duels|r]:%s %s recherche un adversaire.'),
 ('12001', '[|cffff0006%uv%u|r]: %s -%s %s is ready.', '[|cffff0006%uv%u|r]: %s -%s %s est pret.'),
@@ -1135,7 +1139,11 @@ INSERT INTO `trinity_string` (`entry`, `content_default`, `content_loc2`) VALUES
 ('12012', '|cffff2400The Horde is controling the Runeweaver Square graveyard.', '|cffff2400La Horde contrôle le cimetière de la place Tisserune.'),
 ('12013', '|cffff2400The Horde defended the Runeweaver Square graveyard.', '|cffff2400La Horde à défendu le cimetière de la place Tisserune.'),
 ('12014', '|cff74fa2bThe Chest of the Underbelly is here, fight to the death motherfuckers !!', '|cff74fa2bLe Coffre des Entrailles est là, combattez jusqu\à la mort bande de chiens galeux !'),
-('12015', '|cff74fa2bThe Chest of the Underbelly will appear in 5 minutes...', '|cff74fa2bLe Coffre des Entrailles arrive dans 5 minutes...');
+('12015', '|cff74fa2bThe Chest of the Underbelly will appear in 5 minutes...', '|cff74fa2bLe Coffre des Entrailles arrive dans 5 minutes...'),
+('12016', 'All players joined, the 2v2 arena will begin in 20 seconds.', 'Tout les joueurs sont rentré, l\'arène 2c2 commence dans 20 secondes.'),
+('12017', 'All players joined, the 3v3 arena will begin in 25 seconds.', 'Tout les joueurs sont rentré, l\'arène 3c3 commence dans 25 secondes.'),
+('12018', 'You are both in the Arena, the duel will start in 15 seconds.', 'Vous êtes tout les deux dans l\'arène, le duel commence dans 15 secondes.'),
+('12019', 'The Battleground is full and will begin in 15 seconds.', 'Le Champ de bataille est remplis et débute dans 15 secondes.');
 */
 
     // NOT RESERVED IDS                   12000-1999999999

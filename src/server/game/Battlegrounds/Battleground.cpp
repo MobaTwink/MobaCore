@@ -141,6 +141,8 @@ Battleground::Battleground()
     m_InvitedHorde      = 0;
     m_ArenaType         = 0;
     m_IsArena           = false;
+	m_SkipAnnounce      = false;
+	m_JoinedCount       = 0;
     m_Winner            = 2;
     m_StartTime         = 0;
     m_ResetStatTimer    = 0;
@@ -451,8 +453,30 @@ inline void Battleground::_ProcessJoin(uint32 diff)
     // *********************************************************
     // ***           BATTLEGROUND STARTING SYSTEM            ***
     // *********************************************************
-    ModifyStartDelayTime(diff);
-
+	ModifyStartDelayTime(diff);
+	if (GetStartDelayTime() >= StartDelayTimes[BG_STARTING_EVENT_THIRD]) {
+		if (AllJoinedArena()) {
+			uint32 newTime = StartDelayTimes[BG_STARTING_EVENT_THIRD];
+			switch (m_ArenaType) {
+				case ARENA_TYPE_2v2:
+					SendMessageToAll(NEVA_2v2_ARENA_SOON, CHAT_MSG_BG_SYSTEM_NEUTRAL);
+					newTime += 5*IN_MILLISECONDS;
+					break;
+				case ARENA_TYPE_3v3:
+					newTime += 10*IN_MILLISECONDS;
+					SendMessageToAll(NEVA_3v3_ARENA_SOON, CHAT_MSG_BG_SYSTEM_NEUTRAL);
+					break;
+				case ARENA_TEAM_5v5:
+					SendMessageToAll(NEVA_DUEL_SOON, CHAT_MSG_BG_SYSTEM_NEUTRAL);
+					break;
+				default:
+					SendMessageToAll(NEVA_BG_SOON, CHAT_MSG_BG_SYSTEM_NEUTRAL);
+					break;
+			}
+		    SetStartDelayTime(newTime);
+			m_SkipAnnounce = true;
+		}
+	}
     if (m_ResetStatTimer > 5000)
     {
         m_ResetStatTimer = 0;
@@ -482,7 +506,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
         StartingEventCloseDoors();
         SetStartDelayTime(StartDelayTimes[BG_STARTING_EVENT_FIRST]);
         // First start warning - 2 or 1 minute
-        SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_FIRST], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+		SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_FIRST], CHAT_MSG_BG_SYSTEM_NEUTRAL);
 
 		if (!isArena())
 		{
@@ -495,13 +519,17 @@ inline void Battleground::_ProcessJoin(uint32 diff)
     else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_SECOND] && !(m_Events & BG_STARTING_EVENT_2))
     {
         m_Events |= BG_STARTING_EVENT_2;
-        SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_SECOND], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+		if (!m_SkipAnnounce) {
+			SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_SECOND], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+		}
     }
     // After 30 or 15 seconds, warning is signaled
     else if (GetStartDelayTime() <= StartDelayTimes[BG_STARTING_EVENT_THIRD] && !(m_Events & BG_STARTING_EVENT_3))
     {
         m_Events |= BG_STARTING_EVENT_3;
-        SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_THIRD], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+		if (!m_SkipAnnounce) {
+			SendMessageToAll(StartMessageIds[BG_STARTING_EVENT_THIRD], CHAT_MSG_BG_SYSTEM_NEUTRAL);
+		}
     }
     // Delay expired (after 2 or 1 minute)
     else if (GetStartDelayTime() <= 0 && !(m_Events & BG_STARTING_EVENT_4))
@@ -1193,6 +1221,7 @@ void Battleground::AddPlayer(Player* player)
     if (isArena())
     {
         player->RemoveArenaEnchantments(TEMP_ENCHANTMENT_SLOT);
+		m_JoinedCount++;
         if (team == ALLIANCE)                                // gold
         {
             if (player->GetTeam() == HORDE)
@@ -1406,6 +1435,31 @@ uint32 Battleground::GetFreeSlotsForTeam(uint32 Team) const
 bool Battleground::HasFreeSlots() const
 {
     return GetPlayersSize() < GetMaxPlayers();
+}
+
+bool Battleground::AllJoinedArena() const {
+	uint8 maxCount = 10;
+	if (/*!isArena && */!HasFreeSlots()) {
+		sWorld->SendGlobalText("No Free Slots", 0);
+		return true;
+	}
+	switch (m_ArenaType) {
+		case ARENA_TYPE_2v2:
+			maxCount = 4;
+			break;
+		case ARENA_TYPE_3v3:
+			maxCount = 6;
+			break;
+		case ARENA_TYPE_5v5:
+			maxCount = 2;
+			break;
+		default:
+			return false;
+	}
+	if (m_JoinedCount >= maxCount) {
+		return true;
+	}
+	return false;
 }
 
 void Battleground::UpdatePlayerScore(Player* Source, uint32 type, uint32 value, bool doAddHonor)

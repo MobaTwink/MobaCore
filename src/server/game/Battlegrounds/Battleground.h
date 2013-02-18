@@ -396,6 +396,7 @@ class Battleground
         void SetRandom(bool isRandom) { m_IsRandom = isRandom; }
         uint32 GetInvitedCount(uint32 team) const   { return (team == ALLIANCE) ? m_InvitedAlliance : m_InvitedHorde; }
         bool HasFreeSlots() const;
+		bool AllJoinedArena() const;
         uint32 GetFreeSlotsForTeam(uint32 Team) const;
 
         typedef std::set<uint32> SpectatorList;
@@ -627,12 +628,14 @@ class Battleground
         uint32 m_ResetStatTimer;
         uint32 m_ValidStartPositionTimer;
         int32 m_EndTime;                                    // it is set to 120000 when bg is ending and it decreases itself
+		uint32 m_JoinedCount;
         uint32 m_LastResurrectTime;
         BattlegroundBracketId m_BracketId;
         uint8  m_ArenaType;                                 // 2=2v2, 3=3v3, 5=5v5
         bool   m_InBGFreeSlotQueue;                         // used to make sure that BG is only once inserted into the BattlegroundMgr.BGFreeSlotQueue[bgTypeId] deque
         bool   m_SetDeleteThis;                             // used for safe deletion of the bg after end / all players leave
         bool   m_IsArena;
+		bool   m_SkipAnnounce;
         uint8  m_Winner;                                    // 0=alliance, 1=horde, 2=none
         int32  m_StartDelayTime;
         bool   m_IsRated;                                   // is this battle rated?
