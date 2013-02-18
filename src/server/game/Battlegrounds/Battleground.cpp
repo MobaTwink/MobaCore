@@ -454,7 +454,7 @@ inline void Battleground::_ProcessJoin(uint32 diff)
     // ***           BATTLEGROUND STARTING SYSTEM            ***
     // *********************************************************
 	ModifyStartDelayTime(diff);
-	if (GetStartDelayTime() >= StartDelayTimes[BG_STARTING_EVENT_THIRD]) {
+	if (GetStartDelayTime() >= (StartDelayTimes[BG_STARTING_EVENT_THIRD]+11*IN_MILLISECONDS)) {
 		if (AllJoinedArena()) {
 			uint32 newTime = StartDelayTimes[BG_STARTING_EVENT_THIRD];
 			switch (m_ArenaType) {
