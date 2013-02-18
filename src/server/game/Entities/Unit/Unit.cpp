@@ -3946,6 +3946,10 @@ void Unit::RemoveDispellableAuras(bool negative) {
 		} else {
 			if (aurApp->IsPositive())  { continue; } // don't remove positive aura
 		}
+		if (aura->GetSpellInfo()->GetAllEffectsMechanicMask() & ((1<<MECHANIC_FEAR)) && aura->GetSpellInfo()->Dispel == DISPEL_MAGIC) {
+			RemoveAurasByType(SPELL_AURA_MOD_FEAR);
+			continue;
+		}
         if (aura->GetSpellInfo()->GetDispelMask() & dispelMask) {
 			aura->Remove(AURA_REMOVE_BY_ENEMY_SPELL);
 		}
