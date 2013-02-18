@@ -1079,19 +1079,17 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 
             if (attackType != RANGED_ATTACK) {
 				switch (spellInfo->SpellIconID) {
-					case 26:		// Overpower
 					case 2309:		// Crusader Strike
 						damage = int32((float)damage / 1.1f);
 						break;
 					case 561:		// Sceal of Command
 					case 2639:      // Obliterate
-						damage = int32((float)damage / 1.35f);
+						damage = int32((float)damage / 1.4f);
 						break;
-					case 2310:      // Shadow Cleave
 					case 2624:		// Blood Strike
 					case 2719:		// Plague Strike
 					case 2725:		// Blood Boil
-						damage = int32((float)damage / 1.9f);
+						damage = int32((float)damage / 2.1f);
 						break;
 					case 2751:		// Death Strike
 						damage = int32((float)damage / 3.0f);
@@ -1117,13 +1115,10 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 			
 			switch (spellInfo->SpellIconID) {
 				case 88:  		// Death Coil
-					damage = int32((float)damage / 1.9f);
+					damage = int32((float)damage / 2.05f);
 					break;
 				case 2721:		// Icy Touch
-					damage = int32((float)damage / 3.0f);
-					break;
-				case 937:		// Immolation Aura
-					damage = int32((float)damage / 10.0f);
+					damage = int32((float)damage / 3.5f);
 					break;
 				default:
 					break;
