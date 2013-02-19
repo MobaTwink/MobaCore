@@ -1889,6 +1889,8 @@ class Player : public Unit, public GridObject<Player>
         void UpdateShieldBlockValue();
         void UpdateDamagePhysical(WeaponAttackType attType);
         void ApplySpellPowerBonus(int32 amount, bool apply);
+        void ApplyDamageSpellBonus(int32 amount, bool apply);
+        void ApplyHealSpellBonus(int32 amount, bool apply);
         void UpdateSpellDamageAndHealingBonus();
         void ApplyRatingMod(CombatRating cr, int32 value, bool apply);
         void UpdateRating(CombatRating cr);
@@ -1907,6 +1909,8 @@ class Player : public Unit, public GridObject<Player>
         float GetRatingMultiplier(CombatRating cr) const;
         float GetRatingBonusValue(CombatRating cr) const;
         uint32 GetBaseSpellPowerBonus() { return m_baseSpellPower; }
+        uint32 GetBaseHealSpellBonus() { return m_baseHealSpell; }
+        uint32 GetBaseDamageSpellBonus() { return m_baseDamageSpell; }
         int32 GetSpellPenetrationItemMod() const { return m_spellPenetrationItemMod; }
 
         float GetExpertiseDodgeOrParryReduction(WeaponAttackType attType) const;
@@ -2716,6 +2720,8 @@ class Player : public Unit, public GridObject<Player>
         float m_auraBaseMod[BASEMOD_END][MOD_END];
         int16 m_baseRatingValue[MAX_COMBAT_RATING];
         uint32 m_baseSpellPower;
+        uint32 m_baseDamageSpell;
+        uint32 m_baseHealSpell;
         uint32 m_baseFeralAP;
         uint32 m_baseManaRegen;
         uint32 m_baseHealthRegen;

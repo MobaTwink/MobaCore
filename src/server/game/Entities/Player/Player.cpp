@@ -854,6 +854,8 @@ Player::Player(WorldSession* session): Unit(true), m_achievementMgr(this), m_rep
         m_baseRatingValue[i] = 0;
 
     m_baseSpellPower = 0;
+    m_baseDamageSpell = 0;
+    m_baseHealSpell = 0;
     m_baseFeralAP = 0;
     m_baseManaRegen = 0;
     m_baseHealthRegen = 0;
@@ -8090,6 +8092,12 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
             case ITEM_MOD_RANGED_ATTACK_POWER:
                 HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(val), apply);
                 break;
+			case ITEM_MOD_SPELL_HEALING_DONE:
+                ApplyHealSpellBonus(int32(val), apply);
+                break;
+			case ITEM_MOD_SPELL_DAMAGE_DONE:
+                ApplyDamageSpellBonus(int32(val), apply);
+                break;
 //            case ITEM_MOD_FERAL_ATTACK_POWER:
 //                ApplyFeralAPBonus(int32(val), apply);
 //                break;
@@ -8112,10 +8120,8 @@ void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply
             case ITEM_MOD_BLOCK_VALUE:
                 HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, float(val), apply);
                 break;
-            // deprecated item mods
-            case ITEM_MOD_SPELL_HEALING_DONE:
-            case ITEM_MOD_SPELL_DAMAGE_DONE:
-                break;
+			default:
+				break;
         }
     }
 
@@ -14146,6 +14152,14 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                             HandleStatModifier(UNIT_MOD_ATTACK_POWER_RANGED, TOTAL_VALUE, float(enchant_amount), apply);
                             sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "+ %u RANGED_ATTACK_POWER", enchant_amount);
                             break;
+						case ITEM_MOD_SPELL_HEALING_DONE:
+                            ApplyHealSpellBonus(enchant_amount, apply);
+                            sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "+ %u HEALING_SPELL_POWER", enchant_amount);
+							break;
+						case ITEM_MOD_SPELL_DAMAGE_DONE:
+                            ApplyDamageSpellBonus(enchant_amount, apply);
+                            sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "+ %u DAMAGE_SPELL_POWER", enchant_amount);
+							break;
 //                        case ITEM_MOD_FERAL_ATTACK_POWER:
 //                            ApplyFeralAPBonus(enchant_amount, apply);
 //                            sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "+ %u FERAL_ATTACK_POWER", enchant_amount);
@@ -14175,8 +14189,6 @@ void Player::ApplyEnchantment(Item* item, EnchantmentSlot slot, bool apply, bool
                             HandleBaseModValue(SHIELD_BLOCK_VALUE, FLAT_MOD, float(enchant_amount), apply);
                             sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "+ %u BLOCK_VALUE", enchant_amount);
                             break;
-                        case ITEM_MOD_SPELL_HEALING_DONE:   // deprecated
-                        case ITEM_MOD_SPELL_DAMAGE_DONE:    // deprecated
                         default:
                             break;
                     }
