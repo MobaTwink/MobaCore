@@ -2724,6 +2724,11 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
 					case 50435:   // Icy Clutch
 						duration = 4*IN_MILLISECONDS;
 						break;
+					case 48266:   // Blood Presence
+					case 48263:   // Frost Presence	
+					case 48265:   // Unholy Presence
+						duration = 5*IN_MILLISECONDS;
+						break;
 					case 66020:   // Chain of Ice (trinket)
 						duration = int32((float)duration / 3 + 1*IN_MILLISECONDS);
 						break;
