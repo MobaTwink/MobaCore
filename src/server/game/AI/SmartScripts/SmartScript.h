@@ -237,6 +237,7 @@ class SmartScript
         uint32 mTextTimer;
         uint32 mLastTextID;
         uint64 mTextGUID;
+		uint8 randModel;
         uint32 mTalkerEntry;
         bool mUseTextTimer;
 

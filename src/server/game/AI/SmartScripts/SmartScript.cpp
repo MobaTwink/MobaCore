@@ -94,6 +94,7 @@ SmartScript::SmartScript()
     goOrigGUID = 0;
     mLastInvoker = 0;
     mScriptType = SMART_SCRIPT_TYPE_CREATURE;
+	randModel = 0;
 }
 
 SmartScript::~SmartScript()
@@ -1968,6 +1969,29 @@ void SmartScript::ProcessAction(SmartScriptHolder& e, Unit* unit, uint32 var0, u
             me->setRegeneratingHealth(e.action.setHealthRegen.regenHealth ? true : false);
             break;
         }
+		case SMART_ACTION_CHOOSE_RANDOM_MODEL_HORDE:
+		case SMART_ACTION_CHOOSE_RANDOM_MODEL_ALLIANCE:
+		{
+			ObjectList* targets = GetTargets(e, unit);
+			if (!targets) { break; }
+			for (ObjectList::const_iterator itr = targets->begin(); itr != targets->end(); ++itr) {
+				if (!IsCreature(*itr)) { continue; }
+				if (CreatureTemplate const* ci = sObjectMgr->GetCreatureTemplate(e.action.morphOrMount.creature)) {
+					uint32 display_id[65] = { 1404, 1407, 1674, 1677, 1701, 1709, 1748, 1837, 1850, 1930, 2036, 2213, 2214, 2265,
+											  2272, 2459, 2581, 2590, 3117, 3118, 3124, 3125, 3264, 3323, 3360, 3368, 3465, 3466, 3476, 3486, 3489, 4990,
+											  4999, 5033, 5093, 5186, 5439, 5527, 7816, 7852, 8185, 8186, 9263, 9265, 10215, 10571, 10573, 10722, 12729,
+											  16202, 16203, 16227, 16610, 16912, 16922, 17169, 17173, 17231, 17496, 17787, 19510, 21044, 21084, 21220, 21256 };
+					if (randModel < 65) {
+						randModel++;
+					} else {
+						randModel = 0; 
+					}
+					(*itr)->ToCreature()->SetDisplayId(display_id[randModel]);
+				}
+			}
+			delete targets;
+			break;
+		}
         default:
             sLog->outError(LOG_FILTER_SQL, "SmartScript::ProcessAction: Entry %d SourceType %u, Event %u, Unhandled Action type %u", e.entryOrGuid, e.GetScriptType(), e.event_id, e.GetActionType());
             break;

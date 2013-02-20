@@ -486,8 +486,11 @@ enum SMART_ACTION
     SMART_ACTION_SEND_TARGET_TO_TARGET              = 100,    // id
     SMART_ACTION_SET_HOME_POS                       = 101,    // none
     SMART_ACTION_SET_HEALTH_REGEN                   = 102,    // 0/1
+	
+	SMART_ACTION_CHOOSE_RANDOM_MODEL_HORDE          = 103,    // 0/1
+	SMART_ACTION_CHOOSE_RANDOM_MODEL_ALLIANCE       = 104,    // 0/1
 
-    SMART_ACTION_END                                = 103
+    SMART_ACTION_END                                = 105
 };
 
 struct SmartAction
