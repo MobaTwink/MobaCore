@@ -11213,7 +11213,11 @@ uint32 Unit::SpellCriticalDamageBonus(SpellInfo const* spellProto, uint32 damage
             crit_bonus += damage;
             break;
         default:
-            crit_bonus += damage / 2;                       // for spells is 50%
+			if (GetSpellModOwner()->HasAura(35581)) {
+				crit_bonus += damage;
+			} else {
+				crit_bonus += damage / 2;                       // for spells is 50%
+			}
             break;
     }
 
