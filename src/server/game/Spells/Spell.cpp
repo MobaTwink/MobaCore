@@ -2712,6 +2712,7 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
 						break;
 					case 55078:   // Blood Plague
 					case 55095:   // Frost Fever
+					case 59547:   // Gift of the naaru
 						duration -= 4*IN_MILLISECONDS;
 						break;
 					case 57723:   // Stated (Heroism limitation)
