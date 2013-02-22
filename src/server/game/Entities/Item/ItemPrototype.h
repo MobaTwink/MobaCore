@@ -669,16 +669,19 @@ struct ItemTemplate
             case INVTYPE_SHIELD:
             case INVTYPE_HOLDABLE:
                 return true;
+			case INVTYPE_THROWN:
+				return false;
         }
 		
-		switch (SubClass) {
-			case ITEM_SUBCLASS_WEAPON_WAND:
-			case ITEM_SUBCLASS_WEAPON_POLEARM:
-				return false;
-		}
         switch (Class)
         {
             case ITEM_CLASS_WEAPON:
+				switch (SubClass) {
+					case ITEM_SUBCLASS_WEAPON_POLEARM:
+					case ITEM_SUBCLASS_WEAPON_THROWN:
+					case ITEM_SUBCLASS_WEAPON_WAND:
+						return false;
+				}
             case ITEM_CLASS_PROJECTILE:
                 return true;
         }
