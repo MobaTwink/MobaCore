@@ -3950,8 +3950,8 @@ void Unit::RemoveDispellableAuras(bool negative) {
 			RemoveAurasByType(SPELL_AURA_MOD_FEAR);
 			continue;
 		}
-        if (aura->GetSpellInfo()->GetDispelMask() & dispelMask) {
-			aura->Remove(AURA_REMOVE_BY_ENEMY_SPELL);
+        if (aura && aura->GetSpellInfo()->GetDispelMask() & dispelMask) {
+			RemoveAura(aura);
 		}
 	}
 }
