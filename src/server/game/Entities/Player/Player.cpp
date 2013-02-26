@@ -7921,6 +7921,10 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
     ApplyEnchantment(item, apply);
 
     sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "_ApplyItemMods complete.");
+
+	if(CanDualWield() && proto->InventoryType == INVTYPE_RELIC && getClass() == CLASS_SHAMAN && item->GetEntry() != 23199) {
+		removeSpell(674);
+	}
 }
 
 void Player::_ApplyItemBonuses(ItemTemplate const* proto, uint8 slot, bool apply, bool only_level_scale /*= false*/)
