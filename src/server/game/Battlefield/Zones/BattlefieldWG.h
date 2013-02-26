@@ -331,6 +331,8 @@ class BattlefieldWG : public Battlefield
         bool Update(uint32 diff);
 
 		bool AnnonceChest;
+        bool isGYHorde;
+		bool isGYAlliance;
 
         /**
          * \brief Called when a creature is created

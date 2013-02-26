@@ -94,9 +94,13 @@ bool BattlefieldWG::SetupBattlefield() {
 	if (m_DefenderTeam) {
         HideNpc(m_spiritAlliance);
 		m_runeweaverHorde      = SpawnGameObject(GO_DALARAN_RUNEWEAVER_HORDE_BANNER,   5805.020508f, 639.484070f, 647.782959f, 2.515712f);
+		isGYHorde    = true;
+		isGYAlliance = false;
 	} else {
         HideNpc(m_spiritHorde);
 		m_runeweaverAlliance   = SpawnGameObject(GO_DALARAN_RUNWEAVER_ALLIANCE_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
+		isGYHorde    = false;
+		isGYAlliance = true;
 	}
     return true;
 }
@@ -117,6 +121,8 @@ bool BattlefieldWG::Update(uint32 diff) {
 			}
 			m_runeweaverHorde = SpawnGameObject(GO_DALARAN_RUNEWEAVER_HORDE_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
 			sWorld->SendWorldText(NEVA_DALARAN_HORDE_RUNWEAVER_CONTROL);
+			isGYHorde    = true;
+			isGYAlliance = false;
 			ShowNpc(m_spiritHorde, false);
 			HideNpc(m_spiritAlliance);
 		}
@@ -134,6 +140,8 @@ bool BattlefieldWG::Update(uint32 diff) {
 			}
 			m_runeweaverHorde = SpawnGameObject(GO_DALARAN_RUNWEAVER_ALLIANCE_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
 			sWorld->SendWorldText(NEVA_DALARAN_ALLIANCE_RUNWEAVER_CONTROL);
+			isGYHorde    = false;
+			isGYAlliance = true;
 			ShowNpc(m_spiritAlliance, false);
 			HideNpc(m_spiritHorde);
 		}
@@ -263,6 +271,7 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId) {
 		m_runeweaverBannerTimerAlliance = CAPTURE_TIME;
 		go->RemoveFromWorld();
 		m_runeweaverAContested = SpawnGameObject(GO_DALARAN_RUNWEAVER_ACONTESTED_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
+		isGYHorde    = false;
 		HideNpc(m_spiritHorde);
 		break;
 
@@ -272,6 +281,7 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId) {
 		m_runeweaverBannerTimerHorde = CAPTURE_TIME;
 		go->RemoveFromWorld();
 		m_runeweaverHContested = SpawnGameObject(GO_DALARAN_RUNWEAVER_HCONTESTED_BANNER, 5805.020508f, 639.484070f, 647.782959f, 2.515712f);
+		isGYAlliance = false;
 		HideNpc(m_spiritAlliance);
 		break;
 
@@ -281,6 +291,8 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId) {
 		m_runeweaverBannerTimerHorde = 0;
 		go->RemoveFromWorld();
 		m_runeweaverAlliance = SpawnGameObject(GO_DALARAN_RUNWEAVER_ALLIANCE_BANNER,   5805.020508f, 639.484070f, 647.782959f, 2.515712f);
+		isGYAlliance = true;
+		isGYHorde    = false;
 		ShowNpc(m_spiritAlliance, false);
 		HideNpc(m_spiritHorde);
 		break;
@@ -291,6 +303,8 @@ void BattlefieldWG::ProcessEvent(WorldObject *obj, uint32 eventId) {
 		m_runeweaverBannerTimerAlliance = 0;
 		go->RemoveFromWorld();
 		m_runeweaverHorde = SpawnGameObject(GO_DALARAN_RUNEWEAVER_HORDE_BANNER,   5805.020508f, 639.484070f, 647.782959f, 2.515712f);
+		isGYHorde    = true;
+		isGYAlliance = false;
 		ShowNpc(m_spiritHorde, false);
 		HideNpc(m_spiritAlliance);
 		break;
