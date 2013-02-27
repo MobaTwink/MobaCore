@@ -91,7 +91,7 @@ public:
             switch (me->GetEntry())
             {
                 case 29254:
-                    if (player->GetTeam() == HORDE && bf->isGYAlliance)              // Horde unit found in Alliance area
+                    if (player->GetTeam() == HORDE && bf->isGYAlliance && !player->HasAura(16739))              // Horde unit found in Alliance area
                     {
                         if (GetClosestCreatureWithEntry(me, NPC_APPLEBOUGH_A, 32.0f))
                         {
@@ -103,7 +103,7 @@ public:
                     }
                     break;
                 case 29255:
-                    if (player->GetTeam() == ALLIANCE && bf->isGYHorde)           // Alliance unit found in Horde area
+                    if (player->GetTeam() == ALLIANCE && bf->isGYHorde && !player->HasAura(16739))           // Alliance unit found in Horde area
                     {
                         if (GetClosestCreatureWithEntry(me, NPC_SWEETBERRY_H, 32.0f))
                         {
