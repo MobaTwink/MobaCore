@@ -9491,11 +9491,19 @@ ReputationRank Unit::GetFactionReactionTo(FactionTemplateEntry const* factionTem
 
 bool Unit::IsHostileTo(Unit const* unit) const
 {
+	Unit* uOwner = unit->GetCharmerOrOwnerOrSelf();
+	if (uOwner->GetTypeId() == TYPEID_PLAYER && !uOwner->HasAura(32096)) {
+		return false;
+	}
     return GetReactionTo(unit) <= REP_HOSTILE;
 }
 
 bool Unit::IsFriendlyTo(Unit const* unit) const
 {
+	Unit* uOwner = unit->GetCharmerOrOwnerOrSelf();
+	if (uOwner->GetTypeId() == TYPEID_PLAYER && !uOwner->HasAura(32096)) {
+		return true;
+	} 
     return GetReactionTo(unit) >= REP_FRIENDLY;
 }
 
@@ -9537,12 +9545,18 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
     // player cannot attack in mount state
     if (GetTypeId() == TYPEID_PLAYER && IsMounted())
         return false;
+	
+    if (GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER && victim->GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER && !HasAura(32096))
+        return false;
 
     // nobody can attack GM in GM-mode
     if (victim->GetTypeId() == TYPEID_PLAYER)
     {
         if (victim->ToPlayer()->isGameMaster())
             return false;
+		if (GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER && !victim->HasAura(32096)) {
+			return false; // if isn't a player or controled by a player and doesn't have the Aura don't attack.
+		}
     }
     else
     {
@@ -12362,6 +12376,7 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellInfo const* bySpell, Wo
         || (target->GetTypeId() == TYPEID_PLAYER && target->ToPlayer()->isGameMaster()))
         return false;
 
+
     // can't attack own vehicle or passenger
     if (m_vehicle)
         if (IsOnVehicle(target) || m_vehicle->GetBase()->IsOnVehicle(target))
@@ -12382,9 +12397,16 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellInfo const* bySpell, Wo
 
     if (Player const* playerAttacker = ToPlayer())
     {
+		if (target->GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER && !playerAttacker->HasAura(32096))
+            return false;
+
         if (playerAttacker->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_UNK19))
             return false;
     }
+	else {
+		if (target->GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER && !target->HasAura(32096))
+            return false;
+	}
     // check flags
     if (target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_TAXI_FLIGHT | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_UNK_16)
         || (!HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE) && target->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC))
