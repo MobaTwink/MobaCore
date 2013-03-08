@@ -1083,16 +1083,16 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 						damage = int32((float)damage / 1.1f);
 						break;
 					case 561:		// Sceal of Command
+					case 1680:      // Morsure Feroce
+						damage = int32((float)damage / 1.333f);
+						break;
+					case 220:       // Windfury Proc
 					case 2639:      // Obliterate
-						damage = int32((float)damage / 1.4f);
+						damage = int32((float)damage / 1.8f);
 						break;
 					case 2624:		// Blood Strike
 					case 2719:		// Plague Strike
-					case 2725:		// Blood Boil
-						damage = int32((float)damage / 2.1f);
-						break;
-					case 2751:		// Death Strike
-						damage = int32((float)damage / 3.0f);
+						damage = int32((float)damage / 2.2f);
 						break;
 					default:
 						break;
@@ -1115,10 +1115,13 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 			
 			switch (spellInfo->SpellIconID) {
 				case 88:  		// Death Coil
-					damage = int32((float)damage / 2.05f);
+					damage = int32((float)damage / 2.25f);
 					break;
 				case 2721:		// Icy Touch
 					damage = int32((float)damage / 3.5f);
+					break;
+				case 3080:      // Thunderstorm
+					damage = int32((float)damage / 4.3f);
 					break;
 				default:
 					break;

@@ -2722,6 +2722,9 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
 					case 6136:    // Chilled
 						duration -= 1*IN_MILLISECONDS;
 						break;
+					case 24699:   // Vanish out of PvE
+						duration = 2*IN_MILLISECONDS;
+						break;
 					case 50435:   // Icy Clutch
 						duration = 4*IN_MILLISECONDS;
 						break;
