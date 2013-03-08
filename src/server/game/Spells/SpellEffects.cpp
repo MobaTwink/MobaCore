@@ -3764,23 +3764,19 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                         return;
                     unitTarget->RemoveAurasDueToSpell(m_spellInfo->Effects[effIndex].CalcValue());
                     break;
-                // PX-238 Winter Wondervolt TRAP
-                case 26275:
-                {
-                    uint32 spells[4] = { 26272, 26157, 26273, 26274 };
+                case 26275: // Stealth TRAP (Sorry Xmas trap) TODO : remove stealth on pet on aura loose on the master
+					if (unitTarget->GetTypeId() != TYPEID_PLAYER        ||                    // Check if player
+						unitTarget->isInCombat()                        ||                    // Check if in combat
+						unitTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) ||                    // Check if already stealth
+						unitTarget->IsNonMeleeSpellCasted(false, false, true, false, true)) { // Check if is casting
+							return;
+					}
+					unitTarget->CastSpell(unitTarget, 58984, true);                           // Cast Shadowmeld
 
-                    // check presence
-                    for (uint8 j = 0; j < 4; ++j)
-                        if (unitTarget->HasAuraEffect(spells[j], 0))
-                            return;
-
-                    // select spell
-                    uint32 iTmpSpellId = spells[urand(0, 3)];
-
-                    // cast
-                    unitTarget->CastSpell(unitTarget, iTmpSpellId, true);
-                    return;
-                }
+					if (unitTarget->GetGuardianPet()) {                                       // Look for the pet
+						unitTarget->GetGuardianPet()->CastSpell(unitTarget, 58984);           // Stealth the pet too
+					}
+					break;
                 // Bending Shinbone
                 case 8856:
                 {
