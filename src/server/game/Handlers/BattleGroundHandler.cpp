@@ -436,6 +436,8 @@ void WorldSession::HandleBattleFieldPortOpcode(WorldPacket &recvData)
     {
         if (!_player->IsInvitedForBattlegroundQueueType(bgQueueTypeId))
             return;                                 // cheating?
+			
+		_player->CastSpell(_player, 38916);
 
         if (!_player->InBattleground())
             _player->SetBattlegroundEntryPoint();

@@ -1048,6 +1048,7 @@ void Battleground::RemovePlayerAtLeave(uint64 guid, bool Transport, bool SendPac
     {
         if (player->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
             player->RemoveAurasByType(SPELL_AURA_MOD_SHAPESHIFT);
+            player->CastSpell(player, 38916);
 
         if (!player->isAlive())                              // resurrect on exit
         {
