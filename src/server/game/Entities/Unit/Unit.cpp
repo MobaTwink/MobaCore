@@ -9491,19 +9491,11 @@ ReputationRank Unit::GetFactionReactionTo(FactionTemplateEntry const* factionTem
 
 bool Unit::IsHostileTo(Unit const* unit) const
 {
-	Unit* uOwner = unit->GetCharmerOrOwnerOrSelf();
-	if (uOwner->GetTypeId() == TYPEID_PLAYER && !uOwner->HasAura(32096)) {
-		return false;
-	}
     return GetReactionTo(unit) <= REP_HOSTILE;
 }
 
 bool Unit::IsFriendlyTo(Unit const* unit) const
 {
-	Unit* uOwner = unit->GetCharmerOrOwnerOrSelf();
-	if (uOwner->GetTypeId() == TYPEID_PLAYER && !uOwner->HasAura(32096)) {
-		return true;
-	} 
     return GetReactionTo(unit) >= REP_FRIENDLY;
 }
 
@@ -9546,16 +9538,23 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
     if (GetTypeId() == TYPEID_PLAYER && IsMounted())
         return false;
 	
-    if (GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER && victim->GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER && !HasAura(32096))
-        return false;
+	if (GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER              // Is the unit a player ?
+		&& victim->GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER   // Is the victim not a player ?
+		&& !HasAura(32096)                                                   // Does the unit have the buff ?
+		&& victim->getFaction() == 14) {                                     // Is the victim in the correct faction ?
+		return false;
+	}
 
     // nobody can attack GM in GM-mode
     if (victim->GetTypeId() == TYPEID_PLAYER)
     {
         if (victim->ToPlayer()->isGameMaster())
             return false;
-		if (GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER && !victim->HasAura(32096)) {
-			return false; // if isn't a player or controled by a player and doesn't have the Aura don't attack.
+
+		if (GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER          // is the unit not a player ?
+			&& !victim->HasAura(32096)                                       // Does the victim have the buff ?
+			&& getFaction() == 14) {                                         // Is the unit in the correct faction ?
+			return false;
 		}
     }
     else
@@ -12397,14 +12396,14 @@ bool Unit::_IsValidAttackTarget(Unit const* target, SpellInfo const* bySpell, Wo
 
     if (Player const* playerAttacker = ToPlayer())
     {
-		if (target->GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER && !playerAttacker->HasAura(32096))
+		if (target->GetCharmerOrOwnerOrSelf()->GetTypeId() != TYPEID_PLAYER && !playerAttacker->HasAura(32096) && target->getFaction() == 14)
             return false;
 
         if (playerAttacker->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_UNK19))
             return false;
     }
 	else {
-		if (target->GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER && !target->HasAura(32096))
+		if (target->GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER && !target->HasAura(32096) && getFaction() == 14)
             return false;
 	}
     // check flags
