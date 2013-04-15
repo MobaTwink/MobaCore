@@ -4337,12 +4337,13 @@ void Player::removeSpell(uint32 spell_id, bool disabled, bool learn_low_rank)
 
     if (spell_id == 46917 && m_canTitanGrip)
         SetCanTitanGrip(false);
-    if (spell_id == 674 && m_canDualWield)
+    if (spell_id == 674 && m_canDualWield) {
         SetCanDualWield(false);
-
+        //AutoUnequipOffhandForce();
+	} else {
     if (sWorld->getBoolConfig(CONFIG_OFFHAND_CHECK_AT_SPELL_UNLEARN))
         AutoUnequipOffhandIfNeed();
-
+	}
     // remove from spell book if not replaced by lesser rank
     if (!prev_activate)
     {
@@ -7923,6 +7924,7 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
     sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "_ApplyItemMods complete.");
 
 	if(CanDualWield() && proto->InventoryType == INVTYPE_RELIC && getClass() == CLASS_SHAMAN && item->GetEntry() != 23199) {
+        AutoUnequipOffhandForce();
 		removeSpell(674);
 	}
 }
@@ -22968,6 +22970,31 @@ void Player::AutoUnequipOffhandIfNeed(bool force /*= false*/)
 
         CharacterDatabase.CommitTransaction(trans);
     }
+}
+
+void Player::AutoUnequipOffhandForce(bool force /*= false*/)
+{
+    Item* offItem = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
+    if (!offItem)
+        return;
+
+     // unequip offhand weapon if player doesn't have dual wield anymore
+     if (!CanDualWield() && (offItem->GetTemplate()->InventoryType == INVTYPE_WEAPONOFFHAND || offItem->GetTemplate()->InventoryType == INVTYPE_WEAPON))
+          force = true;
+
+    // need unequip offhand for 2h-weapon without TitanGrip (in any from hands)
+    if (!force && (CanTitanGrip() || (offItem->GetTemplate()->InventoryType != INVTYPE_2HWEAPON && !IsTwoHandUsed())))
+        return;
+
+    MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND, true);
+    SQLTransaction trans = CharacterDatabase.BeginTransaction();
+    offItem->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+    offItem->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+    std::string subject = GetSession()->GetTrinityString(LANG_NOT_EQUIPPED_ITEM);
+    MailDraft(subject, "There were problems with equipping one or several items").AddItem(offItem).SendMailTo(trans, this, MailSender(this, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+    CharacterDatabase.CommitTransaction(trans);
 }
 
 OutdoorPvP* Player::GetOutdoorPvP() const

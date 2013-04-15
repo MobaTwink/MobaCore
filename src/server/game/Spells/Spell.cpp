@@ -2726,6 +2726,8 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
 						duration = 2*IN_MILLISECONDS;
 						break;
 					case 50435:   // Icy Clutch
+					case 35478:   // Shaman Totem Heal
+					case 35477:   // Shaman "Sprint"
 						duration = 4*IN_MILLISECONDS;
 						break;
 					case 48266:   // Blood Presence
@@ -2736,6 +2738,12 @@ SpellMissInfo Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool scaleA
 						break;
 					case 66020:   // Chain of Ice (trinket)
 						duration = int32((float)duration / 3 + 1*IN_MILLISECONDS);
+						break;
+					case 37432:   // Shaman Absorb
+						duration = 10*IN_MILLISECONDS;
+						break;
+					case 32096:   // Pve Buff
+						duration = -1;
 						break;
 					default:
 						break;
