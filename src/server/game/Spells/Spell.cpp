@@ -3157,6 +3157,26 @@ void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggered
         if (!(_triggeredCastFlags & TRIGGERED_IGNORE_GCD))
             TriggerGlobalCooldown();
 
+		switch (m_spellInfo->Id) {
+			case 5384:
+			case 7744:
+			case 9175:
+			case 20549:
+			case 20589:
+			case 26297:
+			case 28350:
+			case 28730:
+			case 33697:
+			case 34782:
+			case 36402:
+			case 40538:
+			case 59463:
+			case 59547:
+				m_caster->AddAura(32216, m_caster);
+			default:
+				break;
+		}
+
         //item: first cast may destroy item and second cast causes crash
         if (!m_casttime && !m_spellInfo->StartRecoveryTime && !m_castItemGUID && GetCurrentContainer() == CURRENT_GENERIC_SPELL)
             cast(true);
@@ -3170,6 +3190,10 @@ void Spell::cancel()
 
     uint32 oldState = m_spellState;
     m_spellState = SPELL_STATE_FINISHED;
+
+	if (m_caster->HasAura(32216)) {
+		m_caster->RemoveAura(32216);
+	}
 
     m_autoRepeat = false;
     switch (oldState)
@@ -5511,6 +5535,24 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (Player* plrCaster = m_caster->ToPlayer())
             if (!plrCaster->GetComboPoints())
                 return SPELL_FAILED_NO_COMBO_POINTS;
+
+	switch (m_spellInfo->Id) {
+	case 5384:
+	case 7744:
+	case 9175:
+	case 59547:
+	case 33697:
+	case 26297:
+	case 40538:
+	case 20589:
+	case 36402:
+	case 28350:
+	case 28730:
+	case 34782:
+		if (m_caster->HasAura(32216)) { return SPELL_FAILED_DONT_REPORT; }
+	default:
+		break;
+	}
 
     // all ok
     return SPELL_CAST_OK;
