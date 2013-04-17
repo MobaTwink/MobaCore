@@ -1083,16 +1083,10 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
 						damage = int32((float)damage / 1.1f);
 						break;
 					case 561:		// Sceal of Command
-					case 1680:      // Morsure Feroce
 						damage = int32((float)damage / 1.333f);
 						break;
 					case 220:       // Windfury Proc
-					case 2639:      // Obliterate
 						damage = int32((float)damage / 1.8f);
-						break;
-					case 2624:		// Blood Strike
-					case 2719:		// Plague Strike
-						damage = int32((float)damage / 2.2f);
 						break;
 					default:
 						break;
@@ -1113,19 +1107,6 @@ void Unit::CalculateSpellDamageTaken(SpellNonMeleeDamage* damageInfo, int32 dama
                 damage = SpellCriticalDamageBonus(spellInfo, damage, victim);
             }
 			
-			switch (spellInfo->SpellIconID) {
-				case 88:  		// Death Coil
-					damage = int32((float)damage / 2.25f);
-					break;
-				case 2721:		// Icy Touch
-					damage = int32((float)damage / 3.5f);
-					break;
-				case 3080:      // Thunderstorm
-					damage = int32((float)damage / 4.3f);
-					break;
-				default:
-					break;
-			}
             ApplyResilience(victim, NULL, &damage, crit, CR_CRIT_TAKEN_SPELL);
             break;
         }
@@ -10707,6 +10688,9 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
                 if (AuraEffect* aurEff = GetAuraEffectOfRankedSpell(16836, 0))
                     AddPct(DoneTotalMod, aurEff->GetAmount());
             }
+			if (spellProto->SpellIconID == 1680) { // Ferocious Bite
+				pdamage = int32(float(pdamage)*0.75f);
+			}
             break;
         case SPELLFAMILY_WARLOCK:
             // Fire and Brimstone
@@ -10729,6 +10713,11 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
             if (spellProto->SpellFamilyFlags[1] & 0x00400000 && isPet())
                 if (uint8 count = victim->GetDoTsByCaster(GetOwnerGUID()))
                     AddPct(DoneTotalMod, 15 * count);
+            break;
+        case SPELLFAMILY_SHAMAN:
+            if (spellProto->SpellIconID == 3080) { // Thunderstorm
+				pdamage = int32(float(pdamage)*0.15f);
+			}
             break;
         case SPELLFAMILY_HUNTER:
             // Steady Shot
