@@ -1852,12 +1852,23 @@ void Player::Update(uint32 p_time)
         TeleportTo(m_teleport_dest, m_teleport_options);
 	
 	//Give Speed Buff Yo
-	uint32 visual_buff = 35847;
-    if (GetZoneId() == 4395 && isInCombat()) {
-		CastSpell(this, visual_buff, true);
-    } else {
-        RemoveAurasDueToSpell(visual_buff);
-    }
+	uint32 spirit_buff  = 14461;
+	uint32 stealth_buff = 58984;
+    if (HasAura(spirit_buff)) {
+		if (!isInCombat() && !HasAuraType(SPELL_AURA_MOD_STEALTH) && !IsNonMeleeSpellCasted(false, false, true, false, true)) {
+			CastSpell(this, stealth_buff, true);                        // Cast Shadowmeld
+			if (GetGuardianPet()) {                                     // Look for a pet
+				GetGuardianPet()->CastSpell(this, stealth_buff);        // Stealth the pet too
+			}
+		}
+		if (isInCombat() || !HasAura(stealth_buff) || IsNonMeleeSpellCasted(false, false, true, false, true)) {
+			RemoveAurasDueToSpell(spirit_buff);
+		} 
+    } else if (GetGuardianPet()) {
+		if (GetGuardianPet()->HasAura(stealth_buff)) {
+			GetGuardianPet()->RemoveAurasDueToSpell(stealth_buff);
+		}
+	}
 }
 
 void Player::setDeathState(DeathState s)

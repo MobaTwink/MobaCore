@@ -3764,19 +3764,6 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                         return;
                     unitTarget->RemoveAurasDueToSpell(m_spellInfo->Effects[effIndex].CalcValue());
                     break;
-                case 26275: // Stealth TRAP (Sorry Xmas trap) TODO : remove stealth on pet on aura loose on the master
-					if (unitTarget->GetTypeId() != TYPEID_PLAYER        ||                    // Check if player
-						unitTarget->isInCombat()                        ||                    // Check if in combat
-						unitTarget->HasAuraType(SPELL_AURA_MOD_STEALTH) ||                    // Check if already stealth
-						unitTarget->IsNonMeleeSpellCasted(false, false, true, false, true)) { // Check if is casting
-							return;
-					}
-					unitTarget->CastSpell(unitTarget, 58984, true);                           // Cast Shadowmeld
-
-					if (unitTarget->GetGuardianPet()) {                                       // Look for the pet
-						unitTarget->GetGuardianPet()->CastSpell(unitTarget, 58984);           // Stealth the pet too
-					}
-					break;
                 // Bending Shinbone
                 case 8856:
                 {
