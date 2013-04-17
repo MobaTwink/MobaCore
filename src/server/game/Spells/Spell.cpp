@@ -2360,6 +2360,24 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
     m_damage = target->damage;
     m_healing = -target->damage;
 
+	switch (m_spellInfo->SpellFamilyName) {
+    case SPELLFAMILY_DEATHKNIGHT:
+			m_healing *= 0.9f;
+    case SPELLFAMILY_MAGE:
+    case SPELLFAMILY_PRIEST:
+    case SPELLFAMILY_PALADIN:
+    case SPELLFAMILY_DRUID:
+    case SPELLFAMILY_WARLOCK:
+    case SPELLFAMILY_HUNTER:
+    case SPELLFAMILY_ROGUE:
+    case SPELLFAMILY_SHAMAN:
+    case SPELLFAMILY_WARRIOR:
+			m_damage *= 0.9f;
+        break;
+	default:
+		break;
+	}
+
     // Fill base trigger info
     uint32 procAttacker = m_procAttacker;
     uint32 procVictim   = m_procVictim;
