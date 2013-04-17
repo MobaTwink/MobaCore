@@ -3501,6 +3501,9 @@ void Spell::EffectWeaponDmg(SpellEffIndex effIndex)
                 break;                                      // not weapon damage effect, just skip
         }
     }
+	if (m_spellInfo->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT) {
+		fixed_bonus = uint32(float(fixed_bonus)*0.15f);
+	}
 
     // apply to non-weapon bonus weapon total pct effect, weapon total flat effect included in weapon damage
     if (fixed_bonus || spell_bonus)

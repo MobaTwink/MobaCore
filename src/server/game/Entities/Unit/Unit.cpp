@@ -10740,6 +10740,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* victim, SpellInfo const* spellProto, uin
                         AddPct(DoneTotalMod, aurEff->GetAmount());
             break;
         case SPELLFAMILY_DEATHKNIGHT:
+			pdamage = int32(float(pdamage)*0.15f);
             // Improved Icy Touch
             if (spellProto->SpellFamilyFlags[0] & 0x2)
                 if (AuraEffect* aurEff = GetDummyAuraEffect(SPELLFAMILY_DEATHKNIGHT, 2721, 0))
