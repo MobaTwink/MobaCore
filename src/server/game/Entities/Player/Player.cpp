@@ -773,6 +773,7 @@ Player::Player(WorldSession* session): Unit(true), m_achievementMgr(this), m_rep
     m_drunkTimer = 0;
     m_restTime = 0;
     m_deathTimer = 0;
+    m_stealthTimer = 0;
     m_deathExpireTime = 0;
 
     m_swingErrorMsg = 0;
@@ -1851,11 +1852,18 @@ void Player::Update(uint32 p_time)
     if (IsHasDelayedTeleport() && isAlive())
         TeleportTo(m_teleport_dest, m_teleport_options);
 	
-	//Give Speed Buff Yo
 	uint32 spirit_buff  = 14461;
 	uint32 stealth_buff = 58984;
+
+	if (p_time >= m_stealthTimer) {
+		m_stealthTimer = 0;
+	} else {
+		m_stealthTimer -= p_time;
+	}
+
     if (HasAura(spirit_buff)) {
-		if (!isInCombat() && !HasAuraType(SPELL_AURA_MOD_STEALTH) && !IsNonMeleeSpellCasted(false, false, true, false, true)) {
+		if (!isInCombat() && !HasAuraType(SPELL_AURA_MOD_STEALTH) && !IsNonMeleeSpellCasted(false, false, true, false, true) && m_stealthTimer == 0) {
+			m_stealthTimer = 1500;									    // define stealth timer
 			CastSpell(this, stealth_buff, true);                        // Cast Shadowmeld
 			if (GetGuardianPet()) {                                     // Look for a pet
 				GetGuardianPet()->CastSpell(this, stealth_buff);        // Stealth the pet too
@@ -1863,10 +1871,11 @@ void Player::Update(uint32 p_time)
 		}
 		if (isInCombat() || !HasAura(stealth_buff) || IsNonMeleeSpellCasted(false, false, true, false, true)) {
 			RemoveAurasDueToSpell(spirit_buff);
-		} 
-    } else if (GetGuardianPet()) {
-		if (GetGuardianPet()->HasAura(stealth_buff)) {
-			GetGuardianPet()->RemoveAurasDueToSpell(stealth_buff);
+			if (GetGuardianPet()) {
+				if (GetGuardianPet()->HasAura(stealth_buff)) {
+					GetGuardianPet()->RemoveAurasDueToSpell(stealth_buff);
+				}
+			}
 		}
 	}
 }

@@ -2767,6 +2767,8 @@ class Player : public Unit, public GridObject<Player>
 
         uint32 m_deathTimer;
         time_t m_deathExpireTime;
+		
+        uint32 m_stealthTimer;
 
         uint32 m_restTime;
 
